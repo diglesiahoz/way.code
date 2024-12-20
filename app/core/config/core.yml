@@ -1,0 +1,860 @@
+signature: <proc> [@config-env] [opt]
+
+task:
+  keys:
+    exclude: true
+    applyWith: ""
+    label: ""
+    call: ""
+    loop: []
+    args: {}
+    check: {}
+    event: ""
+
+opt:
+
+  y:
+    type: Boolean # [ String | Number | Array | Object ]
+    default: false # [ VALOR | null ]
+    help: Habilita confirmación
+
+  v:
+    type: Boolean # [ String | Number | Array | Object ]
+    default: false # [ VALOR | null ]
+    help: Habilita información extra. Nivel 1.
+
+  r:
+    type: Boolean # [ String | Number | Array | Object ]
+    default: false # [ VALOR | null ]
+    help: Limpia caché
+
+  s:
+    type: Boolean # [ String | Number | Array | Object ]
+    default: false # [ VALOR | null ]
+    help: Habilita modo simulación
+
+  f:
+    type: Boolean # [ String | Number | Array | Object ]
+    default: false # [ VALOR | null ]
+    help: Fuerza ejecución
+
+  apply:
+    type: Array # [ String | Number | Array | Object ]
+    default: [] # [ VALOR | null ]
+    help: Permite seleccionar tareas a ejecutar
+
+  i:
+    type: Boolean # [ String | Number | Array | Object ]
+    default: false # [ VALOR | null ]
+    help: Muestra información sobre la ejecución del procedimiento
+
+  m:
+    type: Boolean # [ String | Number | Array | Object ]
+    default: false # [ VALOR | null ]
+    help: Permite el envio de notificaciones
+
+  o:
+    type: Boolean # [ String | Number | Array | Object ]
+    default: false # [ VALOR | null ]
+    help: Muestra información
+
+envconfig:
+  \.local$: bgGreenBright.black.bold
+  \.ddev$: bgGreenBright.black.bold
+  \.dev$: bgCyanBright.black.bold
+  \.pre$: bgCyanBright.black.bold
+  \.stage$: bgCyanBright.black.bold
+  \.prod$: bgRedBright.black.bold
+
+interface:
+  makeApp:
+    collection: false
+    args:
+      name:
+        required: true
+        type: String
+        defaultValue: ""
+      directory:
+        required: false
+        type: Array
+        defaultValue:
+          - config
+          - config/@
+          - config/proc
+          - file
+          - lib
+          - docs
+      file:
+        required: false
+        type: Array
+        defaultValue:
+          -
+            origin: make.app.lib_js
+            target: lib/main.js
+          -
+            origin: make.app.app_yml
+            target: config/app.yml
+          -
+            origin: make.app.interface_yml
+            target: config/interface.yml
+          -
+            origin: make.app.hook_yml
+            target: config/hook.yml
+          -
+            origin: make.app.proc_yml
+            target: config/proc/test.yml
+          -
+            origin: make.app.gitignore
+            target: .gitignore
+          -
+            origin: make.app.README_md
+            target: README.md
+          -
+            origin: make.app.gitkeep
+            target: config/@/.gitkeep
+          -
+            origin: make.app.gitkeep
+            target: docs/.gitkeep
+  ask:
+    collection: false
+    args:
+      exitIfNegative: 
+        required: false
+        type: Boolean
+        defaultValue: false
+      exitMessage: 
+        required: false
+        type: String
+        defaultValue: "Proceso abortado"
+      message:
+        required: false
+        type: String
+        defaultValue: "¿Deseas continuar?..."
+      messageProgress:
+        required: false
+        type: String
+        #defaultValue: "en progreso..."
+        defaultValue: ""
+      onlyResponse:
+        required: false
+        type: Boolean
+        defaultValue: false
+      var:  
+        required: false
+        type: Object
+        defaultValue: null
+  apply:
+    collection: false
+    args:
+      value: 
+        required: true
+        type: String
+        defaultValue: ""
+  bar:
+    collection: false
+    args:
+      format: 
+        required: false
+        type: String
+        defaultValue: "[{bar}] {percentage}% || {value}/{total} ({eta} sec.)"
+      hideCursor: 
+        required: false
+        type: Boolean
+        defaultValue: true
+      clearOnComplete: 
+        required: false
+        type: Boolean
+        defaultValue: true
+      barsize: 
+        required: false
+        type: Number
+        defaultValue: 20
+      stopOnComplete: 
+        required: false
+        type: Boolean
+        defaultValue: true
+  cast:
+    collection: false
+    args:
+      data:
+        required: true
+        type:
+        defaultValue:
+      delimiter:
+        required: false
+        type: String
+        defaultValue: "\n"
+      to:
+        required: false
+        type: String
+        defaultValue: array
+      join:
+        required: false
+        type: String
+        defaultValue: " "
+      pipe:        
+        required: false
+        type: String
+        defaultValue: ""
+  checkReq:
+    collection: false
+    args:
+      data:
+        required: true
+        type: 
+        defaultValue: 
+  checkRequiredTaskSettings:
+    collection: false
+    args: {}
+  clearLogRunning:
+    collection: false
+    args: {}
+  clone:
+    collection: false
+    args:
+      data:
+        required: true
+        type: 
+        defaultValue: 
+  complete:
+    collection: false
+    args:
+      choices:
+        required: true
+        type: Array
+        defaultValue: []
+      continue:
+        required: false
+        type: Boolean
+        defaultValue: false
+      confirm:
+        required: false
+        type: Boolean
+        defaultValue: false
+      message:
+        required: false
+        type: String
+        defaultValue: "Selecciona por favor"
+      multiple:
+        required: false
+        type: Boolean
+        defaultValue: false
+      limit:
+        required: false
+        type: Number
+        defaultValue: 10
+      pipe:        
+        required: false
+        type: String
+        defaultValue: ""
+  decode:
+    collection: false
+    args:
+      data:
+        required: true
+        type: 
+        defaultValue:
+      throwException:
+        required: false
+        type: Array
+        defaultValue: []
+      excludeKeys:
+        required: false
+        type: Array
+        defaultValue: []
+      showWarn:
+        required: false
+        type: Boolean
+        defaultValue: true
+      from:
+        required: false
+        type: String
+        defaultValue: ""
+      gData:
+        required: false
+        type: 
+        defaultValue:
+  eval:
+    collection: false
+    args:
+      cmd:        
+        required: true
+        type: String
+        defaultValue: ""
+      out:
+        required: false
+        type: Boolean
+        defaultValue: false
+  exec:
+    collection: false
+    args:
+      cmd:        
+        required: true
+        type: String
+        defaultValue: ""
+      host:        
+        required: false
+        type: String
+        defaultValue: ""
+      user:        
+        required: false
+        type: String
+        defaultValue: ""
+      pipe:        
+        required: false
+        type: String
+        defaultValue: ""
+      out:        
+        required: false
+        type: Boolean
+        defaultValue: false
+      nohup:
+        required: false
+        type: Boolean
+        defaultValue: false
+      watch:
+        required: false
+        type: Boolean
+        defaultValue: false
+      cd:        
+        required: false
+        type: String
+        defaultValue: "~"
+      sleep:
+        required: false
+        type: Number
+        defaultValue: 0
+      cast:
+        required: false
+        type: Boolean
+        defaultValue: false
+      show_warn:
+        required: false
+        type: Boolean
+        defaultValue: true
+      pem: # Ruta absoluta a fichero .pem
+        required: false
+        type: String
+        defaultValue: ""
+      ping: # Determina si es necesario ejecutar "ping" antes de lanzar comando
+        required: false
+        type: Boolean
+        defaultValue: true
+      message: # Determina si es necesario ejecutar "ping" antes de lanzar comando
+        required: false
+        type: String
+        defaultValue: ""
+  fetch:
+    collection: false
+    args:
+      base:
+        required: true
+        type: String
+        defaultValue: ""
+      end:
+        required: true
+        type: String
+        defaultValue: ""
+      method:
+        required: true
+        type: String
+        defaultValue: GET
+      headers:
+        required: false
+        type: Object
+        defaultValue: {}
+      options:
+        required: false
+        type: Object
+        defaultValue: {}
+      data:
+        required: false
+        type: Object
+        defaultValue: {}
+      timeout:
+        required: false
+        type: Number
+        defaultValue: 1000
+      login:
+        required: false
+        type: Object
+        defaultValue:
+          user: ""
+          pass: ""
+  getAlias:
+    collection: false
+    args:
+      data:
+        required: true
+        type: String
+        defaultValue: []
+  getArrayDiff:
+    collection: false
+    args:
+      array1:
+        required: true
+        type: Array
+        defaultValue: []
+      array2:
+        required: true
+        type: Array
+        defaultValue: []
+  getArrayMerge:
+    collection: false
+    args:
+      array1:
+        required: true
+        type: Array
+        defaultValue: []
+      array2:
+        required: true
+        type: Array
+        defaultValue: []
+  getArrayEquals:
+    collection: false
+    args:
+      array1:
+        required: true
+        type: Array
+        defaultValue: []
+      array2:
+        required: true
+        type: Array
+        defaultValue: []
+  getArrayFilter:
+    collection: false
+    args:
+      array1:
+        required: true
+        type: Array
+        defaultValue: []
+      filter:
+        required: true
+        type: Array
+        defaultValue: []
+  getConfig:
+    args:
+      key:
+        required: true
+        type:
+        defaultValue:
+      decode:
+        required: false
+        type: Boolean
+        defaultValue: true
+  getConfigFromCLI:
+    collection: false
+    args:
+      config:
+        required: true
+        type:
+        defaultValue:
+      q:
+        required: false
+        type: String
+        defaultValue: ""
+  getDate:
+    collection: false
+    args:
+      pipe:        
+        required: true
+        type: String
+        defaultValue: ""
+  getFile:
+    collection: false
+    args:
+      key:
+        required: true
+        type:
+        defaultValue:
+      decode:
+        required: false
+        type: Boolean
+        defaultValue: true
+      data:
+        required: false
+        type: Object
+        defaultValue: {}
+      dataParse:
+        required: false
+        type: Boolean
+        defaultValue: true
+  getFilePath:
+    collection: false
+    args:
+      key:
+        required: true
+        type: String
+        defaultValue: ""
+      absolute:
+        required: false
+        type: Boolean
+        defaultValue: false
+  getFilesFromDir:
+    collection: false
+    args:
+      dir:
+        required: true
+        type:
+        defaultValue:
+      recursive:
+        required: false
+        type: Boolean
+        defaultValue: false
+      files:
+        required: false
+        type: Array
+        defaultValue: []
+      onlyNames:
+        required: false
+        type: Boolean
+        defaultValue: false
+  getRandomString:
+    collection: false
+    args:
+      length:        
+        required: true
+        type: Number
+        defaultValue: ""
+      pipe:        
+        required: false
+        type: String
+        defaultValue: ""
+  getTagFromString:
+    collection: false
+    args:
+      data:        
+        required: true
+        type: String
+        defaultValue: ""
+      pipe:        
+        required: false
+        type: String
+        defaultValue: ""
+  getWrapHtmlFromString:
+    collection: false
+    args:
+      string:
+        required: true
+        type: 
+        defaultValue: ""
+  init:
+    collection: false
+    args:
+      file:
+        required: false
+        type: Array
+        defaultValue:
+          -
+            origin: init.complete_sh
+            target: complete.sh
+            ignoreIfExist: false
+  input:
+    collection: false
+    args:
+      message:
+        required: false
+        type: String
+        defaultValue: "Por favor, introduce valor..."
+  log:
+    collection: false
+    args:
+      message:
+        required: true
+        type: 
+        defaultValue:
+      type:
+        required: false
+        type: String
+        defaultValue:
+      label:
+        required: false
+        type: String
+        defaultValue:
+  loadConfig:
+    collection: false
+    args:
+      key:
+        required: true
+        type: Array
+        defaultValue: []
+      force:
+        required: false
+        type: Boolean
+        defaultValue: false
+  mail:
+    collection: false
+    args:
+      from:
+        required: true
+        type: String
+        defaultValue: ""
+      to:
+        required: false
+        type: Array
+        defaultValue: []
+      cc:
+        required: false
+        type: Array
+        defaultValue: []
+      bbc:
+        required: false
+        type: Array
+        defaultValue: []
+      data:
+        required: false
+        type: Object
+        defaultValue: {}
+      text:
+        required: false
+        type: String
+        defaultValue: ""
+      html:
+        required: false
+        type: String
+        defaultValue: ""
+      subject:
+        required: false
+        type: String
+        defaultValue: ""
+      attachments: # https://nodemailer.com/message/attachments/
+        required: false
+        type: Array
+        defaultValue: []
+      transporter:
+        required: false
+        type: Object
+        defaultValue:
+          #port: 25
+          sendmail: true
+          host: "localhost"
+          tls:
+            #secure: true # TO-DO
+            rejectUnauthorized: false
+      force:
+        required: false
+        type: Boolean
+        defaultValue: false
+      sentMessage:
+        required: false
+        type: String
+        defaultValue: "E-mail enviado"
+  makeDocs:
+    collection: false
+    args: {}
+  normalize:
+    collection: false
+    args:
+      string:
+        required: true
+        type: String
+        defaultValue: ""
+  out:
+    collection: false
+    args:
+      data:
+        required: false
+        type: String
+        defaultValue: ""
+  parseConfigKey:
+    collection: false
+    args:
+      key:
+        required: true
+        type: String
+        defaultValue:
+      force:
+        required: false
+        type: Boolean
+        defaultValue: false
+  query:
+    collection: false
+    args:
+      input:
+        required: false
+        type: 
+        defaultValue: null
+      select: 
+        required: false
+        type: String
+        defaultValue: "."
+      removeDuplicate: 
+        required: false
+        type: Boolean
+        defaultValue: false
+      removeEmpty: 
+        required: false
+        type: Boolean
+        defaultValue: false
+      sort: 
+        required: false
+        type: Boolean
+        defaultValue: true
+      output: 
+        required: false
+        type: String
+        defaultValue: 
+  removeDuplicateFromArray:
+    collection: false
+    args:
+      data:
+        required: true
+        type: Array
+        defaultValue:
+  removeDuplicateFromString:
+    collection: false
+    args:
+      data:
+        required: true
+        type: String
+        defaultValue:
+      pipe:        
+        required: false
+        type: String
+        defaultValue: ""
+  removeEmptyFromArray:
+    collection: false
+    args:
+      data:
+        required: true
+        type:
+        defaultValue:
+  setArgsAndOpt:
+    collection: false
+    args:
+      argv:
+        required: true
+        type:
+        defaultValue:
+  setConfig:
+    args:
+      key:
+        required: true
+        type:
+        defaultValue:
+      data:
+        required: true
+        type:
+        defaultValue:
+      decode:
+        required: false
+        type: Boolean
+        defaultValue: true
+      save:
+        required: false
+        type: Boolean
+        defaultValue: true
+  syncFile:
+    args:
+      origin:
+        required: true
+        type: 
+        defaultValue: 
+      target:
+        required: true
+        type: 
+        defaultValue: 
+      user:
+        required: false
+        type: String
+        defaultValue: ""
+      host:
+        required: false
+        type: String
+        defaultValue: ""
+      data:
+        required: false
+        type: Object
+        defaultValue: {}
+      backup:
+        required: false
+        type: Boolean
+        defaultValue: true
+      chown:
+        required: false
+        type: String
+        defaultValue: ""
+      execCmd:
+        required: false
+        type: String
+        defaultValue: ""
+      execPipe:
+        required: false
+        type: Boolean
+        defaultValue: false
+      sudo:
+        required: false
+        type: Boolean
+        defaultValue: true
+  toCLI:
+    collection: false
+    args:
+      data:
+        required: true
+        type:
+        defaultValue: 
+      recursive:
+        required: false
+        type: Boolean
+        defaultValue: false
+      type:
+        required: false
+        type: String
+        defaultValue: norc # ramac # norc # void
+      config:
+        required: false
+        type: Object
+        defaultValue:
+          columnDefault: 
+            alignment: left
+            #paddingLeft: 0
+            #paddingRight: 0
+            #wrapWord: true
+  toHTML:
+    collection: false
+    args:
+      data:
+        required: true
+        type: 
+        defaultValue: 
+      recursive:
+        required: false
+        type: Boolean
+        defaultValue: false
+  unique:
+    collection: false
+    args:
+      data:
+        required: true
+        type:
+        defaultValue:
+  var:
+    collection: false
+    args:
+      key:
+        required: true
+        type: String
+        defaultValue:
+      value:
+        required: true
+        type:
+        defaultValue:
+      allow_merge:
+        required: false
+        type: Boolean
+        defaultValue: false
+  wait:
+    args:
+      ms:
+        required: true
+        type: Number
+        defaultValue: 0
+
+
+
+
+
+
+
+
+

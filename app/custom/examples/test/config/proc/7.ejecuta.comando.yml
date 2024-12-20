@@ -1,0 +1,16 @@
+help: Ejemplo de ejecución de comando linux
+
+task:
+  require:
+    config:
+      - lib.test.myconf target
+  do:
+    -
+      applyWith: release
+      call: exec
+      args:
+        cmd: lsb_release -a
+        user: (({target}.user))
+        host: (({target}.host))
+        out: true
+

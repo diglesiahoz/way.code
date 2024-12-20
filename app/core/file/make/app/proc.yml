@@ -1,0 +1,19 @@
+help: Ejecuta test
+example:
+- (({}.tmp.proc.sig))
+
+# Propiedad que establece el uso del procedimiento de forma interna. No permitido uso mediante CLI.
+# allowed: false
+
+task:
+  complete: []
+  require:
+    config: []
+    args: {}
+    opt: {}
+    setttings: {}
+  do:
+    - { event: 'origin startup' }
+    - call: ((name)).main
+    - call: out
+    - { event: 'origin windup' }

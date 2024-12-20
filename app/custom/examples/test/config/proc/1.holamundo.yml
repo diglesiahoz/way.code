@@ -1,0 +1,28 @@
+help: "Ejemplo de como establecer mensajes en consola"
+
+task:
+  require:
+    config: []
+  do:
+    -
+      call: log
+      args:
+        message: ¡Hola mundo!
+        type: label
+    -
+      call: log
+      args:
+        message: ¡Hola mundo!
+        type: pretty
+    -
+      call: log
+      args:
+        message: ¡Hola mundo!
+        type: success
+    -
+      call: log
+      args:
+        message: ¡Hola mundo!
+        type: warning
+    -
+      call: exit

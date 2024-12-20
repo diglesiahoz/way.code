@@ -1,0 +1,50 @@
+help: "Ejemplo de como obtener datos desde servidor y utilizarlos posteriormente"
+
+task:
+  require:
+    config:
+      - lib.test.myconf target
+  do:
+    -
+      call: exec
+      args:
+        user: (({target}.user))
+        host: (({target}.host))
+        cmd: ls /etc/nginx/sites-enabled/
+        out: false
+    -
+      call: cast
+      args:
+        data: (({}.out.buffer))
+    -
+      call: complete
+      args:
+        choices: (({}.out))
+        confirm: true
+        message: Selecciona aplicación a gestionar
+    -
+      call: var
+      args:
+        key: toremove
+        value: (({}.out))
+    -
+      call: log
+      args:
+        message: (({}.var.toremove))
+        type: pretty
+    - 
+      call: ask
+      args:
+        message: ¿Estás seguro de querer gestionar (({}.var.toremove))? (Acción irreversible)
+    - 
+      check:
+        data:
+          -
+            key: (({}.out))
+            is: not
+        false:
+          -
+            call: log
+            args:
+              message: Gestiona (({}.var.toremove))
+              type: pretty

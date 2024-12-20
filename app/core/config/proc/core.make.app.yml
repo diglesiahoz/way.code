@@ -1,0 +1,31 @@
+# DOCS:
+# > Permite establecer la configuración inicial de una aplicación personalizada
+# :DOCS
+
+# RECIPE:Instalar nueva aplicación:
+# ```console
+# way core.make.app myapp -v
+# way core.init -v
+# ```
+# :RECIPE
+
+help: "Establece libreria personalizada"
+example:
+ - (({}.tmp.proc.sig)) --name myapp
+
+task:
+  require:
+    args:
+      name:
+        type: String
+        default:
+  do:
+    -
+      call: makeApp
+      args:
+        name: (({}.args.name))
+    -
+      call: log
+      args:
+        message: (({}.out.data))
+        type: success

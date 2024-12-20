@@ -1,0 +1,16 @@
+help: Ejemplo de ejecución de "hook" de evento
+
+task:
+  require:
+    config:
+      - .*.site.[dev|stage] target
+  do:
+    -
+      event: 'before.exec.test'
+    -
+      call: log
+      args:
+        message: TEST!
+        type: pretty
+    -
+      event: 'after.exec.test'

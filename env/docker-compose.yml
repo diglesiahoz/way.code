@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  app:
+    container_name: ${COMPOSE_PROJECT_NAME}-app
+    hostname: ${COMPOSE_PROJECT_NAME}-app
+    env_file:
+      - ./.env 
+    environment:
+      - WAY_CODE_APP_NAME=${WAY_CODE_APP_NAME}
+      - WAY_CODE_APP_ROOT=${WAY_CODE_APP_ROOT}
+    build:
+      context: .
+      dockerfile: ./dockerfile/Dockerfile.app
+      args:
+        APPSETTING_UID: ${APPSETTING_UID}
+        APPSETTING_GID: ${APPSETTING_GID}
+        APPSETTING_USER: ${APPSETTING_USER}
+        APPSETTING_DOCKER_GROUP_ID: ${APPSETTING_DOCKER_GROUP_ID}
+        APPSETTING_SERVICE_IMAGE: ubuntu:24.04
+    working_dir: ${WAY_CODE_APP_ROOT}
+    volumes:
+      - /usr/bin/docker:/usr/bin/docker:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - 
+        consistency: cached
+        source: /home/${APPSETTING_USER}/.ssh
+        target: /home/${APPSETTING_USER}/.ssh
+        type: bind
+      - 
+        consistency: cached
+        source: ${WAY_CODE_APP_ROOT}
+        target: ${WAY_CODE_APP_ROOT}
+        type: bind
+      - 
+        consistency: cached
+        source: ${APPSETTING_PROJECTS_PATH}
+        target: ${APPSETTING_PROJECTS_PATH}
+        type: bind
+    restart: unless-stopped

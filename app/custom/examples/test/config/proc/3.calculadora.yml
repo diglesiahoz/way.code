@@ -1,0 +1,32 @@
+help: "Ejemplo de calculadora"
+
+task:
+  require:
+    args:
+      num1:
+        required: true
+        type: Number
+        defaultValue:
+      op:
+        required: true
+        type: String
+        defaultValue:
+          - "+"
+          - "-"
+          - "*"
+          - "/"
+      num2:
+        required: true
+        type: Number
+        defaultValue:
+  do:
+    -
+      call: eval
+      args:
+        cmd: (({}.args.num1)) (({}.args.op)) (({}.args.num2))
+        out: false
+    -
+      call: log
+      args:
+        message: "Resultado: (({}.out.data))"
+        type: success

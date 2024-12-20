@@ -1,0 +1,18 @@
+ip: 
+  public: 172.105.89.196
+  vpn: 10.8.48.153
+
+user: root
+host: ((ip.public))
+
+###################
+###### HOOKS ######
+###################
+#hook:
+#  call:
+#    ssh:
+#      exec:
+#        user: ((user))
+#        host: ((host))
+#        cd: /var/www
+#  event: {}       

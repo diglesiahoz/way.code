@@ -1,0 +1,64 @@
+help: ""
+
+
+task:
+  require:
+    config: []
+    args: {}
+  do:
+
+    # Para generar una aplicación en Xibo dirigete a /application/view
+    
+    -
+      call: fetch
+      args:
+        base: https://dev-hermes-r3.esferize.com/api
+        end: /authorize/access_token
+        method: POST
+        headers:
+          Content-Type: application/x-www-form-urlencoded; charset=UTF-8
+        data:
+          grant_type: client_credentials
+          client_id: abf5f72ed6bfc813a5b6fbdb3951417d6c8a69a8
+          client_secret: 68540c2e623fdd2c65629fb56f461dbf2b206c42eb3a1af3800bed7e4223e4c4cd68789121c2b7a3704e527d6e6fd65c60cc40eaadc37efb578c9225f994f757d3334a00fd04d72a1f81ed7aa2f77647e12a04f554117f34f69b55f73679ed250902745f3796dd4d8990067c09487b0fc6a14656e0bdb1d79c3dfef870c7b4
+        timeout: 1000
+      # Equivalente "PHP"
+        # curl -s -X POST -H 'Content-Type: application/x-www-form-urlencoded' -d 'client_id=abf5f72ed6bfc813a5b6fbdb3951417d6c8a69a8&client_secret=68540c2e623fdd2c65629fb56f461dbf2b206c42eb3a1af3800bed7e4223e4c4cd68789121c2b7a3704e527d6e6fd65c60cc40eaadc37efb578c9225f994f757d3334a00fd04d72a1f81ed7aa2f77647e12a04f554117f34f69b55f73679ed250902745f3796dd4d8990067c09487b0fc6a14656e0bdb1d79c3dfef870c7b4&grant_type=client_credentials' 'https://dev-hermes-r3.esferize.com/api/authorize/access_token'
+
+    #- call: out
+
+    -
+      call: var
+      args:
+        key: access_token
+        value: (({}.out.data.access_token))
+    
+    #- { call: log, args: { message: "TOKEN: (({}.var.access_token))", type: success } }
+
+    -
+      call: fetch
+      args:
+        base: https://dev-hermes-r3.esferize.com/api
+        end: /layout
+        method: GET
+        headers:
+          Authorization: Bearer (({}.var.access_token))
+        timeout: 1000
+
+    #- call: out
+
+    -
+      call: var
+      args:
+        key: data
+        value: (({}.out.data))
+
+    #- { call: log, args: { message: "(({}.var.data))", type: console } }
+
+    - 
+      call: query
+      args:
+        input: (({}.var.data))
+        select: .[]|.layout
+
+    - { call: log, args: { message: "(({}.out.data))", type: console } }

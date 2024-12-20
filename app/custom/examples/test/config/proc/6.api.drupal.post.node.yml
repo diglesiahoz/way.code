@@ -1,0 +1,64 @@
+help: ""
+
+
+task:
+  require:
+    config: []
+    args: {}
+  do:
+
+    # Crea nodo (Autentificación simple)
+    
+    -
+      call: fetch
+      args:
+        base: https://dev-ontv.esferize.com
+        end: /node?_format=json
+        method: POST
+        login:
+          user: admin
+          pass: admin
+        headers:
+          # Creado al "vuelo" mediante opción "login"
+          # Authorization: "Basic YWRtaW46YWRtaW4="
+          Content-Type: application/hal+json
+          Cache-Control: no-cache
+        data:
+          _links:
+            type: 
+              href: "https://dev-ontv.esferize.com/rest/type/node/page"
+          title:
+            - { value: "Example node title" }
+          body:
+            - { value: "Example body content" }
+          type:
+            - { target_id: page }
+        options:
+          rejectUnauthorized: false
+        timeout: 1000
+
+      # Equivalente "PHP"
+
+        # curl --request POST \
+        #      -k \
+        #      -i \
+        #      -s \
+        #      --user admin:admin \
+        #      --header 'Content-type: application/hal+json' \
+        #      -H 'Cache-Control: no-cache' \
+        #      https://dev-ontv.esferize.com/node?_format=json \
+        #      --data-binary '{"_links":{"type":{"href":"https://dev-ontv.esferize.com/rest/type/node/page"}},"title":[{"value":"Example node title"}], "body":[{"value":"Example body content"}], "type":[{"target_id":"page"}]}'
+
+    -
+      call: var
+      args:
+        key: data
+        value: (({}.out.data))
+
+    - 
+      call: query
+      args:
+        input: (({}.var.data))
+        select: .
+
+    - { call: log, args: { message: "(({}.out.data))", type: console } }

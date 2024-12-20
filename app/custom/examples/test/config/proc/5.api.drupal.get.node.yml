@@ -1,0 +1,49 @@
+help: ""
+
+
+task:
+  require:
+    config: []
+    args: {}
+  do:
+
+    # Crea nodo (Autentificación simple)
+    
+    -
+      call: fetch
+      args:
+        base: https://dev-ontv.esferize.com
+        end: /node/1?_format=json
+        method: GET
+        login:
+          user: admin
+          pass: admin
+        headers:
+          # Creado al "vuelo" mediante opción "login"
+          # Authorization: "Basic YWRtaW46YWRtaW4="
+          Content-Type: application/hal+json
+          Cache-Control: no-cache
+        data: {}
+        options:
+          rejectUnauthorized: false
+        timeout: 1000
+
+      # Equivalente "PHP"
+
+        # curl -sk --user "admin:admin" --header 'Content-type: application/hal+json' --request GET https://dev-ontv.esferize.com/node/1?_format=json | jq .
+
+        # curl -sk --header 'Content-type: application/hal+json' --header "Authorization: Basic YWRtaW46YWRtaW4=" --data '{"key1":"value1", "key2":"value2"}' --request GET https://dev-ontv.esferize.com/node/1?_format=json | jq .
+
+    -
+      call: var
+      args:
+        key: data
+        value: (({}.out.data))
+
+    - 
+      call: query
+      args:
+        input: (({}.var.data))
+        select: .
+
+    - { call: log, args: { message: "(({}.out.data))", type: console } }

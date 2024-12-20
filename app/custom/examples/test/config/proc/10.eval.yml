@@ -1,0 +1,15 @@
+help: Ejemplo de evaluación de código JS
+
+task:
+  require:
+    config: []
+  do:
+    -
+      call: eval
+      args:
+        cmd: console.log( "¡Hola mundo!" )
+    -
+      call: eval
+      args:
+        cmd: "\"mysqldump: Got error: 2003: Can't connect to MySQL server\".includes(\"error\")"
+        out: true

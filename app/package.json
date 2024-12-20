@@ -1,0 +1,63 @@
+{
+  "name": "way",
+  "version": "1.0.0",
+  "description": "The other way of doing things",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Daniel de la Iglesia",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:diglesiahoz/way.git"
+  },
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^2.0.3"
+  },
+  "dependencies": {
+    "@chilkat/ck-node12-linux64": "^9.50.84",
+    "@rauschma/stringio": "^1.4.0",
+    "abort-controller": "^3.0.0",
+    "ansi-colors": "^4.1.1",
+    "chalk": "^4.1.0",
+    "child_process": "^1.0.2",
+    "cli-progress": "^3.8.2",
+    "columnify": "^1.5.4",
+    "cron-job-manager": "^2.1.4",
+    "cronstrue": "^1.122.0",
+    "dateformat": "^3.0.3",
+    "enquirer": "^2.3.5",
+    "figures": "^3.2.0",
+    "fs": "0.0.1-security",
+    "glob": "^10.3.12",
+    "html-minifier": "^4.0.0",
+    "js-yaml": "^3.13.1",
+    "json-colorz": "^0.2.7",
+    "json-to-env2": "^1.1.1",
+    "lnf": "^1.3.10",
+    "minimist": "^1.2.5",
+    "node-fetch": "^2.6.1",
+    "node-jq": "^1.11.2",
+    "nodemailer": "^6.4.14",
+    "os-utils": "0.0.14",
+    "path": "^0.12.7",
+    "ping": "^0.4.1",
+    "prompt-sync": "^4.2.0",
+    "ps-list": "^7.2.0",
+    "request": "^2.88.2",
+    "semver": "^7.3.2",
+    "ssh-exec": "^2.0.0",
+    "ssh2shell": "^1.9.4",
+    "table": "^6.0.7",
+    "tmp": "^0.2.1"
+  },
+  "directories": {
+    "bin": "./bin"
+  },
+  "engines": {
+    "node": ">=16"
+  },
+  "engineStrict": true
+}

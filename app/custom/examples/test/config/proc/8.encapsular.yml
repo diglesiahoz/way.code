@@ -1,0 +1,12 @@
+help: "Ejemplo de como encapsular comandos"
+
+task:
+  require:
+    config:
+      - target
+  do:
+    -
+      call: log
+      args:
+        message: ( (({}.date)) ) (({}.exec)) get (({target}._name)) (({}.tmp.optSignature))
+        type: success
