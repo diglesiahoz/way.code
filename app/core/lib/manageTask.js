@@ -466,13 +466,14 @@ way.lib.manageTask = async function (argTask) {
 
 
 
-                    /* HOOK CALL @ */
+                    /* HOOK CALL FROM PROFILE (@) */
                       if (way.envBatch.status) {
                         var argsToRun = [way.envBatch.now.replace(/^@/,'')];
                       } else {
                         var argsToRun = way.args['@'];
                       }
                       for (confKey of argsToRun) {
+
                         if (!(confKey in way.map.config)) {
                           var n = confKey.split(".");
                           if (`@${n.join(".")}` in way.map.config) {
@@ -484,23 +485,29 @@ way.lib.manageTask = async function (argTask) {
                             }
                           }
                         }
-                        //console.log('00000 ===>',`way.config.${confKey}`)
+
                         try {
 
+                          // IMPORTANTE
+                          if (way.app_name_root != way.proc.name.split('.')[0]) {
+                            var app_name_root = way.proc.name.split('.')[0];
+                          }
+
+                          var to_check_config_name = confKey;
+                          if (!/^@/.test(confKey)) {
+                            to_check_config_name = `@${app_name_root}.${confKey}`;
+                          }
+
+                          var o_confKey = confKey;
                           var confKey = await way.lib.parseConfigKey({
-                            key: `way.config.${confKey}`
+                            key: `way.config.${to_check_config_name}`
                           }).then((o) => {
                             return o;
                           }).catch((o) => {});
-                          //console.log(2)
 
-
-                          if (iTask.call == "exec") {
-                            //way.lib.exit()
-                          }
-                          
                           var hookProcKeys = Object.keys(eval(`${confKey}.hook.call`));
-                          //console.log(0, hookProcKeys)
+                          //console.log(hookProcKeys)
+
                           for (hookProcKey of hookProcKeys) {
                             //console.log(1, hookProcKey, way.proc.name)
                             if (new RegExp(`^${hookProcKey}`, "g").test(way.proc.name)) {
@@ -512,15 +519,19 @@ way.lib.manageTask = async function (argTask) {
                                   hookCall = `${confKey}.hook.call["${hookProcKey}"]["${hookCallNameKey}"]`;
                                   //console.log(4, hookCall)
                                   way.lib.log({
-                                    message:`Call hooked from config: ${hookCall}`,
-                                    type: "log"
+                                    message: `Launch "${hookCallNameKey}" hook call from configuration profile "${o_confKey}"`,
+                                    type: "verbose"
                                   });
-                                  iTask.args = Object.assign({}, eval(hookCall), iTask.args);
+                                  //console.log(iTask.args)
+                                  //console.log(eval(hookCall))
+                                  //iTask.args = Object.assign({}, eval(hookCall), iTask.args);
+                                  iTask.args = Object.assign({}, iTask.args, eval(hookCall));
+                                  //console.log(iTask.args)
                                 }
                               }
                             } else {
                               way.lib.log({
-                                message:`No call hooked from entity: ${callname} (${hookProcKey})`,
+                                message:`No call hooked from profile: ${callname} (${hookProcKey})`,
                                 type: "log"
                               });
                             }
@@ -529,12 +540,16 @@ way.lib.manageTask = async function (argTask) {
                           //way.lib.exit()
 
                         } catch (e) {}
+
+                        
                       }
 
 
                     /* HOOK CALL ENV */
                       try {
+
                         var hookProcKeys = Object.keys(eval(`way.config.env.hook.call`));
+
                         for (hookProcKey of hookProcKeys) {
                           if (new RegExp(`^${hookProcKey}`, "g").test(way.proc.name)) {
                             var hookCallNameKeys = Object.keys(eval(`way.config.env.hook.call["${hookProcKey}"]`));
@@ -543,9 +558,9 @@ way.lib.manageTask = async function (argTask) {
                                 hookCall = `way.config.env.hook.call["${hookProcKey}"]["${hookCallNameKey}"]`;
                                 way.lib.log({
                                   message:`Call hooked from env: ${hookCall}`,
-                                  type: "log"
+                                  type: "verbose"
                                 });
-                                iTask.args = Object.assign({}, eval(hookCall), iTask.args);
+                                iTask.args = Object.assign({}, iTask.args, eval(hookCall));
                               }
                             }
                           } else {
@@ -556,6 +571,7 @@ way.lib.manageTask = async function (argTask) {
                           }
                         }
                       } catch (e) {}
+
 
 
                     //console.log(way.argcall)
