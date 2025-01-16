@@ -512,6 +512,7 @@ way.lib.init = async function (_args){
               '**/node_modules/**',
               '**/.git/**',
               '**/*.yml',
+              '**/*.sh',
             ],
           }).map(file => {
             if (fs.lstatSync(file).isDirectory()) {
