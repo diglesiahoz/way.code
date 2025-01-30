@@ -307,7 +307,7 @@ interface:
       out:        
         required: false
         type: Boolean
-        defaultValue: false
+        defaultValue:
       nohup:
         required: false
         type: Boolean

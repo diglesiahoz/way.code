@@ -8,8 +8,7 @@ way.lib.exec = async function (_args) {
   //console.log(_args)
 
   
-
-  if (way.opt.v || way.log.level > 0) {
+  if ( (way.opt.v || way.log.level > 0) && _args.out == null) {
     _args.out = true;
   }
 
