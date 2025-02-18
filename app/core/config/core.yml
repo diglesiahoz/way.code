@@ -300,6 +300,10 @@ interface:
         required: false
         type: String
         defaultValue: ""
+      pass:
+        required: false
+        type: String
+        defaultValue: ""
       pipe:        
         required: false
         type: String

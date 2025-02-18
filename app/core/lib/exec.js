@@ -47,7 +47,7 @@ way.lib.exec = async function (_args) {
     }
   } else {
     if (way.lib.check(_args.cd)) {
-      var settings = `cd ${_args.cd}; bash`;
+      var settings = `cd ${_args.cd}; bash --login`;
     } else {
       var settings = ``;
     }
@@ -77,7 +77,11 @@ way.lib.exec = async function (_args) {
     }
   } else {
     if (way.lib.check(_args.user) && way.lib.check(_args.host)) {
-      _args.cmd = `ssh -o LogLevel=QUIET -t ${_args.pem} ${_args.user}@${_args.host} '${settings}${_args.cmd}'`;
+      if (way.lib.check(_args.pass)) {
+        _args.cmd = `sshpass -p '${_args.pass}' ssh ${_args.user}@${_args.host} -t '${settings}${_args.cmd}'`;
+      } else {
+        _args.cmd = `ssh -o LogLevel=QUIET -t ${_args.pem} ${_args.user}@${_args.host} '${settings}${_args.cmd}'`;
+      }
     } else {
       if (_args.watch) {
         _args.cmd = `${settings}watch -n 0.1 '${_args.cmd}'`;

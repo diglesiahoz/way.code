@@ -22,6 +22,8 @@ RUN apt install -y sudo
 RUN apt install -y curl
 RUN apt install -y jq
 RUN apt install -y perl
+RUN apt install -y sshpass
+
 
 # user:
 RUN deluser --remove-home ubuntu
