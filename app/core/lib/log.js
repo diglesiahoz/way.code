@@ -40,7 +40,8 @@ way.lib.log = function (_args) {
         var icon = figures.line;
         if (typeof _args.message === "string" || typeof _args.message === "number" || typeof _args.message === "boolean") {
           var iLogMessage = `${color.gray(icon)} ${color.gray(_args.message)}`;
-          console.log(`${color.gray(icon)} ${color.gray(_args.message)}`);
+          //console.log(`${color.gray(icon)} ${color.gray(_args.message)}`);
+          console.log(`${color.gray(_args.message)}`);
         } else {
           if (way.lib.check(_args.label)) {
             console.log(`${color.gray(icon)} ${color.gray(_args.label)}`)

@@ -1624,7 +1624,7 @@ process.setMaxListeners(0);
 
     // Muestra tiempo de ejecución
     var executionTime = way.lib.getPerformanceTask().toFixed(2);
-    way.lib.log({ message:`Exec.: ${(executionTime / 60).toFixed(2)} min. (${executionTime} sec.)`, type: 'verbose'})
+    way.lib.log({ message:`${executionTime} sec. (${(executionTime / 60).toFixed(2)} min.)`, type: 'label'});
 
     // Finaliza ejecución
     process.exit(0);
