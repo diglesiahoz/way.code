@@ -805,15 +805,19 @@ interface:
         required: false
         type: String
         defaultValue: norc # ramac # norc # void
+      color:
+        required: false
+        type: String
+        defaultValue: white.bold
       config:
         required: false
         type: Object
         defaultValue:
           columnDefault: 
+            wrapWord: true
             alignment: left
-            #paddingLeft: 0
-            #paddingRight: 0
-            #wrapWord: true
+            # paddingLeft: 0
+            # paddingRight: 0
   toHTML:
     collection: false
     args:

@@ -1111,12 +1111,12 @@ way.lib.manageTask = async function (argTask) {
 
                             var rend = way.lib.getPerformanceTask().toFixed(2);
                             way.task.log.push({
-                              'Estado': status,
-                              'Proc.::Tarea': `${way.proc.name}`,
-                              'Llamada': `${task.call.split("(")[0]}`,
-                              'Tipo de llamada': task.callType,
-                              'Motivo': way.task.message,
-                              'Rend.': `${rend} / ${(rend / 60).toFixed(2)} / ${(rend / 3600).toFixed(2)}`
+                              'Status': status,
+                              'Proc.::Task': `${way.proc.name}`,
+                              'Call': `${task.call.split("(")[0]}`,
+                              'Call type': task.callType,
+                              'Reason': way.task.message,
+                              'Performance': `${rend} / ${(rend / 60).toFixed(2)} / ${(rend / 3600).toFixed(2)}`
                             });
                             way.task.message = ""
 

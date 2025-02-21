@@ -1539,14 +1539,13 @@ process.setMaxListeners(0);
       }
       ips = results.join(" - ")
       var executionTime = way.lib.getPerformanceTask().toFixed(2);
-      iLog['Origen'] = `${color.bold.cyan(os.hostname())} ${color.dim.white(`(${ips})`)}`;
-      iLog['Firma'] = `${way.exec}`;
-      iLog['Ejecución'] = way.task.log;
-      iLog['Rendimiento'] = `${executionTime} seg. / ${(executionTime / 60).toFixed(2)} min. / ${(executionTime / 3600).toFixed(2)} h.`;
+      iLog['Source'] = `${os.hostname()} ${ips}`;
+      iLog['Signature'] = `${way.exec}`;
+      iLog['Execution'] = way.task.log;
+      iLog['Performance'] = `${executionTime} seg. / ${(executionTime / 60).toFixed(2)} min. / ${(executionTime / 3600).toFixed(2)} h.`;
       way.lib.toCLI({ 
-        data: {
-          iLog
-        },
+        data: { iLog },
+        color: "gray",
         config: {
           columns: {
             "4": {
@@ -1556,32 +1555,34 @@ process.setMaxListeners(0);
           }
         }
       });
-      if (!way.lib.check(way.config.env.core.mail.from) || !way.lib.check(way.config.env.core.mail.to)) {
-        way.lib.log({
-          message: `Para el envio de notificaciones debes de configurar remitente y destinatario/s en el fichero de configuración de entorno (custom/config/env.yml)`,
-          type: 'warn'
-        });
-      } else {
-        await way.lib.mail({
-          from: way.config.env.core.mail.from,
-          to: way.config.env.core.mail.to,
-          subject: `way ${way.proc.name}`,
-          html: way.lib.toHTML({ 
-            data: {
-              iLog
-            }
-          }),
-        }).then((o) => { 
+      if (way.lib.check(way.config.env)) {
+        if (!way.lib.check(way.config.env.core.mail.from) || !way.lib.check(way.config.env.core.mail.to)) {
           way.lib.log({
-            message: `${o.data.message}`,
-            type: 'log'
-          });
-        }).catch((o) => {
-          way.lib.log({
-            message: `${o.data.message}`,
+            message: `Para el envio de notificaciones debes de configurar remitente y destinatario/s en el fichero de configuración de entorno (custom/config/env.yml)`,
             type: 'warn'
           });
-        });
+        } else {
+          await way.lib.mail({
+            from: way.config.env.core.mail.from,
+            to: way.config.env.core.mail.to,
+            subject: `way ${way.proc.name}`,
+            html: way.lib.toHTML({ 
+              data: {
+                iLog
+              }
+            }),
+          }).then((o) => { 
+            way.lib.log({
+              message: `${o.data.message}`,
+              type: 'log'
+            });
+          }).catch((o) => {
+            way.lib.log({
+              message: `${o.data.message}`,
+              type: 'warn'
+            });
+          });
+        }
       }
     }
 
@@ -1621,6 +1622,11 @@ process.setMaxListeners(0);
       fs.rmSync(`${path}`, { recursive: false, force: true });
     });
 
+    // Muestra tiempo de ejecución
+    var executionTime = way.lib.getPerformanceTask().toFixed(2);
+    way.lib.log({ message:`Exec.: ${(executionTime / 60).toFixed(2)} min. (${executionTime} sec.)`, type: 'verbose'})
+
+    // Finaliza ejecución
     process.exit(0);
 
 })();

@@ -23,14 +23,15 @@ way.lib.toCLI = function (_args) {
             var oKey = key;
             output = way.lib.toCLI({ 
               data: value,
+              color: _args.color,
               recursive: true,
               config: _args.config
             });
-            oData.push([color.bold(oKey), output.substring(0, output.length - 1)]);
+            oData.push([eval(`color.${_args.color}(oKey)`), output.substring(0, output.length - 1)]);
             data = oData;
             break;
           default:
-            data.push([color.bold(key), value]);
+            data.push([eval(`color.${_args.color}(key)`), eval(`color.${_args.color}(value)`)]);
         }
       }
       counter++;
@@ -39,7 +40,7 @@ way.lib.toCLI = function (_args) {
       headers = way.lib.removeDuplicateFromArray(headers);
       oHeaders = headers;
       var headers = headers.map( (e) => {
-        return color.bold(e);
+        return eval(`color.${_args.color}(e)`);
       });
       data.push(headers);
       for (o in _args.data) {
@@ -55,6 +56,7 @@ way.lib.toCLI = function (_args) {
                 output = way.lib.toCLI({ 
                   data: value,
                   recursive: true,
+                  color: _args.color,
                   config: _args.config
                 });
                 dataRow.push([output.substring(0, output.length - 1)]);
@@ -70,7 +72,7 @@ way.lib.toCLI = function (_args) {
       }
     }
     if (_args.recursive == false) {
-      console.log(table(data, _args.config))
+      console.log(eval(`color.${_args.color}(table(data, _args.config))`));
     } else {
       return table(data, _args.config);
     }
