@@ -586,6 +586,9 @@ interface:
         required: false
         type: Boolean
         defaultValue: false
+  loadEnv:
+    collection: false
+    args: {}
   mail:
     collection: false
     args:

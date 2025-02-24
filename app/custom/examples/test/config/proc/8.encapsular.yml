@@ -8,5 +8,5 @@ task:
     -
       call: log
       args:
-        message: ( (({}.date)) ) (({}.exec)) get (({target}._name)) (({}.tmp.optSignature))
+        message: ( (({}.date)) ) (({}.exec)) get (({target}._name)) (({}.optSig))
         type: success

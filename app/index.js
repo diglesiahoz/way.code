@@ -44,6 +44,7 @@ process.setMaxListeners(0);
       lib: {}
     },
     opt: {},
+    optSig: "",
     args: {
       '@': [],
     },
@@ -90,7 +91,6 @@ process.setMaxListeners(0);
     tmp: {
       manageTask: false,
       args: [],
-      optSignature: "",
       out: []
     },
     log: {
@@ -503,7 +503,7 @@ process.setMaxListeners(0);
                   warnMessage.push(`Opción "${argkey}" no requiere valor. Requerido tipo "${opt[argkey].type}"`);
                 }
                 way.opt[argkey] = argv[argkey];
-                way.tmp.optSignature += `${argkey}`;
+                way.optSig += `${argkey}`;
                 break;
               case 'Array':
                 if (argv[argkey].constructor.name == "Array") {
@@ -556,8 +556,8 @@ process.setMaxListeners(0);
           break;
       }
     }
-    if (way.lib.check(way.tmp.optSignature)) {
-      way.tmp.optSignature = `-${way.tmp.optSignature}`;
+    if (way.lib.check(way.optSig)) {
+      way.optSig = `-${way.optSig}`;
     }
     for (a of argv['_']) {
       if (a != way.args[0] && !/^\@[a-z.]*/g.test(a)) {
