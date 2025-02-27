@@ -143,14 +143,23 @@ way.lib.setArgsAndOpt = function (_args) {
                 } else {
                   ma['value'] = way.args[`arg${counter}`];
 
-                
                   if (typeof ma['default'] !== "undefined" && ma['default'] != null) {
-                    // console.log(ma['default'].constructor.name, ma['default']);
+                    
                     if (ma['default'].constructor.name == "Object") {
                       ma['default'] = Object.keys(ma['default']);
                     }
                     if (ma['default'].constructor.name == "String" || ma['default'].constructor.name == "Number") {
-                      ma['default'] = [ ma['default'].toString() ];
+                      if (ma['default'].startsWith('callback::')) {
+                        way.tmp.manageTask = true;
+                        var function_name = `way.lib.${ma['default'].split('::')[1]}();`;
+                        var output_callback = await eval(function_name);
+                        if (way.lib.check(output_callback.data)) {
+                          ma['default'] = output_callback.data;
+                        }
+                        way.tmp.manageTask = false;
+                      } else {
+                        ma['default'] = [ ma['default'].toString() ];
+                      }
                     }
                   }
                   

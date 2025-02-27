@@ -34,19 +34,8 @@ way.lib.loadEnv = async function (_args){
           });
         }
 
-        //console.log(env_array)
-        //env_array.forEach(env_var => {
-        //  console.log(env_var)
-        //});
-
         way.var.loadEnv = env_array;
-
-        // way.var.env = `${env_array.join("; ")}`;
-        // console.log(way.var.env); 
-        // console.log('')
-        // way.var.env_dockerfile = `ENV ${env_array.join("\nENV ")}`;
-        // console.log(way.var.env_dockerfile); 
-
+        //console.log(way.var.loadEnv)
 
         return resolve({
           args: Object.assign({}, _args),
