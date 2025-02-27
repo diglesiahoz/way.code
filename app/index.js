@@ -1623,7 +1623,7 @@ process.setMaxListeners(0);
     });
 
     // Muestra tiempo de ejecución
-    if (way.proc.name != "core.help") {
+    if (way.proc.name != "core.help" && !way.opt.o) {
       var executionTime = way.lib.getPerformanceTask().toFixed(2);
       way.lib.log({ message:`${executionTime} sec. (${(executionTime / 60).toFixed(2)} min.)`, type: 'label'});
     }

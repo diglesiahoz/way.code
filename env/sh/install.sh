@@ -14,7 +14,7 @@ export WAY_CODE_APP_NAME=way;
 export WAY_CODE_APP_ROOT=/home/\$USER/project/apps/way.code/app
 alias \${WAY_CODE_APP_NAME}='function '\$WAY_CODE_APP_NAME'(){ 
   CMD="docker exec -it -u \$USER way_code-app /bin/bash -c \"export PWD=\$(pwd) && /usr/bin/node \${WAY_CODE_APP_ROOT} \$(echo \$* | xargs)\""
-  if [ "\$(echo \$* | xargs -n1 | grep -E "^-[a-z]*(v|r|s){1}")" != "" ]
+  if [ "\$(echo \$* | xargs -n1 | grep -E "^-[a-z]*(v|r|s){1}")" != "" ] && [ "\$(echo \$* | xargs -n1 | grep -E "^-[a-z]*(o){1}")" = "" ]
   then
     # https://codepoints.net/
     printf "%b" "\$(tput bold)\$(tput dim)\$(tput setaf 6)" "\u25C9  exec => ( " "\$(tput sgr0)" "\$(tput bold)\$(tput setaf 6)" "\$CMD" "\$(tput bold)\$(tput dim)\$(tput setaf 6)" " )" "\$(tput sgr0)\n"
