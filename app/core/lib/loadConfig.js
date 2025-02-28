@@ -253,6 +253,9 @@ way.lib.loadConfig = function (_args) {
               way.env['_this']._key = map.join(".").replace(/^@/g,"");
               eval(`${configRefKey}["_key"] = "${map.join(".").replace(/^@/g,"")}"`);
 
+              way.env['_this']._parent_key = way.env['_this']._key.split('.')[0];
+              eval(`${configRefKey}["_parent_key"] = "${way.env['_this']._key.split('.')[0]}"`);
+
               var tagFromString = await way.lib.getTagFromString({ data: way.env['_this']._key });
               way.env['_this']._tag = tagFromString.data;
               eval(`${configRefKey}["_tag"] = "${way.env['_this']._tag}"`);
