@@ -36,7 +36,7 @@ way
 
 ## Docs
 
-#### Proc.
+#### Procedimientos
 
 * [core.init](docs/auto_generated--proc--core.init.md)
 * [core.make.app](docs/auto_generated--proc--core.make.app.md)

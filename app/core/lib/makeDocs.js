@@ -70,8 +70,8 @@ way.lib.makeDocs = async function (_args) {
         var readmedoc_blocks = {};
         readmedoc_blocks['Perfiles'] = {};
         readmedoc_blocks['Perfiles']['mapkey'] = 'profileKey';
-        readmedoc_blocks['Proc.'] = {};
-        readmedoc_blocks['Proc.']['mapkey'] = 'procKey';
+        readmedoc_blocks['Procedimientos'] = {};
+        readmedoc_blocks['Procedimientos']['mapkey'] = 'procKey';
 
 
         //console.log(way.map)
