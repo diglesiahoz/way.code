@@ -32,7 +32,7 @@ way.lib.makeDocs = async function (_args) {
           // readme[source]['docsend'] = [];
           // readme[source]['docsend'].push('');
           readme[source]['recipes'] = [];
-          readme[source]['recipes'].push(`## Recetas`);
+          readme[source]['recipes'].push(`## Recipes`);
           readme[source]['recipes'].push(``);
           var add_line = true;
           var is_end = false;

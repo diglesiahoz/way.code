@@ -41,7 +41,7 @@ way
 * [core.init](docs/auto_generated--proc--core.init.md)
 * [core.make.app](docs/auto_generated--proc--core.make.app.md)
 * [core.ssh](docs/auto_generated--proc--core.ssh.md)
-## Recetas
+## Recipes
 
 * [Instalar aplicación desde repositorio](docs/auto_generated--proc--core.init--recipe1--instalar_aplicaci_n_desde_repositorio.md)
 * [Instalar nueva aplicación](docs/auto_generated--proc--core.make.app--recipe1--instalar_nueva_aplicaci_n.md)
