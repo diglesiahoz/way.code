@@ -470,7 +470,15 @@ way.lib.manageTask = async function (argTask) {
                       if (way.envBatch.status) {
                         var argsToRun = [way.envBatch.now.replace(/^@/,'')];
                       } else {
-                        var argsToRun = way.args['@'];
+                        if (way.args['@'].length == 0 && way.lib.check(way.env._this)) {
+                          if (way.lib.check(way.env._this._config_name)) {
+                            var argsToRun = [ way.env._this._config_name ];
+                          } else {
+                            var argsToRun = [];
+                          }
+                        } else {
+                          var argsToRun = way.args['@'];
+                        }
                       }
                       for (confKey of argsToRun) {
 
