@@ -32,7 +32,7 @@ way.lib.makeDocs = async function (_args) {
           // readme[source]['docsend'] = [];
           // readme[source]['docsend'].push('');
           readme[source]['recipes'] = [];
-          readme[source]['recipes'].push(`## Recipes`);
+          readme[source]['recipes'].push(`## Recetas`);
           readme[source]['recipes'].push(``);
           var add_line = true;
           var is_end = false;
@@ -68,8 +68,8 @@ way.lib.makeDocs = async function (_args) {
 
 
         var readmedoc_blocks = {};
-        readmedoc_blocks['Profiles'] = {};
-        readmedoc_blocks['Profiles']['mapkey'] = 'profileKey';
+        readmedoc_blocks['Perfiles'] = {};
+        readmedoc_blocks['Perfiles']['mapkey'] = 'profileKey';
         readmedoc_blocks['Proc.'] = {};
         readmedoc_blocks['Proc.']['mapkey'] = 'procKey';
 
