@@ -373,321 +373,56 @@ process.setMaxListeners(0);
     way.config.core = data;
 
 
-  // Analiza argumentos
-    var args = process.argv.slice(2);
-    way.args._ = ""
-    var argscore = [];
-    var tmp_args = args
-    var remove = true;
-    for (i in args) {
-      var arg = args[i]
-      if (remove) {
-        var tmp_args = tmp_args.filter(function(ele){
-          return ele != arg;
-        })
-        //console.log(arg, way.map.config, way.lib.check(way.map.config[arg]), !/^@/.test(arg), !/^-/.test(arg))
-        if (!/^@/.test(arg) && !/^-/.test(arg)) {
-          way.proc.name = arg;
-          remove = false;
-        } else {
-          // argscore.push(`${arg}`)
-        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+  // Determina nombre del procedimiento
+    process.argv.slice(2).some( argv => {
+      if (!/^\@/g.test(argv) && !/^-/g.test(argv)) {
+        return way.proc.name = argv;
       }
-    }
-    tmp_args.forEach(arg => {
-      var arg_data = arg.replace(/\\/, '\\\\');
-      var arg_data = arg_data.replace(/"/g, '\\\\"');
-      /*
-      if (/\s+/.test(arg)) {
-        way.args._ += ` \"${arg}\"`
-      } else {
-        way.args._ += ` ${arg_data}`
-      }
-      */
-      way.args._ += ` ${arg_data}`
     });
-  
-    way.args._ = way.args._.trim();
-
-    
-
-
-
-    
-    // Analiza argumentos
-    opt = way.config.core.opt;
-
-    
-    // var argv = require('minimist')(argscore, {});
-
-    var argv = require('minimist')(process.argv.slice(2), {});
-
-
-    //console.log(argv);
-    //console.log(way.args);
-
-
-    for (x in argv) {
-      if (x != "_") {
-        if (Object.keys(way.config.core.opt).includes(x)) {
-          if (way.config.core.opt[x].type == "Boolean" && typeof argv[x] != "boolean") {
-            argv._.push(argv[x])
-            delete argv[x]
-            argv[x] = true;
-          }
-        }
-      }
-    }
-
-    //console.log(argv);
-    //way.lib.exit()
-
-    var filtered = [];
-    for (x of argv._) {
-      if (!/^@/.test(x) && way.proc.name != x) {
-        filtered.push(x)
-      }
-    }
-    c = 1
-    for (arg of filtered) {
-      if (!/^-/g.test(arg) && !/^@/g.test(arg) && arg != '') {
-        way.args[`arg${c}`] = arg;
-        c++;
-      }
-    }
-
-    //console.log(argv);
-    //console.log(way.args); way.lib.exit()
-
-
-
-    
-
-
-    warnMessage = [];
-    for (argkey in argv) {
-      switch (argkey) {
-        case '_':
-          if (argv['_'].length > 0) {
-            c = 0;
-            for (arg of argv['_']) {
-              
-              if (/^\@[a-z.]*/g.test(arg)) {
-                //console.log(arg)
-                if(argv._.length == 1 && argv['_'] == '@') {
-                  way.args['@'].push('*');
-                } else {
-                  way.args['@'].push(arg.replace(/^\@/,""));
-                }
-                
-              }/* else {
-                if (c == 0) {
-                  way.args[c] = arg;
-                } else {
-                  way.args[`arg${c}`] = arg;
-                }
-                c++;
-              } */
-            }
-          }
-          break;
-        default:
-          if (!Object.keys(opt).includes(argkey)) {
-            //console.log(`\x1b[31;1m%s\x1b[0m`, `Opción "${argkey}" no soportada`);
-            //process.exit();
-          } else {
-            //console.log(argkey, '==>', opt[argkey].type, argv[argkey].constructor.name)
-            switch (opt[argkey].type) {
-              case 'Boolean':
-                if (opt[argkey].type !== argv[argkey].constructor.name) {
-                  warnMessage.push(`Opción "${argkey}" no requiere valor. Requerido tipo "${opt[argkey].type}"`);
-                }
-                way.opt[argkey] = argv[argkey];
-                way.optSig += `${argkey}`;
-                break;
-              case 'Array':
-                if (argv[argkey].constructor.name == "Array") {
-                  way.opt[argkey] = argv[argkey];
-                } else {
-                  if (typeof way.opt[argkey] == "undefined") {
-                    way.opt[argkey] = [];
-                  }
-                  if (argv[argkey].constructor.name !== "String") {
-                    warnMessage.push(`Tipo "${argv[argkey].constructor.name}" no soportado como valor de opción "${argkey}". Requiere "String"`)
-                  }
-                  way.opt[argkey].push(argv[argkey]);
-                }
-                break;
-              case 'Object':
-                if ( (argv[argkey].constructor.name == "String" && (!/^\[.*\]$/.test(argv[argkey]) && !/^\{.*\}$/.test(argv[argkey]))) || argv[argkey].constructor.name == "Number" ) {
-                  warnMessage.push(`Tipo "${argv[argkey].constructor.name}" no soportado en opción "${argkey}". Requiere "${opt[argkey].type}"`)
-                }
-                if (argv[argkey].constructor.name == "Array") {
-                  way.opt[argkey] = {};
-                  for (i in argv[argkey]) {
-                    try {
-                      way.opt[argkey][i] = JSON.parse(argv[argkey][i]);
-                    } catch (e) {
-                      warnMessage.push(`Fallo en valor de objeto "${argkey}". Requiere objeto válido.\n${e.message}`)
-                    }
-                  }
-                } else {
-                  try {
-                    way.opt[argkey] = JSON.parse(argv[argkey]);
-                  } catch (e) {
-                    way.lib.log({ message: e.message, type: "warning" })
-                    warnMessage.push(`Fallo en valor de objeto "${argkey}". Requiere objeto válido.\n${e.message}`)
-                  }
-                }
-                break;
-              case 'String':
-              case 'Number':
-                if (opt[argkey].type !== argv[argkey].constructor.name) {
-                  warnMessage.push(`--Tipo "${argv[argkey].constructor.name}" no soportado como valor de opción "${argkey}". Requiere "${opt[argkey].type}"`)
-                }
-                way.opt[argkey] = argv[argkey];
-                break
-              default:
-                warnMessage.push(`Tipo "${argv[argkey].constructor.name}" no soportado en opción "${argkey}". Requiere "${opt[argkey].type}"`)
-                break;
-            }
-            //console.log(way.opt)
-          }
-          break;
-      }
-    }
-    if (way.lib.check(way.optSig)) {
-      way.optSig = `-${way.optSig}`;
-    }
-    for (a of argv['_']) {
-      if (a != way.args[0] && !/^\@[a-z.]*/g.test(a)) {
-        warnMessage.push(`No soportado argumento "${a}"`);
-      }
-    }
-    
-    delete argv['_'];
-    for (optkey of Object.keys(opt).concat(Object.keys(argv))) {
-      if (!Object.keys(way.opt).includes(optkey)) {
-        try {
-          if (opt[optkey].default.constructor.name == opt[optkey].type) {
-            way.opt[optkey] = opt[optkey].default
-          } else {
-            warnMessage.push(`Tipo de opción "${optkey}" definida no es "${opt[optkey].type}". Actualmente "${opt[optkey].default.constructor.name}"`)
-          }
-        } catch (e) {
-          //
-          if (!Object.keys(opt).includes(optkey)) {
-            if (way.lib.check(argv[optkey]) && argv[optkey] == "!") {
-              argv[optkey] = false;
-            }
-            //way.lib.exit(`No soportada opción "${optkey}"`);
-          } else {
-            switch (opt[optkey].type) {
-              case 'String':
-                way.opt[optkey] = "";
-                break;
-              case 'Number':
-                way.opt[optkey] = 0;
-                break;
-              case 'Array':
-                way.opt[optkey] = [];
-                break;
-              case 'Object':
-                way.opt[optkey] = {};
-                break;
-              default:
-                way.lib.exit(`Tipo "${opt[optkey].type}" no soportado en opción "${optkey}"`)
-                break;
-            }
-          }
-        }
-      }
-    }
-
-
-    //console.log(`argv`, argv);
-    //console.log(way.opt)
-    //console.log(way.log.level)
-    //console.log(way.args)
-    for (profile_key of way.args['@']) {
-      way.args._ = way.args._.replace(`@${profile_key}`,'');
-    }
-    way.args._ = way.args._.trim();
-    
-    
-
-
-
-
-    //way.lib.log({ message: way.opt, type: 'pretty' });way.lib.log({ message: way.args, type: 'pretty' });way.lib.exit();
-
-
-
-
-
-
-    
-
-  // Obtiene procedimiento a ejecutar
-    if (!way.lib.check(way.map.procKey)) {
-      way.lib.exit('No se han encontrado procedimientos a ejecutar.');
-    }
-
-    if (!/^[a-z0-9\.-]*$/g.test(way.args[0])) {
-      way.lib.exit(`Nombre de procedimiento no valido "${way.args[0]}"`);
-    }
-    
-    if (typeof way.proc.name === "undefined") {
-      way.proc.name = way.args[0];
-    }
-
     if (!way.lib.check(way.map.config[way.proc.name])) {
-
-      // COMPRUEBA Y OBTIENE ALIAS
-        if (typeof way.proc.name !== "undefined") {
-          var output = await way.lib.getAlias({ data: way.proc.name });
-          if (typeof output.data !== "undefined") {
-            way.proc.name = output.data;
-          } else {
-            way.lib.exit(`No disponible procedimiento "${way.proc.name}"`);
-          }
+      // Obtiene alias del nombre del procedimiento
+      if (way.lib.check(way.proc.name)) {
+        var output = await way.lib.getAlias({ data: way.proc.name });
+        if (typeof output.data !== "undefined") {
+          way.proc.name = output.data;
+        } else {
+          way.lib.exit(`No disponible procedimiento "${way.proc.name}"`);
         }
-
-    }
-
-    delete way.args[0];
-    way.proc.forced = false;
-
-
-
-
-
-    if (way.args["@"].length > 0 && !way.lib.check(way.proc.name)) {
-      way.proc.name = "core.get";
-      way.proc.forced = true;
-    }
-
-    if (!way.lib.check(way.proc.name)) {
-      way.proc.name = "core.help";
-      way.proc.forced = true;
-      /*
-      var choice = await way.lib.complete({
-        choices: way.map.procKey.slice(),
-        message: `Selecciona procedimiento a ejecutar`
-      });
-      if (!way.lib.check(choice)) {
-        way.lib.log({ message:`Requerido procedimiento a ejecutar`, type: "warning" });
-        process.exit()
       } else {
-        way.proc.name = choice;
+        // No establecido nombre del procedimiento
+        if (/^@/.test(process.argv.slice(2)[0])) {
+          way.proc.name = "core.get";
+          way.proc.forced = true;
+        } else {
+          way.proc.name = "core.help";
+          way.proc.forced = true;
+        }
       }
-      */
     }
-
-
-
-    if (!way.lib.check(way.map.config[way.proc.name])) { 
-      way.lib.exit(`No disponible procedimiento "${way.proc.name}"`)
+    if (!way.lib.check(way.proc.name)) {
+      way.lib.exit(`Not found procedure`);
     }
     way.proc.appconfig = `${way.map.config[way.proc.name].split('config')[0]}config`;
     way.proc.appname = way.proc.appconfig.replace(/^custom\/app\//,"").split("/")[0];
@@ -697,12 +432,149 @@ process.setMaxListeners(0);
     way.proc.approot = a.join("/");
     way.root_app = `${way.root}/${way.proc.approot}`;
 
+    // console.log()
+    // console.log(`way.proc.name: ${way.proc.name}`);
+    // console.log(`way.proc.approot: ${way.proc.approot}`);
+    // console.log(`way.root_app: ${way.root_app}`);
+    // way.lib.exit()
 
-  
+
+  // Carga configuración del procedimiento
+    await way.lib.loadConfig({ key: [way.proc.name] });
+    procNameParsed = await way.lib.parseConfigKey({
+      key: way.proc.name,
+      force: true
+    });
+    way.proc.code = eval(`way.config${procNameParsed}`);
+    if (way.lib.check(way.proc.code.allowed) && !way.proc.code.allowed && !way.proc.forced) {
+      way.lib.exit(`No disponible procedimiento "${way.proc.name}"`)
+    }
 
 
 
-    
+  // Establece opciones por defecto (core)
+    Object.keys(way.config.core.opt).forEach( opt_name => {
+      way.opt[opt_name] = way.config.core.opt[opt_name].default;
+    });
+
+
+  // Analiza argumentos
+    var minimist_args = require('minimist')(process.argv.slice(2), {});
+    //console.log(minimist_args)
+    //console.log(Object.keys(minimist_args))
+
+    var tmp_values = [];
+    var app_args = [];
+    process.argv.slice(2).forEach( argv => {
+
+      //console.log();console.log(`ARGV: ${argv}`)
+
+      // PROFILE
+      if (/^\@[a-z.]*/g.test(argv)) {
+        //console.log(`PROFILE!`)
+        way.args['@'].push(argv.replace(/^\@/,""));
+      }
+      // COMPLEX OPTION
+      else if (/^--[a-z.]*/g.test(argv)) {
+        var opt_name = argv.replace(/^--/,"");
+        //console.log(`COMPLEX OPTION! ${opt_name}`)
+        // Determina el origen de la configuración definida
+        try {
+          if (way.lib.check(way.config.core.opt[opt_name])) {
+            opt_source = `way.config.core.opt`;
+          } else {
+            if (way.lib.check(way.proc.code.task.require.opt[opt_name])) {
+              opt_source = `way.proc.code.task.require.opt`;
+            }
+          }
+        } catch (e) { 
+          // console.log(e)
+        }
+        try {
+          var opt_type = eval(`${opt_source}[opt_name].type`);
+          var opt_type = String(opt_type).charAt(0).toLowerCase() + String(opt_type).slice(1);
+          if (!app_args.length != 0 && typeof minimist_args[opt_name] != opt_type) {
+            way.lib.exit(`Option "${opt_name}" is not "${opt_type}" (current value: ${minimist_args[opt_name]})`);
+          }
+          switch (opt_type) {
+            case 'boolean':
+              var value = true;
+              break;
+            case 'string':
+              var value = minimist_args[opt_name];
+              tmp_values.push(value);
+              break;
+            default:
+              way.lib.exit(`Unsupported option type "${opt_type}"`);
+          }
+          if (!app_args.length) {
+            way.opt[opt_name] = value;
+          } else {
+            way.args._ = (way.lib.check(way.args._)) ? `${way.args._} ${argv}` : `${argv}` ;
+          }
+        } catch (e) { 
+          //console.log(e)
+        }
+      }
+      // SIMPLE OPTION
+      else if (/^-[a-z.]*/g.test(argv)) {
+        var opt_name = argv.replace(/^-/,"");
+        //console.log(`SIMPLE OPTION! ${opt_name} ${app_args.length}`)
+        if (opt_name.split('').length > 1) {
+          opt_name.split('').forEach( opt_name => {
+            if (Object.keys(way.config.core.opt).includes(opt_name)) {
+              if (way.config.core.opt[opt_name].type != 'Boolean') {
+                way.lib.exit(`Unsupported "${opt_name}" option type: ${way.config.core.opt[opt_name].type}`);
+              }
+            }
+            if (!app_args.length) {
+              way.opt[opt_name] = true;
+              way.optSig += `${opt_name}`;
+            } else {
+              way.args._ = (way.lib.check(way.args._)) ? `${way.args._} -${opt_name}` : `-${opt_name}` ;
+            }
+          });
+        } else {
+          if (!Object.keys(way.config.core.opt).includes(opt_name)) {
+            way.lib.exit(`Unsupported "${opt_name}" option`);
+          }
+          if (!app_args.length) {
+            way.opt[opt_name] = true;
+            way.optSig += `${opt_name}`;
+          } else {
+            way.args._ = (way.lib.check(way.args._)) ? `${way.args._} -${opt_name}` : `-${opt_name}` ;
+          }
+        }
+      }
+      // ARG
+      else {
+        var proc_name_without_app = Array.from(way.proc.name.split('.')).slice(1).join('.');
+        if (way.proc.name != argv && `${proc_name_without_app}` != argv && !tmp_values.includes(argv)) {
+          app_args.push(argv);
+          way.args._ = (way.lib.check(way.args._)) ? `${way.args._} ${argv}` : `${argv}` ;
+        }
+      }
+    });
+    var arg_nums = 0;
+    app_args.forEach( argv => {
+      way.args[`arg${arg_nums + 1}`] = argv;
+      arg_nums++;
+    });
+    if (way.lib.check(way.optSig)) {
+      way.optSig = `-${way.optSig}`;
+    }
+
+
+
+
+    //console.log()
+    //console.log(`way.optSig`, way.optSig)
+    //console.log(`way.opt`, way.opt)
+    //console.log(`way.args`, way.args)
+    //console.log(`minimist_args`, minimist_args)
+    //console.log()
+    //way.lib.exit()
+
 
 
     if (way.opt.s) {
@@ -717,32 +589,24 @@ process.setMaxListeners(0);
       way.log.level = 1;
       way.opt.v = true;
     }
-
-
-
-
-
-  // Carga configuración del procedimiento
-    await way.lib.loadConfig({ key:[way.proc.name] });
-
-    //console.log(way.config)
-    if (way.lib.check(way.args['@'])) {
-      way.args['@'] = (typeof way.args['@'] == 'string') ? way.args['@'].split(" "): way.args['@'];
-    }
-    //way.proc.code = eval(`way.config.${way.proc.name}`);
-    procNameParsed = await way.lib.parseConfigKey({
-      key: way.proc.name,
-      force: true
-    });
-    
-    way.proc.code = eval(`way.config${procNameParsed}`);
-    
-    if (way.lib.check(way.proc.code.allowed) && !way.proc.code.allowed && !way.proc.forced) {
-      way.lib.exit(`No disponible procedimiento "${way.proc.name}"`)
+    if (way.proc.name == "core.help") {
+      way.opt.v = true;
     }
 
 
 
+
+
+
+
+  
+
+
+
+
+
+
+    
 
 
 
@@ -763,11 +627,12 @@ process.setMaxListeners(0);
     }
 
 
-  if (argscore.length > 0) {
-    way.lib.exit('No soportado establecer argumentos antes del nombre del procedimiento')
-  }
+  //if (argscore.length > 0) {
+  //  way.lib.exit('No soportado establecer argumentos antes del nombre del procedimiento')
+  //}
 
-    
+  
+
 
   // Carga ficheros de configuración de librería custom
     for (mapConfigKey of Object.keys(way.map.config)) {
@@ -963,23 +828,24 @@ process.setMaxListeners(0);
                 }
 
 
-                //console.log(approot)
-
-
-                var founded = true;
+                // Obtiene nombre de perfil
+                var ask = true;
 
                 if (approot != "") {
                   var configKey = `@${path.basename(approot)}.local`;
-                  if (!way.map.configKey.includes(configKey)) {
-                    founded = false;
-                  } else {
+                  if (way.map.configKey.includes(configKey)) {
                     way.reference.config[configReference] = configKey;
                   }
-                } else {
-                  founded = false;
+                  if (taskRequire.config.length == 1) {
+                    ask = false;
+                  }
+                  if (Object.keys(way.reference.config).length == taskRequire.config.length) {
+                    ask = false;
+                  }
                 }
 
-                if (!founded) {
+
+                if (ask) {
                   for (configKey of way.map.configKey) {
                     if (new RegExp(configType,"g").test(configKey)) {
                       filteredKeys.push(configKey);
@@ -997,6 +863,7 @@ process.setMaxListeners(0);
                   way.reference.config[configReference] = choice;
                   filteredKeys = []
                 }
+
 
 
               }
@@ -1162,11 +1029,6 @@ process.setMaxListeners(0);
 
 
 
-
-
-
-
-
   //console.log(way.opt)
   //console.log(way.proc)
   //console.log(way.args)
@@ -1174,9 +1036,6 @@ process.setMaxListeners(0);
   //way.lib.exit()
 
   
-  if (way.proc.name == "core.help") {
-    way.opt.v = true;
-  }
 
 
 
@@ -1192,7 +1051,7 @@ process.setMaxListeners(0);
         way.tmp.proc.sig = `${way.app_name_root} ${way.args.arg1}.test`;
       }
 
-      await way.lib.setArgsAndOpt({ argv: argv });
+      await way.lib.setArgsAndOpt({ argv: Object.assign({}, way.opt, way.args) });
       //console.log(way.args); console.log(way.opt);
 
       for (var i = 0; i < doTask.length; i++) {
@@ -1351,7 +1210,7 @@ process.setMaxListeners(0);
 
               await way.lib.checkRequiredTaskSettings();
 
-              await way.lib.setArgsAndOpt({ argv: argv });
+              await way.lib.setArgsAndOpt({ argv: Object.assign({}, way.opt, way.args) });
               //console.log(way.args); console.log(way.opt);
               //way.lib.exit()
               
@@ -1480,7 +1339,7 @@ process.setMaxListeners(0);
 
         await way.lib.checkRequiredTaskSettings();
         
-        await way.lib.setArgsAndOpt({ argv: argv });
+        await way.lib.setArgsAndOpt({ argv: Object.assign({}, way.opt, way.args) });
         //console.log(way.args); console.log(way.opt);
         //way.lib.exit()
 

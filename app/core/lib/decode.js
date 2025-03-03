@@ -8,7 +8,7 @@ way.lib.decode = function (_args) {
 
         var data = _args.data;
         var odata = data;
-        //var opt = opt || {};
+        var opt = opt || {};
         //opt.throwException = opt.throwException || [];
         //opt.data = opt.data || {};
         //opt.showWarn = (opt.showWarn == false) ? false : true;

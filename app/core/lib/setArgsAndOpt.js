@@ -21,9 +21,9 @@ way.lib.setArgsAndOpt = function (_args) {
               var counter = 1;
               for (opt in taskRequire.opt) {
 
-                if (Object.keys(way.opt).includes(opt)) {
-                  way.lib.exit(`No se permite establecer opción del core "${opt}" desde procedimiento "${way.proc.name}"`);
-                }
+                //if (Object.keys(way.opt).includes(opt)) {
+                //  way.lib.exit(`No se permite establecer opción del core "${opt}" desde procedimiento "${way.proc.name}"`);
+                //}
 
                 var ma = taskRequire.opt[opt];
 
@@ -281,7 +281,7 @@ way.lib.setArgsAndOpt = function (_args) {
             } catch (e) {
               way.lib.exit(e)
             }
-          }
+          } else {}
 
 
           // console.log('------')
