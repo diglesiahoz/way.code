@@ -23,7 +23,7 @@ RUN apt install -y curl
 RUN apt install -y jq
 RUN apt install -y perl
 RUN apt install -y sshpass
-
+RUN apt install -y rsync
 
 # user:
 RUN deluser --remove-home ubuntu

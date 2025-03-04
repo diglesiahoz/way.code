@@ -568,7 +568,8 @@ process.setMaxListeners(0);
       way.optSig = `-${way.optSig}`;
     }
 
-    //console.log(); console.log(`minimist_args`, minimist_args); console.log(`way.optSig`, way.optSig); console.log(`way.opt`, way.opt); console.log(`way.args`, way.args); console.log(); way.lib.exit()
+    //console.log(); console.log(`minimist_args`, minimist_args); console.log(`way.optSig`, way.optSig); console.log(`way.opt`, way.opt); console.log(`way.args`, way.args); console.log(); 
+    //way.lib.exit()
 
 
     if (way.opt.s || way.opt.d) {
