@@ -13,6 +13,12 @@ task:
 
 opt:
 
+  # DRY-RUN
+  d:
+    type: Boolean # [ String | Number | Array | Object ]
+    default: false # [ VALOR | null ]
+    help: Habilita dry-run
+
   y:
     type: Boolean # [ String | Number | Array | Object ]
     default: false # [ VALOR | null ]
@@ -348,6 +354,10 @@ interface:
         required: false
         type: String
         defaultValue: ""
+      exclude_dryrun: # Determina si es necesario ejecutar "ping" antes de lanzar comando
+        required: false
+        type: Boolean
+        defaultValue: false
   fetch:
     collection: false
     args:

@@ -128,6 +128,7 @@ process.setMaxListeners(0);
       || require('minimist')(process.argv.slice(2), {})['r']
       || require('minimist')(process.argv.slice(2), {})['v']
       || require('minimist')(process.argv.slice(2), {})['s']
+      || require('minimist')(process.argv.slice(2), {})['d']
       ) {
       
       if (
@@ -142,7 +143,8 @@ process.setMaxListeners(0);
         try {
           if (
             (require('minimist')(process.argv.slice(2), {})['v']
-            || require('minimist')(process.argv.slice(2), {})['s'])
+            || require('minimist')(process.argv.slice(2), {})['s']
+            || require('minimist')(process.argv.slice(2), {})['d'])
             && !require('minimist')(process.argv.slice(2), {})['o']
             ) {
             console.log(color.bold.cyan('All cache cleared!'))
@@ -155,7 +157,8 @@ process.setMaxListeners(0);
           fs.unlinkSync(`${way.root}/.cache/core`);
           if (
             (require('minimist')(process.argv.slice(2), {})['v']
-            || require('minimist')(process.argv.slice(2), {})['s'])
+            || require('minimist')(process.argv.slice(2), {})['s']
+            || require('minimist')(process.argv.slice(2), {})['d'])
             && !require('minimist')(process.argv.slice(2), {})['o']
             ) {
             console.log(color.bold.cyan('Cleared core cache!'))
@@ -568,8 +571,7 @@ process.setMaxListeners(0);
     //console.log(); console.log(`minimist_args`, minimist_args); console.log(`way.optSig`, way.optSig); console.log(`way.opt`, way.opt); console.log(`way.args`, way.args); console.log(); way.lib.exit()
 
 
-
-    if (way.opt.s) {
+    if (way.opt.s || way.opt.d) {
       way.opt.r = true;
       way.opt.v = true;
       way.opt.y = true;

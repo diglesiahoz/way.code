@@ -108,16 +108,15 @@ way.lib.exec = async function (_args) {
     _args.cmd = _args.cmd + " 2>&1"
   }
 
-  //console.log(_args.cmd, stdio)
-  //way.lib.exit()
+  //console.log(_args, stdio);way.lib.exit()
 
   way.lib.log({ message:`exec:: ${_args.cmd}` });
 
-  if (way.opt.v && way.log.level > 0 || way.opt.s) {
+  if (way.opt.v && way.log.level > 0 || (way.opt.s || way.opt.d && !_args.exclude_dryrun)) {
     var message_cdm = _args.cmd.replace(/^set -e pipefail; /g, '');
     message_cdm = message_cdm.trim();
-    if (way.opt.s) {
-      console.log(color.dim.bold.cyan(`${figures.circleDotted}  exec => (`), color.bold.cyan(message_cdm), color.dim.bold.cyan(`)`));
+    if (way.opt.s || way.opt.d && !_args.exclude_dryrun) {
+      console.log(color.dim.bold.cyan(`${figures.circleDotted}  DRY-RUN exec => (`), color.bold.cyan(message_cdm), color.dim.bold.cyan(`)`));
     } else {
       console.log(color.dim.bold.cyan(`${figures.circleFilled}  exec => (`), color.bold.cyan(message_cdm), color.dim.bold.cyan(`)`));
     }
@@ -138,7 +137,7 @@ way.lib.exec = async function (_args) {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
 
-      if (way.opt.s) {
+      if (way.opt.s || way.opt.d && !_args.exclude_dryrun) {
         return resolve({
           code: 0,
           buffer: ""
