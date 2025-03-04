@@ -378,8 +378,8 @@ way.lib.init = async function (_args){
 
 
           } catch (e) {
-            way.lib.exit(e.toString())
-            way.lib.log({message: `${configKey} => ${e.toString()}`, type: 'warn'});
+            console.log(e)
+            way.lib.exit()
           }
         }
 
