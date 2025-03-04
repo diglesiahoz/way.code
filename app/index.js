@@ -459,6 +459,7 @@ process.setMaxListeners(0);
 
 
   // Analiza argumentos
+    way.args._ = "";
     var minimist_args = require('minimist')(process.argv.slice(2), {});
     //console.log(minimist_args)
     //console.log(Object.keys(minimist_args))
