@@ -354,7 +354,7 @@ interface:
         required: false
         type: String
         defaultValue: ""
-      exclude_dryrun: # Determina si es necesario ejecutar "ping" antes de lanzar comando
+      exclude_dryrun: # Ejecuta comando aunque estemos en modo DRY-RUN. Útil para ejecutar comandos necesarios que no implican cambios
         required: false
         type: Boolean
         defaultValue: false
