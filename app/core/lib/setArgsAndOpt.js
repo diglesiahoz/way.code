@@ -104,6 +104,7 @@ way.lib.setArgsAndOpt = function (_args) {
             }
           }
 
+          
 
           // REQUIRE - ARGS
           if (way.lib.check(taskRequire.args)) {
@@ -135,7 +136,6 @@ way.lib.setArgsAndOpt = function (_args) {
                 ) {
                   way.lib.exit(`Fallo al definir argumento desde procedimiento "${way.proc.name}". Propiedades requeridas: type, default`)
                 }
-
 
 
                 if (ma['type'] === '.*') {
@@ -273,6 +273,11 @@ way.lib.setArgsAndOpt = function (_args) {
                   }
                 }
 
+                // Comprueba si hay argumentos obligatorios
+                if ( (typeof ma['required'] !== "undefined" && ma['required']) && (way.args[`${arg}`] == "" && (typeof ma['default'] !== "undefined" && ma['default'] != null)) ) {
+                  way.lib.exit(`Procedure "${way.proc.name}" require argument "${arg}" (${ma['type']})`);
+                }
+
                 counter++;
 
               };
@@ -281,7 +286,14 @@ way.lib.setArgsAndOpt = function (_args) {
             } catch (e) {
               way.lib.exit(e)
             }
-          } else {}
+          } else {
+            // No hay definidos argumentos en procedimiento
+            Object.keys(way.args).forEach(function(key, index) {
+              if (/^arg/.test(key)) {
+                way.lib.exit(`Procedure "${way.proc.name}" does not accept arguments (not allowed: ${way.args._})`);
+              }
+            });
+          }
 
 
           // console.log('------')
@@ -290,6 +302,9 @@ way.lib.setArgsAndOpt = function (_args) {
           // console.log('------')
 
         }
+
+        //console.log(way.args)
+        //way.lib.exit()
 
         resolve({
           args: Object.assign({}, _args),

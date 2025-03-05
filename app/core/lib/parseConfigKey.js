@@ -17,8 +17,11 @@ way.lib.parseConfigKey = async function (_args) {
                 }
                 tmpSignature = `${tmpSignature}["${tmp.join(".").replace(/\./g, "\"][\"")}"]`;
               } else  {
-                if (!/\]$/.test(tmpKey)) {
+                if (!/^\]/.test(tmpKey) && !/\]$/.test(tmpKey)) {
                   tmpSignature = `${tmpSignature}["${tmpKey.replace(/^\]\./,'')}"]`;
+                }
+                if (/^\]/.test(tmpKey) && !/\]$/.test(tmpKey)) {
+                  tmpSignature = `${tmpSignature}.${tmpKey.replace(/^\]\./,'')}`;
                 }
               }
             }

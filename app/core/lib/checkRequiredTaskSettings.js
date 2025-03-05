@@ -35,26 +35,40 @@ way.lib.checkRequiredTaskSettings = function () {
             if (way.lib.check(taskRequire.settings)) {
 
               for (setting in taskRequire.settings) {
+
+                var setting_tree = await way.lib.parseConfigKey({
+                  key: `${setting}`,
+                  force: true
+                });
+
+                var founded = false;
                 try {
-                  
-                  var error = false;
-                  var out = eval(`way.env._this.${setting}`);
-                  if (!way.lib.check(out)) {
-                    error = true;
-                  } else {
-                    var re = new RegExp(`${taskRequire.settings[setting]}`);
-                    if (!re.test(out)) {
-                      error = true;
+                  if (typeof eval(`way.env._this${setting_tree}`) !== "undefined") {
+                    founded = true;
+                  }
+                } catch (e) { }
+
+                if (!founded) {
+                  messages.push(`Procedure '${way.proc.name}' requires property '${setting}' to be implemented from profile '${config_name}'`);
+                } else {
+                  try {
+                    var error = false;
+                    if (taskRequire.settings[setting] != null) {
+                      var out = eval(`way.env._this${setting_tree}`);
+                      if (!way.lib.check(out) || !new RegExp(`${taskRequire.settings[setting]}`).test(out)) {
+                        error = true;
+                      }
                     }
+                    if (error) {
+                      messages.push(`Procedure '${way.proc.name}' requires property '${setting}' to be defined and to match pattern '${taskRequire.settings[setting]}' from profile '${config_name}'`);
+                    }
+                  } catch (e) {
+                    way.lib.exit(e);
                   }
-                  if (error) {
-                    messages.push(`Procedimiento "${way.proc.name}" requiere que la propiedad "${setting}" este definida y que cumpla el patrón "${taskRequire.settings[setting]}" desde perfil "${config_name}"`);
-                  }
-                } catch (e) {
-                  way.lib.exit(e);
                 }
+
               }
-              
+
             }
 
             for (msg of messages) {
@@ -67,6 +81,7 @@ way.lib.checkRequiredTaskSettings = function () {
           }
 
         }
+        
 
         resolve({
           attach: {},

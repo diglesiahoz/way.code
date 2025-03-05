@@ -1329,15 +1329,11 @@ process.setMaxListeners(0);
       }
 
 
-
       if (!way.envBatch.status) {
 
         await way.lib.checkRequiredTaskSettings();
         
         await way.lib.setArgsAndOpt({ argv: Object.assign({}, way.opt, way.args) });
-        //console.log(way.args); console.log(way.opt);
-        //way.lib.exit()
-
 
         for (var i = 0; i < doTask.length; i++) {
 
