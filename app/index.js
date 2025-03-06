@@ -484,8 +484,10 @@ process.setMaxListeners(0);
       // COMPLEX OPTION
       else if (/^--[a-z.]*/g.test(argv)) {
         var opt_name = argv.replace(/^--/,"");
-        //console.log(`COMPLEX OPTION! ${opt_name}`)
-        // Determina el origen de la configuración definida
+        //console.log(`COMPLEX OPTION! ${opt_name} ${app_args.length}`)
+        if (app_args.length > 0) {
+          way.args._ = (way.lib.check(way.args._)) ? `${way.args._} ${argv}` : `${argv}` ;
+        }
         try {
           if (way.lib.check(way.config.core.opt[opt_name])) {
             opt_source = `way.config.core.opt`;
@@ -514,11 +516,7 @@ process.setMaxListeners(0);
             default:
               way.lib.exit(`Unsupported option type "${opt_type}"`);
           }
-          if (!app_args.length) {
-            way.opt[opt_name] = value;
-          } else {
-            way.args._ = (way.lib.check(way.args._)) ? `${way.args._} ${argv}` : `${argv}` ;
-          }
+          way.opt[opt_name] = value;
         } catch (e) { 
           //console.log(e)
         }
@@ -529,25 +527,25 @@ process.setMaxListeners(0);
         //console.log(`SIMPLE OPTION! ${opt_name} ${app_args.length}`)
         if (app_args.length > 0) {
           way.args._ = (way.lib.check(way.args._)) ? `${way.args._} ${argv}` : `${argv}` ;
-        } else {
-          if (opt_name.split('').length > 1) {
-            opt_name.split('').forEach( opt_name => {
-              if (Object.keys(way.config.core.opt).includes(opt_name)) {
-                if (way.config.core.opt[opt_name].type != 'Boolean') {
-                  way.lib.exit(`Unsupported "${opt_name}" option type: ${way.config.core.opt[opt_name].type}`);
-                }
+        }
+        if (opt_name.split('').length > 1) {
+          opt_name.split('').forEach( opt_name => {
+            if (Object.keys(way.config.core.opt).includes(opt_name)) {
+              if (way.config.core.opt[opt_name].type != 'Boolean') {
+                way.lib.exit(`Unsupported "${opt_name}" option type: ${way.config.core.opt[opt_name].type}`);
               }
-              way.opt[opt_name] = true;
-              way.optSig += `${opt_name}`;
-            });
-          } else {
-            if (!Object.keys(way.config.core.opt).includes(opt_name)) {
-              way.lib.exit(`Unsupported "${opt_name}" option`);
             }
             way.opt[opt_name] = true;
             way.optSig += `${opt_name}`;
+          });
+        } else {
+          if (!Object.keys(way.config.core.opt).includes(opt_name)) {
+            way.lib.exit(`Unsupported "${opt_name}" option`);
           }
+          way.opt[opt_name] = true;
+          way.optSig += `${opt_name}`;
         }
+
       }
       // ARG
       else {
