@@ -29,6 +29,11 @@ opt:
     default: false # [ VALOR | null ]
     help: Habilita información extra. Nivel 1.
 
+  l:
+    type: Boolean # [ String | Number | Array | Object ]
+    default: false # [ VALOR | null ]
+    help: Habilita información extra. Nivel 2.
+
   r:
     type: Boolean # [ String | Number | Array | Object ]
     default: false # [ VALOR | null ]
@@ -48,11 +53,6 @@ opt:
     type: Array # [ String | Number | Array | Object ]
     default: [] # [ VALOR | null ]
     help: Permite seleccionar tareas a ejecutar
-
-  i:
-    type: Boolean # [ String | Number | Array | Object ]
-    default: false # [ VALOR | null ]
-    help: Muestra información sobre la ejecución del procedimiento
 
   m:
     type: Boolean # [ String | Number | Array | Object ]

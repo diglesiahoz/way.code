@@ -127,6 +127,7 @@ process.setMaxListeners(0);
       /^core.init/.test(way.cmd)
       || require('minimist')(process.argv.slice(2), {})['r']
       || require('minimist')(process.argv.slice(2), {})['v']
+      || require('minimist')(process.argv.slice(2), {})['l']
       || require('minimist')(process.argv.slice(2), {})['s']
       || require('minimist')(process.argv.slice(2), {})['d']
       ) {
@@ -143,11 +144,12 @@ process.setMaxListeners(0);
         try {
           if (
             (require('minimist')(process.argv.slice(2), {})['v']
+            || require('minimist')(process.argv.slice(2), {})['l']
             || require('minimist')(process.argv.slice(2), {})['s']
             || require('minimist')(process.argv.slice(2), {})['d'])
             && !require('minimist')(process.argv.slice(2), {})['o']
             ) {
-            console.log(color.bold.cyan('All cache cleared!'))
+            //console.log(color.bold.cyan('All cache cleared!'))
           }
         } catch (e) {
           // console.log(e)
@@ -157,11 +159,12 @@ process.setMaxListeners(0);
           fs.unlinkSync(`${way.root}/.cache/core`);
           if (
             (require('minimist')(process.argv.slice(2), {})['v']
+            || require('minimist')(process.argv.slice(2), {})['l']
             || require('minimist')(process.argv.slice(2), {})['s']
             || require('minimist')(process.argv.slice(2), {})['d'])
             && !require('minimist')(process.argv.slice(2), {})['o']
             ) {
-            console.log(color.bold.cyan('Cleared core cache!'))
+            //console.log(color.bold.cyan('Cleared core cache!'))
           }
         } catch (e) {
           // console.log(e)
@@ -524,10 +527,10 @@ process.setMaxListeners(0);
       else if (/^-[a-z.]*/g.test(argv)) {
         var opt_name = argv.replace(/^-/,"");
         //console.log(`SIMPLE OPTION! ${opt_name} ${app_args.length}`)
-        if (opt_name.split('').length > 1) {
-          if (app_args.length > 0) {
-            way.args._ = (way.lib.check(way.args._)) ? `${way.args._} ${argv}` : `${argv}` ;
-          } else {
+        if (app_args.length > 0) {
+          way.args._ = (way.lib.check(way.args._)) ? `${way.args._} ${argv}` : `${argv}` ;
+        } else {
+          if (opt_name.split('').length > 1) {
             opt_name.split('').forEach( opt_name => {
               if (Object.keys(way.config.core.opt).includes(opt_name)) {
                 if (way.config.core.opt[opt_name].type != 'Boolean') {
@@ -537,16 +540,12 @@ process.setMaxListeners(0);
               way.opt[opt_name] = true;
               way.optSig += `${opt_name}`;
             });
-          }
-        } else {
-          if (!Object.keys(way.config.core.opt).includes(opt_name)) {
-            way.lib.exit(`Unsupported "${opt_name}" option`);
-          }
-          if (!app_args.length) {
+          } else {
+            if (!Object.keys(way.config.core.opt).includes(opt_name)) {
+              way.lib.exit(`Unsupported "${opt_name}" option`);
+            }
             way.opt[opt_name] = true;
             way.optSig += `${opt_name}`;
-          } else {
-            way.args._ = (way.lib.check(way.args._)) ? `${way.args._} -${opt_name}` : `-${opt_name}` ;
           }
         }
       }
@@ -578,6 +577,10 @@ process.setMaxListeners(0);
       way.opt.y = true;
     }
     if (way.opt.v) {
+      way.log.level = 1;
+    }
+    if (way.opt.l) {
+      way.opt.v = true;
       way.log.level = 2;
     }
     if (way.proc.name == "core.get") {
@@ -588,6 +591,9 @@ process.setMaxListeners(0);
       way.opt.v = true;
     }
 
+
+    //console.log(); console.log(`minimist_args`, minimist_args); console.log(`way.optSig`, way.optSig); console.log(`way.opt`, way.opt); console.log(`way.args`, way.args); console.log(); 
+    //way.lib.exit()
 
 
 
@@ -1376,7 +1382,7 @@ process.setMaxListeners(0);
     }
 
 
-    if (!way.opt.s && way.opt.i) {
+    if (!way.opt.s && way.opt.l) {
       const { networkInterfaces } = require('os');
       const nets = networkInterfaces();
       const results = [];

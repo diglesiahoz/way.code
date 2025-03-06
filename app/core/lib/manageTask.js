@@ -1114,7 +1114,7 @@ way.lib.manageTask = async function (argTask) {
                               }
                             }
                             if (way.log.level > 1) {
-                              console.log(status, color.gray(task.call));
+                              // console.log(status, color.gray(task.call));
                             }
 
                             var rend = way.lib.getPerformanceTask().toFixed(2);
