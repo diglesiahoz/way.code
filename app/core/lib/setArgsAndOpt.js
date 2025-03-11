@@ -12,6 +12,11 @@ way.lib.setArgsAndOpt = function (_args) {
 
           //console.log(way.args)
           //console.log(way.opt)
+          try {
+            way.args = Object.assign(way.args, eval(`way.env._this.hook.args["${way.proc.name}"]`));
+          } catch (e) {}
+          //console.log(way.args)
+          //way.lib.exit()
 
           
           // REQUIRE - OPT
@@ -31,7 +36,13 @@ way.lib.setArgsAndOpt = function (_args) {
                   typeof ma['type'] === "undefined" || 
                   typeof ma['default'] === "undefined"
                 ) {
-                  way.lib.exit(`Fallo al definir opción desde procedimiento "${way.proc.name}". Propiedades requeridas: type, default`)
+                  var r_sig = [];
+                  var t = (typeof ma['type'] === "undefined") ? 'type' : '' ;
+                  r_sig.push(t);
+                  t = (typeof ma['default'] === "undefined") ? 'default' : '' ;
+                  r_sig.push(t);
+                  r_sig = r_sig.filter(elm => elm);
+                  way.lib.exit(`Failed to define option "${opt}" from procedure "${way.proc.name}" (not found: ${r_sig.join(', ')})`);
                 }
 
                 ma['value'] = _args.argv[opt];
@@ -79,7 +90,7 @@ way.lib.setArgsAndOpt = function (_args) {
                 try {
                   var type = ma['value'].constructor.name;
                   if (type !== ma['type'] && ma['type'] !== null) {
-                    way.lib.exit(`Argumento "${opt}" requiere valor de tipo "${ma['type']}". Detectado "${type}" desde llamada "${way.proc.name}"`);
+                    way.lib.exit(`Option "${opt}" requires value of type "${ma['type']}". Detected "${type}" from call "${way.proc.name}"`);
                   }
                 } catch (e) { 
                   // Establece el valor por defecto si no detecta valor
@@ -90,10 +101,12 @@ way.lib.setArgsAndOpt = function (_args) {
                 if (typeof ma['default'] !== "undefined" && ma['default'] != null) {
                   if (ma['default'].constructor.name == 'Array') {
                     if (!ma['default'].includes(ma['value'])) {
-                      way.lib.exit(`No permitido valor "${ma['value']}" en argumento "${opt}" (Permitido: ${ma['default'].join(', ')})`)
+                      way.lib.exit(`Value "${ma['value']}" not allowed in argument "${opt}" (Allowed: ${ma['default'].join(', ')})`)
                     }
                   }
                 }
+
+                //console.log(opt, ma['value']);
 
                 way.opt[`${opt}`] = ma['value'];
 
@@ -104,7 +117,6 @@ way.lib.setArgsAndOpt = function (_args) {
             }
           }
 
-          
 
           // REQUIRE - ARGS
           if (way.lib.check(taskRequire.args)) {
@@ -122,7 +134,7 @@ way.lib.setArgsAndOpt = function (_args) {
               }
 
               if (c > Object.keys(taskRequire.args).length) {
-                // way.lib.exit(`El numero de argumentos introducidos no es correcto. (${msg.join(', ')})`);
+                // way.lib.exit(`The number of arguments entered is not correct. (${msg.join(', ')})`);
               }
               
               var counter = 1;
@@ -132,9 +144,18 @@ way.lib.setArgsAndOpt = function (_args) {
 
                 if (
                   typeof ma['type'] === "undefined" || 
+                  typeof ma['required'] === "undefined" || 
                   typeof ma['default'] === "undefined"
                 ) {
-                  way.lib.exit(`Fallo al definir argumento desde procedimiento "${way.proc.name}". Propiedades requeridas: type, default`)
+                  var r_sig = [];
+                  var t = (typeof ma['type'] === "undefined") ? 'type' : '' ;
+                  r_sig.push(t);
+                  t = (typeof ma['required'] === "undefined") ? 'required' : '' ;
+                  r_sig.push(t);
+                  t = (typeof ma['default'] === "undefined") ? 'default' : '' ;
+                  r_sig.push(t);
+                  r_sig = r_sig.filter(elm => elm);
+                  way.lib.exit(`Failed to define argument "${arg}" from procedure "${way.proc.name}" (not found: ${r_sig.join(', ')})`);
                 }
 
 
@@ -171,16 +192,20 @@ way.lib.setArgsAndOpt = function (_args) {
                         ma['value'] = choice;
                       }
                     } else {
-                      // Solicita valor...
-                      var input = await way.lib.input({
-                        message: `${color.bold.white(`Introduce el valor de "${arg}"`)} (${color.white(`${ma['type']}`)})`
-                      }).then((o) => {
-                        return o.data;
-                      })
-                      if (way.lib.check(input)) {
-                        ma['value'] = input;
+                      if (!ma['required']) {
+                        ma['value'] = '';
                       } else {
-                        way.lib.exit(`Argumento requerido "${arg}" (${ma['type']}) desde procedimiento "${way.proc.name}"`);
+                        // Solicita valor...
+                        var input = await way.lib.input({
+                          message: `${color.bold.white(`Introduce "${arg}" value`)} (${color.white(`${ma['type']}`)})`
+                        }).then((o) => {
+                          return o.data;
+                        })
+                        if (way.lib.check(input)) {
+                          ma['value'] = input;
+                        } else {
+                          way.lib.exit(`Required argument "${arg}" (${ma['type']}) from procedure "${way.proc.name}"`);
+                        }
                       }
                     }
                   }
@@ -204,7 +229,7 @@ way.lib.setArgsAndOpt = function (_args) {
                   try {
                     var type = ma['value'].constructor.name;
                     if (type !== ma['type'] && ma['type'] !== null) {
-                      way.lib.exit(`Argumento "${arg}" requiere valor de tipo "${ma['type']}". Detectado "${type}" desde llamada "${way.proc.name}"`);
+                      way.lib.exit(`Argument "${arg}" requires value of type "${ma['type']}". Detected "${type}" from call "${way.proc.name}"`);
                     }
                   } catch (e) { 
                     // Establece el valor por defecto si no detecta valor
@@ -215,7 +240,7 @@ way.lib.setArgsAndOpt = function (_args) {
                   if (typeof ma['default'] !== "undefined" && ma['default'] != null) {
                     if (ma['default'].constructor.name == 'Array') {
                       if (!ma['default'].includes(ma['value'])) {
-                        way.lib.exit(`No permitido valor "${ma['value']}" en argumento "${arg}" (Permitido: ${ma['default'].join(', ')})`)
+                        way.lib.exit(`Not allowed value "${ma['value']}" in argument "${arg}" (Allowed: ${ma['default'].join(', ')})`)
                       }
                     }
                   }

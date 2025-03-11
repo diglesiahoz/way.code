@@ -727,6 +727,7 @@ process.setMaxListeners(0);
             }
 
             //console.log('--------------',configReference,'--------------')
+            //console.log(way.args['@'])
 
             var scope = "";
             if (way.lib.check(way.args['@'][nconf])) {
@@ -843,7 +844,6 @@ process.setMaxListeners(0);
                   }
                 }
 
-
                 if (ask) {
                   for (configKey of way.map.configKey) {
                     if (new RegExp(configType,"g").test(configKey)) {
@@ -863,7 +863,13 @@ process.setMaxListeners(0);
                   filteredKeys = []
                 }
 
-
+                // Comprueba perfil
+                if (way.map.configKey.includes(configKey) && rc.length > 1) {
+                  var re = new RegExp(configType,"g");
+                  if (!re.test(configKey)) {
+                    way.lib.exit(`Procedimiento "${way.proc.name}" requiere configuración del tipo "${configType}" en ambito de ejecución "${configReference}"`);
+                  }
+                }
 
               }
             }
@@ -1459,7 +1465,8 @@ process.setMaxListeners(0);
       process.stdout.write(JSON.stringify(way.tmp.out))
     } else {
       if (way.tmp.out.length > 0) {
-        console.log(way.tmp.out);
+        //console.log(way.tmp.out);
+        way.lib.log({ message: way.tmp.out, type: 'console' });
       }
     }
   }

@@ -32,7 +32,31 @@ way.lib.log = function (_args) {
     case 'console':
       if (way.opt.v){
         var iLogMessage = _args.message;
-        console.log(_args.message);
+        //console.log(_args.message);
+        switch (typeof _args.message) {
+          case "number":
+          case "boolean":
+          case "string":
+            console.log(_args.message);
+            break;
+          default:
+            //jclrz.params.colored = false
+            //jclrz.display.func = true
+            jclrz.colors.attr  = ['white'] // cyan
+            jclrz.colors.str   = ['green']
+            jclrz.colors.num   = ['green']
+            jclrz.colors.bool  = ['yellow']
+            jclrz.colors.quot  = ['green']
+            jclrz.colors.punc  = ['white']
+            jclrz.colors.brack = ['white']
+            jclrz.colors.date  = ['green'] 
+            jclrz.colors.regex = ['green'] 
+            jclrz.colors.null =  ['green']
+            jclrz.colors.undef = ['green']
+            jclrz.colors.func  = ['cyan'] 
+            jclrz(_args.message)
+        }
+        break;
       }
       break;
     case 'label':
@@ -43,25 +67,27 @@ way.lib.log = function (_args) {
           //console.log(`${color.gray(icon)} ${color.gray(_args.message)}`);
           console.log(`${color.gray(_args.message)}`);
         } else {
+          /*
           if (way.lib.check(_args.label)) {
             console.log(`${color.gray(icon)} ${color.gray(_args.label)}`)
           } else {
             console.log(`${color.gray(icon)}`)
           }
+          */
           var maincolor = [ "white" ];
-            jclrz.colors.attr  = maincolor
-            jclrz.colors.str   = maincolor
-            jclrz.colors.num   = maincolor
-            jclrz.colors.bool  = maincolor
-            jclrz.colors.quot  = maincolor
-            jclrz.colors.punc  = maincolor
-            jclrz.colors.brack = maincolor
-            jclrz.colors.date  = maincolor
-            jclrz.colors.regex = maincolor
-            jclrz.colors.null =  maincolor
-            jclrz.colors.undef = maincolor
-            jclrz.colors.func  = maincolor
-            jclrz(_args.message)
+          jclrz.colors.attr  = maincolor;
+          jclrz.colors.str   = maincolor;
+          jclrz.colors.num   = maincolor;
+          jclrz.colors.bool  = maincolor;
+          jclrz.colors.quot  = maincolor;
+          jclrz.colors.punc  = maincolor;
+          jclrz.colors.brack = maincolor;
+          jclrz.colors.date  = maincolor;
+          jclrz.colors.regex = maincolor;
+          jclrz.colors.null =  maincolor;
+          jclrz.colors.undef = maincolor;
+          jclrz.colors.func  = maincolor;
+          jclrz(_args.message);
         }
       }
       break;
