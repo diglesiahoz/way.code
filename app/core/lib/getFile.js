@@ -45,7 +45,7 @@ way.lib.getFile = async function (_args) {
 
           /*
 
-          //way.lib.log({ message: dataClone, type: "pretty" })
+          //way.lib.log({ message: dataClone, type: "console" })
           //console.log(way.lib.tree(dataClone))
 
           //console.log(eval(`dataClone.cookieByCategory[1].cookies[0].constructor.name`))
@@ -148,7 +148,7 @@ way.lib.getFile = async function (_args) {
             //console.log(dataClone)
           }
 
-          //way.lib.log({ message: dataClone, type: "pretty" })
+          //way.lib.log({ message: dataClone, type: "console" })
 
           var data = await way.lib.decode({
             data: fileContent,
@@ -169,7 +169,7 @@ way.lib.getFile = async function (_args) {
           //console.log(way.lib.tree(dataClone))
 
 
-          //way.lib.log({ message: dataClone, type: "pretty" })
+          //way.lib.log({ message: dataClone, type: "console" })
 
           */
 

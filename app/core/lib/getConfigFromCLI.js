@@ -16,7 +16,7 @@ way.lib.getConfigFromCLI = async function (_args) {
 
         //way.lib.log({
         //  message: output,
-        //  type: 'pretty'
+        //  type: 'console'
         //});
 
         resolve({

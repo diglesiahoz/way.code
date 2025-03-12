@@ -204,7 +204,7 @@ way.lib.decode = function (_args) {
                           break;
                         }
                       } catch (e) {
-                        if (!way.opt.s && !way.task.exclude) {
+                        if (!way.opt.d && !way.task.exclude) {
                           if (_args.throwException.includes(reftype)/* && !condicionalReference*/) {
                             if (/\{\}\.env\..*/.test(oReference)) {
                               
@@ -217,7 +217,8 @@ way.lib.decode = function (_args) {
                                   way.lib.exit(`Referencia "${reftype}" no implementada: "${oReference}"`);
                                 } else {
                                   if (refaccess != "way.out.buffer") {
-                                    way.lib.exit(`Referencia "${reftype}" no implementada: "${oReference}"`);
+                                    if (!way.opt.d)
+                                      way.lib.exit(`Referencia "${reftype}" no implementada: "${oReference}"`);
                                   }
                                 }
                               } else {
@@ -305,7 +306,7 @@ way.lib.decode = function (_args) {
                       if (/\{\}\.env\..*/.test(oReference)) {
                         
                       } else {
-                        if (!way.opt.s) {
+                        if (!way.opt.d) {
                           if (way.proc.name !== "get") {
                             if (!/^\(\[.*\]\)$/.test(oReference)) {
                               way.lib.exit(`Referencia "${oReference}" no definida.`);
@@ -346,7 +347,7 @@ way.lib.decode = function (_args) {
 
               if (!way.lib.check(refvalue) && !way.lib.isObjEmpty(opt) && way.lib.check(_args.throwException)) {
                 if (_args.throwException.includes(reftype)) {
-                  if (typeof refvalue == "undefined" && !way.opt.s && !way.task.exclude) { 
+                  if (typeof refvalue == "undefined" && !way.opt.d && !way.task.exclude) { 
 
                     if (!way.task.loop) {
                       if (!/^\(\[.*\]\)$/.test(oReference)) {

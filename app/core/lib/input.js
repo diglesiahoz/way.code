@@ -6,7 +6,7 @@ way.lib.input = async function (_args) {
         const prompt = require('prompt-sync')();
         var exit = 0; 
         while (exit == 0) {
-          way.lib.log({message: _args.message, type: 'pretty'});
+          way.lib.log({message: _args.message, type: 'console'});
           var input = "";
           var input = prompt();
           if (way.lib.check(input)) {

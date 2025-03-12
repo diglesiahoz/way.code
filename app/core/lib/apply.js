@@ -4,7 +4,7 @@ way.lib.apply = function (_args) {
     way.opt.apply.push(_args.value);
     way.lib.log({
       message: `Aplica "${_args.value}"`,
-      type: "pretty"
+      type: "console"
     });
   }
 }

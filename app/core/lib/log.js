@@ -5,9 +5,6 @@ way.lib.log = function (_args) {
     _args = oargs;
   }
 
-  //if (!way.lib.check(_args.type)) {
-  //  _args.type = "pretty"
-  //}
   if (!way.lib.check(_args.label)) {
     _args.label = arguments[2] || '';
   }
@@ -238,35 +235,6 @@ way.lib.log = function (_args) {
         jclrz.colors.undef = maincolor
         jclrz.colors.func  = maincolor
         jclrz(_args.message);
-      }
-      break;
-    case 'pretty':
-      var icon = figures.circleDouble;
-      switch (typeof _args.message) {
-        case "number":
-        case "boolean":
-        case "string":
-          console.log(_args.message);
-          break;
-        default:
-          if (way.lib.check(_args.label)) {
-            console.log(`${color.white(icon)} ${color.blue(_args.label)}`);
-          }
-          //jclrz.params.colored = false
-          //jclrz.display.func = true
-          jclrz.colors.attr  = ['white'] // cyan
-          jclrz.colors.str   = ['green']
-          jclrz.colors.num   = ['green']
-          jclrz.colors.bool  = ['yellow']
-          jclrz.colors.quot  = ['green']
-          jclrz.colors.punc  = ['white']
-          jclrz.colors.brack = ['white']
-          jclrz.colors.date  = ['green'] 
-          jclrz.colors.regex = ['green'] 
-          jclrz.colors.null =  ['green']
-          jclrz.colors.undef = ['green']
-          jclrz.colors.func  = ['cyan'] 
-          jclrz(_args.message)
       }
       break;
     case 'out':

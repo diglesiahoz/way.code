@@ -12,6 +12,29 @@ way.lib.exec = async function (_args) {
     _args.out = true;
   }
 
+  if (_args.watch) {
+    var stdio = "inherit";
+  } else {
+    /*
+    if (_args.out) {
+      var stdio = [ "inherit", "pipe", "pipe" ];
+    } else {
+      var stdio = [];
+    } 
+    */
+    var stdio = [ "inherit", "pipe", "pipe" ];
+  }
+  //console.log(_args, stdio);way.lib.exit()
+
+  
+  if (_args.message != "") {
+    way.lib.log({
+      message:`${_args.message}`,
+      type: "label"
+    });
+  }
+  
+
   var oCmd = _args.cmd;
 
   if (_args.nohup && _args.watch) {
@@ -71,16 +94,16 @@ way.lib.exec = async function (_args) {
 
   if (_args.nohup) {
     if (way.lib.check(_args.user) && way.lib.check(_args.host)) {
-      _args.cmd = `ssh -o LogLevel=QUIET -t ${_args.pem} ${_args.user}@${_args.host} '${settings}nohup $(${_args.cmd}) &'`;
+      _args.cmd = `ssh -o LogLevel=QUIET ${_args.default_options} ${_args.pem} ${_args.user}@${_args.host} '${settings}nohup $(${_args.cmd}) &'`;
     } else {
       _args.cmd = `${settings}nohup $(${_args.cmd}) &`;
     }
   } else {
     if (way.lib.check(_args.user) && way.lib.check(_args.host)) {
       if (way.lib.check(_args.pass)) {
-        _args.cmd = `sshpass -p '${_args.pass}' ssh ${_args.user}@${_args.host} -t '${settings}${_args.cmd}'`;
+        _args.cmd = `sshpass -p '${_args.pass}' ssh ${_args.user}@${_args.host} ${_args.default_options} '${settings}${_args.cmd}'`;
       } else {
-        _args.cmd = `ssh -o LogLevel=QUIET -t ${_args.pem} ${_args.user}@${_args.host} '${settings}${_args.cmd}'`;
+        _args.cmd = `ssh -o LogLevel=QUIET ${_args.default_options} ${_args.pem} ${_args.user}@${_args.host} '${settings}${_args.cmd}'`;
       }
     } else {
       if (_args.watch) {
@@ -91,45 +114,24 @@ way.lib.exec = async function (_args) {
     }
   }
 
-  if (_args.watch) {
-    var stdio = "inherit";
-  } else {
-    /*
-    if (_args.out) {
-      var stdio = [ "inherit", "pipe", "pipe" ];
-    } else {
-      var stdio = [];
-    } 
-    */
-    var stdio = [ "inherit", "pipe", "pipe" ];
-  }
-
   if (!_args.show_warn) {
     _args.cmd = _args.cmd + " 2>&1"
   }
-
-  //console.log(_args, stdio);way.lib.exit()
+  
 
   way.lib.log({ message:`exec:: ${_args.cmd}` });
 
-  if (way.opt.v && way.log.level > 0 || (way.opt.s || way.opt.d && !_args.exclude_dryrun)) {
+
+  if (way.opt.v && way.log.level > 0 || (way.opt.d && !_args.exclude_dryrun)) {
     var message_cdm = _args.cmd.replace(/^set -e pipefail; /g, '');
     message_cdm = message_cdm.trim();
-    if (way.opt.s || way.opt.d && !_args.exclude_dryrun) {
+    if (way.opt.d && !_args.exclude_dryrun) {
       console.log(color.dim.bold.cyan(`${figures.circleDotted}  DRY-RUN exec => (`), color.bold.cyan(message_cdm), color.dim.bold.cyan(`)`));
     } else {
       console.log(color.dim.bold.cyan(`${figures.circleFilled}  exec => (`), color.bold.cyan(message_cdm), color.dim.bold.cyan(`)`));
     }
     
   }
-
-  if (_args.message != "") {
-    way.lib.log({
-      message:`${_args.message}`,
-      type: "label"
-    });
-  }
-
   //console.log(_args.cmd)
   //way.lib.exit()
 
@@ -137,7 +139,7 @@ way.lib.exec = async function (_args) {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
 
-      if (way.opt.s || way.opt.d && !_args.exclude_dryrun) {
+      if (way.opt.d && !_args.exclude_dryrun) {
         return resolve({
           code: 0,
           buffer: ""

@@ -38,7 +38,6 @@ way.lib.var = function (_args) {
         }
       }
       if (typeof _args.value == "string") {
-        //var set = eval(`way.var.${_args.key} = "${_args.value}"`);
         var set = eval(`way.var.${_args.key} = ${_args.value}`);
       } else {
         var set = eval(`way.var.${_args.key} = ${JSON.stringify(_args.value)}`);

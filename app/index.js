@@ -128,7 +128,6 @@ process.setMaxListeners(0);
       || require('minimist')(process.argv.slice(2), {})['r']
       || require('minimist')(process.argv.slice(2), {})['v']
       || require('minimist')(process.argv.slice(2), {})['l']
-      || require('minimist')(process.argv.slice(2), {})['s']
       || require('minimist')(process.argv.slice(2), {})['d']
       ) {
       
@@ -145,11 +144,10 @@ process.setMaxListeners(0);
           if (
             (require('minimist')(process.argv.slice(2), {})['v']
             || require('minimist')(process.argv.slice(2), {})['l']
-            || require('minimist')(process.argv.slice(2), {})['s']
             || require('minimist')(process.argv.slice(2), {})['d'])
             && !require('minimist')(process.argv.slice(2), {})['o']
             ) {
-            //console.log(color.bold.cyan('All cache cleared!'))
+            console.log(color.bold.cyan('All cache cleared!'))
           }
         } catch (e) {
           // console.log(e)
@@ -160,11 +158,10 @@ process.setMaxListeners(0);
           if (
             (require('minimist')(process.argv.slice(2), {})['v']
             || require('minimist')(process.argv.slice(2), {})['l']
-            || require('minimist')(process.argv.slice(2), {})['s']
             || require('minimist')(process.argv.slice(2), {})['d'])
             && !require('minimist')(process.argv.slice(2), {})['o']
             ) {
-            //console.log(color.bold.cyan('Cleared core cache!'))
+            console.log(color.bold.cyan('Cleared core cache!'))
           }
         } catch (e) {
           // console.log(e)
@@ -569,7 +566,7 @@ process.setMaxListeners(0);
     //way.lib.exit()
 
 
-    if (way.opt.s || way.opt.d) {
+    if (way.opt.d) {
       way.opt.r = true;
       way.opt.v = true;
       way.opt.y = true;
@@ -1386,7 +1383,7 @@ process.setMaxListeners(0);
     }
 
 
-    if (!way.opt.s && way.opt.l) {
+    if (!way.opt.d && way.opt.l) {
       const { networkInterfaces } = require('os');
       const nets = networkInterfaces();
       const results = [];

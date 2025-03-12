@@ -890,7 +890,7 @@ way.lib.manageTask = async function (argTask) {
 
                       // Ejecuta tarea
                         if (
-                          way.opt.s && 
+                          way.opt.d && 
                           task.callName != "cast" &&
                           task.callName != "var" && 
                           task.callName != "exec" && 
@@ -940,7 +940,7 @@ way.lib.manageTask = async function (argTask) {
                           }
                           //console.log('EXCLUDE:', way.task.exclude)
 
-                          if (!way.opt.v && way.lib.check(task.label) && !way.opt.s && !way.task.exclude) {
+                          if (!way.opt.v && way.lib.check(task.label) && !way.opt.d && !way.task.exclude) {
                             way.lib.log({ message: `${task.label}`, type: "running" });
                           }
                           way.lib.log({ message:`${task.callType} call: ${task.call}` });
@@ -983,7 +983,7 @@ way.lib.manageTask = async function (argTask) {
                                           var error = false;
                                         }
                                       }
-                                      if (error) {
+                                      if (error && !way.opt.d) {
                                         way.lib.log({
                                           message: `Fallo en remplazo: ${ma[m]}`,
                                           type: "warning"
@@ -991,7 +991,7 @@ way.lib.manageTask = async function (argTask) {
                                         var haserors = true;
                                       }
                                     }
-                                    if (haserors) {
+                                    if (haserors && !way.opt.d) {
                                       way.lib.exit()
                                     }
                                   }
@@ -1042,7 +1042,7 @@ way.lib.manageTask = async function (argTask) {
                                   }
                                   */
 
-                                  if (!way.opt.v && way.lib.check(task.label) && !way.opt.s) {
+                                  if (!way.opt.v && way.lib.check(task.label) && !way.opt.d) {
                                     way.lib.clearLogRunning()
                                     
                                     /*
@@ -1089,7 +1089,7 @@ way.lib.manageTask = async function (argTask) {
                                 way.lib.setOut(o);
 
                                 
-                                if (way.lib.check(task.label) && !way.opt.s) {
+                                if (way.lib.check(task.label) && !way.opt.d) {
                                   way.lib.clearLogRunning()
                                   /*
                                   way.lib.log({
