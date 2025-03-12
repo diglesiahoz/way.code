@@ -889,265 +889,259 @@ way.lib.manageTask = async function (argTask) {
 
 
                       // Ejecuta tarea
-                        if (
-                          way.opt.d && 
-                          task.callName != "cast" &&
-                          task.callName != "var" && 
-                          task.callName != "exec" && 
-                          task.callName != "syncFile"
-                          ) {
+                        if (way.opt.d /*&& task.callName != "cast" && task.callName != "var" && task.callName != "exec" && task.callName != "syncFile"*/) {
                           if (!way.lib.check(task.callCmd)) {
                             way.lib.log({ message: `${task.call}`, type: 'label' });
                           } else {
-                            way.lib.log({ message: `${task.callCmd}`, type: 'sim' });
+                            way.lib.log({ message: `${task.callCmd}`, type: 'label' });
                           }
+                        }
+
+                        // FUERZA EJECUTAR TAREA SI ANTERIOR A DADO ERROR
+                        if (way.lib.check(task.exclude) && task.exclude == false) {
+                          way.task.excludeFlag = way.task.exclude;
+                          way.task.exclude = false;
                         } else {
+                          //console.log('-----------eee', way.task.excludeFlag, way.task.warn)
+                          //way.lib.exit()
+                        }
 
-                          // FUERZA EJECUTAR TAREA SI ANTERIOR A DADO ERROR
-                          if (way.lib.check(task.exclude) && task.exclude == false) {
-                            way.task.excludeFlag = way.task.exclude;
+                        // APLICA SOLO TAREAS SELECCIONADAS POR OPCIÓN -a
+                        //console.log()
+                        //console.log(task)
+                        //console.log(way.opt.apply)
+                        //console.log(task.applyWith)
+
+                        //console.log(hTask.length)
+                        //console.log(task)
+
+                        if (way.lib.check(task.applyWith)) {
+
+                          if (!way.opt.apply.includes(task.applyWith)) {
+                            way.task.exclude = true;
+                          } else {
                             way.task.exclude = false;
-                          } else {
-                            //console.log('-----------eee', way.task.excludeFlag, way.task.warn)
-                            //way.lib.exit()
                           }
 
-                          // APLICA SOLO TAREAS SELECCIONADAS POR OPCIÓN -a
-                          //console.log()
-                          //console.log(task)
-                          //console.log(way.opt.apply)
-                          //console.log(task.applyWith)
+                        } else {
+                          /* IMPORTANTE )*/
+                          /* AÑADIDO TRAS COMENTAR LINEA 862 index.js ( "if (way.lib.check(d.applyWith)) {" ) */
+                          /* Soporte llamada "apply" en tiempo de ejecución */
+                          //way.task.exclude = false;
+                          if (way.lib.check(way.task.excludeFlag) && !way.lib.check(task.exclude)) {
+                            way.task.exclude = way.task.excludeFlag;
+                          }
+                        }
+                        //console.log('EXCLUDE:', way.task.exclude)
 
-                          //console.log(hTask.length)
-                          //console.log(task)
-
-                          if (way.lib.check(task.applyWith)) {
-
-                            if (!way.opt.apply.includes(task.applyWith)) {
-                              way.task.exclude = true;
+                        if (!way.opt.v && way.lib.check(task.label) && !way.opt.d && !way.task.exclude) {
+                          way.lib.log({ message: `${task.label}`, type: "running" });
+                        }
+                        way.lib.log({ message:`${task.callType} call: ${task.call}` });
+                        //way.lib.log({
+                        //  message: task.call,
+                        //  type: "verbose"
+                        //});
+                        var tocheck = Array.from(new Set(task.call.match(/(\(\(){1}\w*(\)\)){1}/g)));
+                        if (tocheck.length > 0) {
+                          if (way.proc.name != "get") {
+                            way.lib.exit(`Referencias de bucle no reemplazadas`)
+                          }
+                          /*
+                          for (ref of tocheck) {
+                            console.log(ref)
+                            if (way.lib.check(way.reference.map[ref])) {
+                              originaRef = ref;
+                              var re = new RegExp(ref.replace(/\(/g,'\\(').replace(/\)/g,'\\)'), "g");
+                              tmp = JSON.stringify(task).replace(re, way.reference.map[originaRef]);
+                              task = JSON.parse(tmp)
                             } else {
-                              way.task.exclude = false;
-                            }
-
-                          } else {
-                            /* IMPORTANTE )*/
-                            /* AÑADIDO TRAS COMENTAR LINEA 862 index.js ( "if (way.lib.check(d.applyWith)) {" ) */
-                            /* Soporte llamada "apply" en tiempo de ejecución */
-                            //way.task.exclude = false;
-                            if (way.lib.check(way.task.excludeFlag) && !way.lib.check(task.exclude)) {
-                              way.task.exclude = way.task.excludeFlag;
+                              way.lib.exit(`Reference "${originaRef}" founded before execute task.`);
                             }
                           }
-                          //console.log('EXCLUDE:', way.task.exclude)
+                          */
+                        }
+                        try {
 
-                          if (!way.opt.v && way.lib.check(task.label) && !way.opt.d && !way.task.exclude) {
-                            way.lib.log({ message: `${task.label}`, type: "running" });
-                          }
-                          way.lib.log({ message:`${task.callType} call: ${task.call}` });
-                          //way.lib.log({
-                          //  message: task.call,
-                          //  type: "verbose"
-                          //});
-                          var tocheck = Array.from(new Set(task.call.match(/(\(\(){1}\w*(\)\)){1}/g)));
-                          if (tocheck.length > 0) {
-                            if (way.proc.name != "get") {
-                              way.lib.exit(`Referencias de bucle no reemplazadas`)
-                            }
-                            /*
-                            for (ref of tocheck) {
-                              console.log(ref)
-                              if (way.lib.check(way.reference.map[ref])) {
-                                originaRef = ref;
-                                var re = new RegExp(ref.replace(/\(/g,'\\(').replace(/\)/g,'\\)'), "g");
-                                tmp = JSON.stringify(task).replace(re, way.reference.map[originaRef]);
-                                task = JSON.parse(tmp)
-                              } else {
-                                way.lib.exit(`Reference "${originaRef}" founded before execute task.`);
-                              }
-                            }
-                            */
-                          }
-                          try {
-
-                            /* EXCLUDE */
-                              if (!way.task.exclude) {
-                                var ma = []
-                                ma = task.call.match(/\(\(.*\)\)/g);
-                                if (way.proc.name != "get") {
-                                  if (way.lib.check(ma)) {
-                                    var haserors = false;
-                                    for (var m = 0; m < ma.length; m++) {
-                                      var error = true;
-                                      if (/\{\}\.env\..*/.test(ma[m])) {
-                                        if (way.proc.name == "up") {
-                                          var error = false;
-                                        }
-                                      }
-                                      if (error && !way.opt.d) {
-                                        way.lib.log({
-                                          message: `Fallo en remplazo: ${ma[m]}`,
-                                          type: "warning"
-                                        });
-                                        var haserors = true;
+                          /* EXCLUDE */
+                            if (!way.task.exclude) {
+                              var ma = []
+                              ma = task.call.match(/\(\(.*\)\)/g);
+                              if (way.proc.name != "get") {
+                                if (way.lib.check(ma)) {
+                                  var haserors = false;
+                                  for (var m = 0; m < ma.length; m++) {
+                                    var error = true;
+                                    if (/\{\}\.env\..*/.test(ma[m])) {
+                                      if (way.proc.name == "up") {
+                                        var error = false;
                                       }
                                     }
-                                    if (haserors && !way.opt.d) {
-                                      way.lib.exit()
+                                    if (error && !way.opt.d) {
+                                      way.lib.log({
+                                        message: `Fallo en remplazo: ${ma[m]}`,
+                                        type: "warning"
+                                      });
+                                      var haserors = true;
                                     }
+                                  }
+                                  if (haserors && !way.opt.d) {
+                                    way.lib.exit()
                                   }
                                 }
                               }
+                            }
 
-                              //way.lib.log({
-                              //  label: callname,
-                              //  message: way.argcall,
-                              //  type: "log"
-                              //});
+                            //way.lib.log({
+                            //  label: callname,
+                            //  message: way.argcall,
+                            //  type: "log"
+                            //});
 
-                            
-                            //console.log('TASK',task)
-                            //console.log(way.task.exclude, task.label)
+                          
+                          //console.log('TASK',task)
+                          //console.log(way.task.exclude, task.label)
 
 
-                            way.task.message = "-"
-                            if (!way.task.exclude) {
-                              //console.log('EJECUTA!!!', task)
-                              //console.log(task.call)
-                              //console.log(way.args)
-                              if (task.callType === 'AsyncFunction') {
-                                await eval(task.call).then(function(o){
+                          way.task.message = "-"
+                          if (!way.task.exclude) {
+                            //console.log('EJECUTA!!!', task)
+                            //console.log(task.call)
+                            //console.log(way.args)
+                            if (task.callType === 'AsyncFunction') {
+                              await eval(task.call).then(function(o){
 
-                                  //console.log(`OUT:|${o}|`)
-                                  way.lib.setOut(o);
-
-                                  //console.log(1,way.out)
-                                  way.task.warn = false;
-
-                                  /*
-                                  if (typeof o !== "undefined") {
-                                    if (typeof o == "string" && way.lib.check(o)) {
-                                      way.task.message = o;
-                                    }
-                                    if (way.lib.check(o.message)) {
-                                      way.task.message = o.message;
-                                    }
-                                  }
-                                  if (way.proc.name != "ssh") {
-                                    if (way.task.message != "-" && way.lib.check(way.task.message)) {
-                                      way.lib.log({
-                                        message: way.task.message,
-                                        type: "success"
-                                      });
-                                    }
-                                  }
-                                  */
-
-                                  if (!way.opt.v && way.lib.check(task.label) && !way.opt.d) {
-                                    way.lib.clearLogRunning()
-                                    
-                                    /*
-                                    way.lib.log({
-                                      message: `Completado (${task.label})`,
-                                      type: "success"
-                                    });
-                                    */
-                                    
-                                  }
-                                  
-                                }).catch(function(o) {
-
-                                  way.lib.setOut(o);
-
-                                  resolve({code: o.code, message: o.message});
-                                  
-                                  /*
-                                  if (typeof o !== "undefined") {
-                                    if (way.lib.check(o.message)) {
-                                      way.task.message = o.message;
-                                    } else {
-                                      way.task.message = o;
-                                    }
-                                    //way.task.message = way.task.message;
-                                  }
-                                  
-                                  way.lib.setOut(o);
-                                  way.task.warn = true;
-                                  
-                                  //console.log(way.task.message)
-                                  // way.lib.log({
-                                  //   message: way.task.message,
-                                  //   type: "warning"
-                                  // });
-
-                                  //console.log('FALLO')
-                                  */
-                                  
-                                  
-                                });
-                              } else {
-                                o = eval(task.call);
+                                //console.log(`OUT:|${o}|`)
                                 way.lib.setOut(o);
 
-                                
-                                if (way.lib.check(task.label) && !way.opt.d) {
+                                //console.log(1,way.out)
+                                way.task.warn = false;
+
+                                /*
+                                if (typeof o !== "undefined") {
+                                  if (typeof o == "string" && way.lib.check(o)) {
+                                    way.task.message = o;
+                                  }
+                                  if (way.lib.check(o.message)) {
+                                    way.task.message = o.message;
+                                  }
+                                }
+                                if (way.proc.name != "ssh") {
+                                  if (way.task.message != "-" && way.lib.check(way.task.message)) {
+                                    way.lib.log({
+                                      message: way.task.message,
+                                      type: "success"
+                                    });
+                                  }
+                                }
+                                */
+
+                                if (!way.opt.v && way.lib.check(task.label) && !way.opt.d) {
                                   way.lib.clearLogRunning()
+                                  
                                   /*
                                   way.lib.log({
                                     message: `Completado (${task.label})`,
                                     type: "success"
                                   });
                                   */
+                                  
                                 }
                                 
-                                way.task.warn = false;
-                                //resolve()
-                              }
-                            }
-                            if (way.task.exclude) {
-                              var status = color.bold.yellow(`EXCLUDED`);
+                              }).catch(function(o) {
+
+                                way.lib.setOut(o);
+
+                                resolve({code: o.code, message: o.message});
+                                
+                                /*
+                                if (typeof o !== "undefined") {
+                                  if (way.lib.check(o.message)) {
+                                    way.task.message = o.message;
+                                  } else {
+                                    way.task.message = o;
+                                  }
+                                  //way.task.message = way.task.message;
+                                }
+                                
+                                way.lib.setOut(o);
+                                way.task.warn = true;
+                                
+                                //console.log(way.task.message)
+                                // way.lib.log({
+                                //   message: way.task.message,
+                                //   type: "warning"
+                                // });
+
+                                //console.log('FALLO')
+                                */
+                                
+                                
+                              });
                             } else {
-                              if (way.task.warn) {
-                                var status = color.bold.gray(`DENIED`);
-                                way.task.exclude = true;
-                              } else {
-                                var status = color.bold.gray(`RESOLVED`);
+                              o = eval(task.call);
+                              way.lib.setOut(o);
+
+                              
+                              if (way.lib.check(task.label) && !way.opt.d) {
+                                way.lib.clearLogRunning()
+                                /*
+                                way.lib.log({
+                                  message: `Completado (${task.label})`,
+                                  type: "success"
+                                });
+                                */
                               }
-                            }
-                            if (way.log.level > 1) {
-                              // console.log(status, color.gray(task.call));
-                            }
-
-                            var rend = way.lib.getPerformanceTask().toFixed(2);
-                            way.task.log.push({
-                              'Status': status,
-                              'Proc.::Task': `${way.proc.name}`,
-                              'Call': `${task.call.split("(")[0]}`,
-                              'Call type': task.callType,
-                              'Reason': way.task.message,
-                              'Performance': `${rend} / ${(rend / 60).toFixed(2)} / ${(rend / 3600).toFixed(2)}`
-                            });
-                            way.task.message = ""
-
-
-                          } catch (e){
-                            if (e == `TypeError: Cannot read property 'then' of undefined`) {
-                              way.lib.exit(`Fallo al ejecutar la tarea "${msgsimulate}" (Comprueba si debes de realizar una llamada asíncrona).`);
-                            } else {
-                              way.lib.log({ message:`${e}`, type:"warning" });
-                              way.lib.log({ message:`Fallo al ejecutar la tarea "${msgsimulate}"` });
+                              
+                              way.task.warn = false;
+                              //resolve()
                             }
                           }
-
-                          way.lib.log({ message:`task.warn: ${way.task.warn}` });
-                          // Comprueba salida
-                            if (way.lib.check(way.out)) {
-                              way.lib.log({ message: way.out, label: "out" });
-                              //way.lib.log({
-                              //  message: `(out) ${JSON.stringify(way.out)}`,
-                              //  type: "verbose"
-                              //});
+                          if (way.task.exclude) {
+                            var status = color.bold.yellow(`EXCLUDED`);
+                          } else {
+                            if (way.task.warn) {
+                              var status = color.bold.gray(`DENIED`);
+                              way.task.exclude = true;
+                            } else {
+                              var status = color.bold.gray(`RESOLVED`);
                             }
+                          }
+                          if (way.log.level > 1) {
+                            // console.log(status, color.gray(task.call));
+                          }
+
+                          var rend = way.lib.getPerformanceTask().toFixed(2);
+                          way.task.log.push({
+                            'Status': status,
+                            'Proc.::Task': `${way.proc.name}`,
+                            'Call': `${task.call.split("(")[0]}`,
+                            'Call type': task.callType,
+                            'Reason': way.task.message,
+                            'Performance': `${rend} / ${(rend / 60).toFixed(2)} / ${(rend / 3600).toFixed(2)}`
+                          });
+                          way.task.message = ""
+
+
+                        } catch (e){
+                          if (e == `TypeError: Cannot read property 'then' of undefined`) {
+                            way.lib.exit(`Fallo al ejecutar la tarea "${msgsimulate}" (Comprueba si debes de realizar una llamada asíncrona).`);
+                          } else {
+                            way.lib.log({ message:`${e}`, type:"warning" });
+                            way.lib.log({ message:`Fallo al ejecutar la tarea "${msgsimulate}"` });
+                          }
                         }
+
+                        way.lib.log({ message:`task.warn: ${way.task.warn}` });
+                        // Comprueba salida
+                          if (way.lib.check(way.out)) {
+                            way.lib.log({ message: way.out, label: "out" });
+                            //way.lib.log({
+                            //  message: `(out) ${JSON.stringify(way.out)}`,
+                            //  type: "verbose"
+                            //});
+                          }
+
                         //console.log('OUT:', way.out)
 
 
