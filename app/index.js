@@ -1358,7 +1358,6 @@ process.setMaxListeners(0);
           }
 
           way.task.exclude = false;
-
           var o = await way.lib.manageTask(manageTask);
           if (typeof o !== "undefined") {
             process.stdout.write(`\n`)

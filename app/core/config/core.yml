@@ -324,7 +324,7 @@ interface:
       cd:        
         required: false
         type: String
-        defaultValue: "~"
+        defaultValue: 
       sleep:
         required: false
         type: Number

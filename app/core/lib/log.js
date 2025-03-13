@@ -148,10 +148,7 @@ way.lib.log = function (_args) {
       if (typeof _args.message === "string" || typeof _args.message === "number" || typeof _args.message === "boolean") {
         var iLogMessage = `${color.greenBright(icon)} ${color.white.dim(_args.message)}`;
         //console.log(`${color.greenBright(icon)} ${color.white(_args.message)}`)
-        var message_type = `success`; 
-        if (way.opt.d) {
-          var message_type = `DRY-RUN success`; 
-        }
+        var message_type = `success`;
         console.log(`${color.bold.green(message_type)} ${color.white.dim(_args.message)}`)
         //var iLogMessage = `${color.bgGreen(" SUCC ")} ${color.white(_args.message)}`;
         //console.log(`${color.bgGreen(" SUCC ")} ${color.white(_args.message)}`)

@@ -289,7 +289,7 @@ way.lib.manageTask = async function (argTask) {
                       }
                     }
                     // console.log()
-                    //console.log(`-----${confKey}------`)
+                    // console.log(`-----${confKey}------`)
                     // console.log(app_name_root)
                     var to_check_config_name = confKey;
                     if (!/^@/.test(confKey)) {
@@ -326,14 +326,16 @@ way.lib.manageTask = async function (argTask) {
                         var hooks = [];
                         //console.log(hookProcKeys)
                         for (hookProcKey of hookProcKeys) {
-                          //console.log(hookProcKey)
+                          //console.log(1, hookProcKey)
                           if (new RegExp(`^${hookProcKey}`, "g").test(`${way.proc.name}`)) {
                             var hookCallNameKeys = Object.keys(eval(`${confKey}.hook.event["${hookProcKey}"]`));
-                            //console.log(hookCallNameKeys)
+                            //console.log(2, hookCallNameKeys)
                             for (hookCallNameKey of hookCallNameKeys) {
-                              //console.log(`-${hookCallNameKey} ~ ${iTask.event}`)
+                              //console.log(3, `${iTask.event} ==> (( ${eventName} == ${hookCallNameKey} ))`);
+                              eventName = await way.lib.decode({ data: eventName });
+                              //console.log(4, `${iTask.event} ==> (( ${eventName} == ${hookCallNameKey} ))`);
                               if (eventName == hookCallNameKey) {
-                                //console.log(hookCallNameKey, `@${confKeyName}`)
+                                //console.log(5, hookCallNameKey, `@${confKeyName}`)
                                 hookCall = `${confKey}.hook.event["${hookProcKey}"]["${hookCallNameKey}"]`;
                                 var hookTasks = eval(hookCall);
                                 way.lib.log({
@@ -889,12 +891,15 @@ way.lib.manageTask = async function (argTask) {
 
 
                       // Ejecuta tarea
-                        if (way.opt.d /*&& task.callName != "cast" && task.callName != "var" && task.callName != "exec" && task.callName != "syncFile"*/) {
+                        if (way.opt.d/* && task.callName != "exec" && task.callName != "cast" && task.callName != "var" && task.callName != "syncFile"*/) {
+                          /*
                           if (!way.lib.check(task.callCmd)) {
                             way.lib.log({ message: `${task.call}`, type: 'label' });
                           } else {
                             way.lib.log({ message: `${task.callCmd}`, type: 'label' });
                           }
+                          */
+                          way.lib.log({ message: `${task.call}`, type: 'label' });
                         }
 
                         // FUERZA EJECUTAR TAREA SI ANTERIOR A DADO ERROR

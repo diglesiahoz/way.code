@@ -126,7 +126,7 @@ way.lib.exec = async function (_args) {
     var message_cdm = _args.cmd.replace(/^set -e pipefail; /g, '');
     message_cdm = message_cdm.trim();
     if (way.opt.d && !_args.exclude_dryrun) {
-      console.log(color.dim.bold.cyan(`${figures.circleDotted}  DRY-RUN exec => (`), color.bold.cyan(message_cdm), color.dim.bold.cyan(`)`));
+      console.log(color.dim.bold.cyan(`${figures.circleDotted}  [DRY-RUN] exec => (`), color.bold.cyan(message_cdm), color.dim.bold.cyan(`)`));
     } else {
       console.log(color.dim.bold.cyan(`${figures.circleFilled}  exec => (`), color.bold.cyan(message_cdm), color.dim.bold.cyan(`)`));
     }
