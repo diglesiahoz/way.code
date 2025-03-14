@@ -209,7 +209,7 @@ way.lib.decode = function (_args) {
                             if (/\{\}\.env\..*/.test(oReference)) {
                               
                             } else {
-                              if (way.proc.name !== "get") {
+                              if (way.proc.name != "core.get" && way.proc.name != "get") {
                                 if (typeof odata == 'string') {
                                   console.log('==========');
                                   console.log(odata);
@@ -307,7 +307,7 @@ way.lib.decode = function (_args) {
                         
                       } else {
                         if (!way.opt.d) {
-                          if (way.proc.name !== "get") {
+                          if (way.proc.name != "core.get" && way.proc.name != "get") {
                             if (!/^\(\[.*\]\)$/.test(oReference)) {
                               way.lib.exit(`Referencia "${oReference}" no definida.`);
                             }

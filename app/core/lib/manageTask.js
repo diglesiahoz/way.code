@@ -949,7 +949,7 @@ way.lib.manageTask = async function (argTask) {
                         //});
                         var tocheck = Array.from(new Set(task.call.match(/(\(\(){1}\w*(\)\)){1}/g)));
                         if (tocheck.length > 0) {
-                          if (way.proc.name != "get") {
+                          if (way.proc.name != "core.get" && way.proc.name != "get") {
                             way.lib.exit(`Referencias de bucle no reemplazadas`)
                           }
                           /*
@@ -972,7 +972,7 @@ way.lib.manageTask = async function (argTask) {
                             if (!way.task.exclude) {
                               var ma = []
                               ma = task.call.match(/\(\(.*\)\)/g);
-                              if (way.proc.name != "get") {
+                              if (way.proc.name != "core.get" && way.proc.name != "get") {
                                 if (way.lib.check(ma)) {
                                   var haserors = false;
                                   for (var m = 0; m < ma.length; m++) {
