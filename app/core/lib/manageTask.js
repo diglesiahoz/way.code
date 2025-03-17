@@ -338,6 +338,7 @@ way.lib.manageTask = async function (argTask) {
                                 //console.log(5, hookCallNameKey, `@${confKeyName}`)
                                 hookCall = `${confKey}.hook.event["${hookProcKey}"]["${hookCallNameKey}"]`;
                                 var hookTasks = eval(hookCall);
+                                hookTasks = await way.lib.decode({ data: hookTasks, from: to_check_config_name });
                                 way.lib.log({
                                   message: `Launch "${hookCallNameKey}" event from configuration profile "${confKeyName}"`,
                                   type: "verbose"
