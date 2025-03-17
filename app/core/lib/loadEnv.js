@@ -10,7 +10,6 @@ way.lib.loadEnv = async function (_args){
 
         var envThis = await way.lib.decode({ data: way.env._this }).catch((o) => { return {} });
         const env = jsonToEnv(envThis, {});
-        //console.log(env)
 
         var env_array = [];
         env.split(/\n/).forEach(env_var => {
@@ -20,6 +19,7 @@ way.lib.loadEnv = async function (_args){
             env_var = env_var.replace(a[0], a[0].replace(/-/g,'_'));
           }
           if (a[1] !== "undefined" && a.length <= 2) {
+            env_var = `${a[0]}="${a[1]}"`;
             env_array.push(`${env_var}`);
           }
         });
@@ -35,7 +35,7 @@ way.lib.loadEnv = async function (_args){
         }
 
         way.var.loadEnv = env_array;
-        //console.log(way.var.loadEnv)
+        //console.log(way.var.loadEnv); way.lib.exit()
 
         return resolve({
           args: Object.assign({}, _args),
