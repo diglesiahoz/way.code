@@ -537,10 +537,13 @@ process.setMaxListeners(0);
           });
         } else {
           if (!Object.keys(way.config.core.opt).includes(opt_name)) {
-            way.lib.exit(`Unsupported "${opt_name}" option`);
+            if (app_args.length == 0) {
+              way.lib.exit(`Unsupported "${opt_name}" option`);
+            }
+          } else {
+            way.opt[opt_name] = true;
+            way.optSig += `${opt_name}`;
           }
-          way.opt[opt_name] = true;
-          way.optSig += `${opt_name}`;
         }
 
       }
