@@ -469,6 +469,7 @@ process.setMaxListeners(0);
 
     var tmp_values = [];
     var app_args = [];
+    var found_proc_name = false;
     process.argv.slice(2).forEach( argv => {
 
       //console.log();console.log(`ARGV: ${argv}`)
@@ -481,7 +482,7 @@ process.setMaxListeners(0);
       // COMPLEX OPTION
       else if (/^--[a-z.]*/g.test(argv)) {
         var opt_name = argv.replace(/^--/,"");
-        //console.log(`COMPLEX OPTION! ${opt_name} ${app_args.length}`)
+        //console.log(`COMPLEX OPTION! ${opt_name} ${app_args.length} ${found_proc_name}`)
         if (app_args.length > 0) {
           way.args._ = (way.lib.check(way.args._)) ? `${way.args._} ${argv}` : `${argv}` ;
         }
@@ -521,8 +522,8 @@ process.setMaxListeners(0);
       // SIMPLE OPTION
       else if (/^-[a-z.]*/g.test(argv)) {
         var opt_name = argv.replace(/^-/,"");
-        //console.log(`SIMPLE OPTION! ${opt_name} ${app_args.length}`)
-        if (app_args.length > 0) {
+        //console.log(`SIMPLE OPTION! ${opt_name} ${app_args.length} ${found_proc_name}`)
+        if (found_proc_name) {
           way.args._ = (way.lib.check(way.args._)) ? `${way.args._} ${argv}` : `${argv}` ;
         }
         if (opt_name.split('').length > 1) {
@@ -537,7 +538,7 @@ process.setMaxListeners(0);
           });
         } else {
           if (!Object.keys(way.config.core.opt).includes(opt_name)) {
-            if (app_args.length == 0) {
+            if (!found_proc_name) {
               way.lib.exit(`Unsupported "${opt_name}" option`);
             }
           } else {
@@ -545,11 +546,13 @@ process.setMaxListeners(0);
             way.optSig += `${opt_name}`;
           }
         }
-
       }
       // ARG
       else {
         var proc_name_without_app = Array.from(way.proc.name.split('.')).slice(1).join('.');
+        if (way.proc.name == argv || `${proc_name_without_app}` == argv) {
+          found_proc_name = true;
+        }
         if (way.proc.name != argv && `${proc_name_without_app}` != argv && !tmp_values.includes(argv)) {
           app_args.push(argv);
           way.args._ = (way.lib.check(way.args._)) ? `${way.args._} ${argv}` : `${argv}` ;

@@ -12,11 +12,6 @@ way.lib.setArgsAndOpt = function (_args) {
 
           //console.log(way.args)
           //console.log(way.opt)
-          try {
-            way.args = Object.assign(way.args, eval(`way.env._this.hook.args["${way.proc.name}"]`));
-          } catch (e) {}
-          //console.log(way.args)
-          //way.lib.exit()
 
           
           // REQUIRE - OPT
@@ -248,7 +243,7 @@ way.lib.setArgsAndOpt = function (_args) {
                 }
 
 
-                delete way.args[`arg${counter}`];
+                // delete way.args[`arg${counter}`];
                 way.args[`${arg}`] = ma['value'];
 
 
@@ -327,6 +322,13 @@ way.lib.setArgsAndOpt = function (_args) {
           // console.log('------')
 
         }
+
+        
+        try {
+          way.args = Object.assign(way.args, eval(`way.env._this.hook.args["${way.proc.name}"]`));
+        } catch (e) {}
+        //console.log(way.args)
+        //way.lib.exit()
 
         //console.log(way.args)
         //way.lib.exit()
