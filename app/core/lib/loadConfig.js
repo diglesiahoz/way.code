@@ -288,15 +288,18 @@ way.lib.loadConfig = function (_args) {
             }
             
 
-            //console.log(loaded[c_key])
+            //console.log(c_key, loaded[c_key])
 
-            
             loaded[c_key] = await way.lib.decode({
               data: loaded[c_key],
               throwException: [ "simple" ],
               from: from
             });
-            eval(`way.config${treeSignature} = ${JSON.stringify(loaded[c_key])}`);
+            // Remplaza HOME
+            var loaded_stringify = JSON.stringify(loaded[c_key]).replaceAll(/:"~\//gi, `:"${process.env.HOME}/`);
+            // Establece configuración
+            eval(`way.config${treeSignature} = ${loaded_stringify}`);
+
 
 
             
