@@ -11,6 +11,8 @@ way.lib.loadEnv = async function (_args){
         var envThis = await way.lib.decode({ data: way.env._this }).catch((o) => { return {} });
         const env = jsonToEnv(envThis, {});
 
+        //console.log(env);way.lib.exit()
+
         var env_array = [];
         env.split(/\n/).forEach(env_var => {
           if (env_var === "") return;
