@@ -313,14 +313,6 @@ interface:
         required: false
         type: Boolean
         defaultValue:
-      nohup:
-        required: false
-        type: Boolean
-        defaultValue: false
-      watch:
-        required: false
-        type: Boolean
-        defaultValue: false
       cd:        
         required: false
         type: String
@@ -337,15 +329,11 @@ interface:
         required: false
         type: Boolean
         defaultValue: true
-      pem: # Ruta absoluta a fichero .pem
+      pem:
         required: false
         type: String
         defaultValue: ""
-      ping: # Determina si es necesario ejecutar "ping" antes de lanzar comando
-        required: false
-        type: Boolean
-        defaultValue: true
-      message: # Determina si es necesario ejecutar "ping" antes de lanzar comando
+      message:
         required: false
         type: String
         defaultValue: ""
