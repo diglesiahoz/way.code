@@ -146,6 +146,56 @@ way.lib.exec = async function (_args) {
         });
       }
 
+      //console.log(_args.out)
+
+      var stdio = (_args.out) ? [ "inherit", "inherit", "inherit" ] : [ "inherit", "pipe", "pipe" ];
+      //console.log(stdio)
+
+      try { 
+        var data = require('child_process').execSync(_args.cmd, { 
+          stdio: stdio, 
+          encoding: 'utf-8' 
+        });
+        //console.log(data);
+
+        
+        if (_args.cast) {
+          data = way.lib.cast({ data: data });
+        }
+
+        if (_args.pipe != "") {
+          way.lib.var({
+            key: _args.pipe,
+            value: data
+          });
+        }
+        
+        var resolve_data = {
+          code: 0,
+          buffer: data
+        };
+        //console.log(resolve_data)
+        resolve(resolve_data);
+      } catch (e) {
+        reject(e);
+      }
+
+
+      /* 
+      
+      ////
+      ////
+      //// BACKUP
+      ////
+      ////
+
+      if (way.opt.d && !_args.exclude_dryrun) {
+        return resolve({
+          code: 0,
+          buffer: ""
+        });
+      }
+
       if (!execPing) {
         way.lib.log({
           message: `Prueba a establecer "ping: false"`,
@@ -253,6 +303,7 @@ way.lib.exec = async function (_args) {
           process.on('SIGTERM', process.exit);
         }
       }
+      */
     }, _args.sleep);       
   });
 }

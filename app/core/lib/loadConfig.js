@@ -101,7 +101,6 @@ way.lib.loadConfig = function (_args) {
                       way.reference.configFrom[`${oConfigName}`].required.push(required);
                     }
                   } catch (e) {}
-                  //console.log(1, way.reference.configFrom[`${oConfigName}`].configname)
                   var data = await way.lib.decode({
                     data: way.reference.configFrom[`${oConfigName}`].configname,
                     excludeKeys: [ "[\"task\"]" ]
@@ -288,7 +287,7 @@ way.lib.loadConfig = function (_args) {
             }
             
 
-            //console.log(c_key, loaded[c_key])
+            
 
             loaded[c_key] = await way.lib.decode({
               data: loaded[c_key],
@@ -296,8 +295,11 @@ way.lib.loadConfig = function (_args) {
               from: from
             });
             // Remplaza HOME
+            // var loaded_stringify = JSON.stringify(loaded[c_key]).replaceAll(/_pwd":"~\//gi, `_pwd":"${process.env.HOME}/`);
             var loaded_stringify = JSON.stringify(loaded[c_key]).replaceAll(/:"~\//gi, `:"${process.env.HOME}/`);
+            // console.log(c_key, loaded[c_key], loaded_stringify)
             // Establece configuración
+            loaded[c_key] = JSON.parse(loaded_stringify);
             eval(`way.config${treeSignature} = ${loaded_stringify}`);
 
 
