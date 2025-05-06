@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   app:
     container_name: ${COMPOSE_PROJECT_NAME}-app
@@ -20,7 +18,7 @@ services:
         APPSETTING_SERVICE_IMAGE: ubuntu:24.04
     working_dir: ${WAY_CODE_APP_ROOT}
     volumes:
-      #- /usr/bin/docker:/usr/bin/docker:ro
+      - /usr/bin/docker:/usr/bin/docker:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - 
         consistency: cached

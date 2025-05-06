@@ -592,8 +592,16 @@ process.setMaxListeners(0);
       way.opt.v = true;
     }
 
+    var arr = way.args['_'].split(' ');
+    way.optAll = [];
+    if (arr !== null && arr.length > 0) {
+      way.optAll = arr.filter(e => {
+        return e.match(/^-/);
+      });
+    }
+    way.optAll = way.optAll.join(' ');
 
-    //console.log(); console.log(`minimist_args`, minimist_args); console.log(`way.optSig`, way.optSig); console.log(`way.opt`, way.opt); console.log(`way.args`, way.args); console.log(); 
+    //console.log(); console.log(`minimist_args`, minimist_args); console.log(`way.optSig`, way.optSig); console.log(`way.optAll`, way.optAll); console.log(`way.opt`, way.opt); console.log(`way.args`, way.args); console.log(); 
     //way.lib.exit()
 
 
