@@ -112,9 +112,13 @@ way.lib.exec = async function (_args) {
           buffer: data
         };
         resolve(resolve_data);
-
       } catch (e) {
-        reject(e);
+        var resolve_data = {
+          code: e.status,
+          buffer: e
+        };
+        resolve(resolve_data);
+        //reject(e);
       }
 
     }, _args.sleep);       
