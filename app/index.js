@@ -483,9 +483,9 @@ process.setMaxListeners(0);
       else if (/^--[a-z.]*/g.test(argv)) {
         var opt_name = argv.replace(/^--/,"");
         //console.log(`COMPLEX OPTION! ${opt_name} ${app_args.length} ${found_proc_name}`)
-        if (app_args.length > 0) {
+        //if (app_args.length > 0) {
           way.args._ = (way.lib.check(way.args._)) ? `${way.args._} ${argv}` : `${argv}` ;
-        }
+        //}
         try {
           if (way.lib.check(way.config.core.opt[opt_name])) {
             opt_source = `way.config.core.opt`;
@@ -600,6 +600,8 @@ process.setMaxListeners(0);
       });
     }
     way.optAll = way.optAll.join(' ');
+    //console.log(way.optAll)
+    //way.lib.exit()
 
     //console.log(); console.log(`minimist_args`, minimist_args); console.log(`way.optSig`, way.optSig); console.log(`way.optAll`, way.optAll); console.log(`way.opt`, way.opt); console.log(`way.args`, way.args); console.log(); 
     //way.lib.exit()

@@ -16,7 +16,7 @@ way.lib.getAlias = function (_args) {
         } else {
           // NOMBRES DE PROCEDIMIENTOS SIMILARES...
           similars = Object.keys(way.map.config).filter(element => {
-            if (new RegExp(`\.${_args.data}$`,"g").test(element) && !new RegExp(`^@`,"g").test(element)) {
+            if (new RegExp(`\\.${_args.data}$`,"g").test(element) && !new RegExp(`^@`,"g").test(element)) {
               return element;
             }
           });
