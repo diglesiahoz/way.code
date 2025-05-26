@@ -9,6 +9,9 @@ ARG APPSETTING_GID
 ARG APPSETTING_USER
 ARG APPSETTING_DOCKER_GROUP_ID
 
+# user
+USER root
+
 # env:
 ENV DEBIAN_FRONTEND="noninteractive" TZ="Europe/Madrid"
 
@@ -41,9 +44,9 @@ ADD ../templates/bashrc /home/$APPSETTING_USER/.bashrc
 ADD ../templates/bashrc.root /root/.bashrc
 
 # docker:
-RUN groupadd -g $APPSETTING_DOCKER_GROUP_ID docker
-RUN usermod -aG docker $APPSETTING_USER
-RUN apt install -y docker-compose-v2
+RUN curl -sSL https://get.docker.com/ | sh
+RUN groupmod -g $APPSETTING_DOCKER_GROUP_ID docker
+RUN gpasswd -a $APPSETTING_USER docker
 
 # mkcert:
 # RUN wget https://github.com/FiloSottile/mkcert/releases/download/v1.4.3/mkcert-v1.4.3-linux-amd64
@@ -63,5 +66,3 @@ STOPSIGNAL SIGQUIT
 COPY ../entrypoint/docker-entrypoint.app.sh /docker-entrypoint.app.sh
 RUN chmod +x /docker-entrypoint.app.sh
 ENTRYPOINT [ "/docker-entrypoint.app.sh" ]
-
-USER $APPSETTING_USER

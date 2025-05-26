@@ -96,7 +96,7 @@ way.lib.log = function (_args) {
           process.stdout.write(`${color.gray(`${_args.message}...`)}`);
         } else {
           if (way.lib.check(_args.label)) {
-            process.stdout.write(`${color.gray(`${_args.message}...`)}`)
+            process.stdout.write(`${color.gray(`${_args.message}...`)}`);
           } else {
             process.stdout.write(`...`)
           }

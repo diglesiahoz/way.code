@@ -18,7 +18,11 @@ services:
         APPSETTING_SERVICE_IMAGE: ubuntu:24.04
     working_dir: ${WAY_CODE_APP_ROOT}
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - 
+        consistency: cached
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        type: bind
       - 
         consistency: cached
         source: /home/${APPSETTING_USER}/.ssh
