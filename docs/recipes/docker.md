@@ -34,7 +34,7 @@ sudo rm $HOME/.docker/config.json
 groupdel docker
 ```
 
-# Install docker
+# Install Docker
 ```
 sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose -y && \
 sudo systemctl start docker && \
