@@ -8,6 +8,10 @@ way.lib.exec = async function (_args) {
   if ( (way.opt.v || way.log.level > 0) && _args.out == null) {
     _args.out = true;
   }
+
+  if (_args.pipe != '') {
+    _args.out = false;
+  }
   
   if (_args.message != "") {
     way.lib.log({
@@ -103,7 +107,7 @@ way.lib.exec = async function (_args) {
         if (_args.pipe != "") {
           way.lib.var({
             key: _args.pipe,
-            value: data
+            value: data.trim()
           });
         }
         

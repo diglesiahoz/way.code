@@ -134,248 +134,258 @@ way.lib.decode = function (_args) {
             var refkey = refobj[0];
             var refsetting = refobj[1];
 
-            if (way.lib.check(refsetting)) {
-              refsetting = refsetting.replace(/\[/g,"[\"").replace(/\]/g,"\"]");
-              if (!/^\./.test(refsetting) && !/^\[/.test(refsetting)) {
-                refsetting = `.${refsetting}`
-              }
+            // EXCLUYE REFERENCIAS DE MAPA CUANDO EJECUTAMOS core.get
+            var skip = false;
+            if (/^\(\({[a-z].*\}/.test(oReference) && refkey != '{conf}' && way.proc.name == 'core.get') {
+              skip = true;
             }
-            //console.log(reference, refobj, refkey, refsetting)
-            //console.log(datafromfile, refobj, refobj.length, `"${refkey}"`, `"${refsetting}"`, condicionalReference);
 
-            if (/^[0-9]*$/.test(reference) && /^[0-9]*$/.test(refkey)) {
-              way.lib.log({ message: `Salta referencia (${reference})` });
-            } else {
-              var refaccess = null;
-              var matchtype = false;
+            if (!skip) {
 
-              // simple
-                if (refkey != "{}" && /^[a-zA-Z0-9_\-\.\[\]]*$/.test(reference)) {
-                  reftype = 'simple';
-                  refsetting = reference;
-                  if (!/^\./.test(refsetting) && !/^\[/.test(refsetting)) {
-                    refsetting = `.${refsetting}`
-                  }
-                  try {
-                    if (datafromfile) {
-                      refaccess_key = odata;
-                    } else {
-                      if (way.lib.check(_args.from)) {
-                        refaccess_key = _args.from;
-                      } else {
-                        refaccess_key = way.args[0];
-                      }
-                    }
-                    //console.log(eval(`way.config.${refaccess_key}`))
-                    if (way.lib.check(_args.gData)) {
-                      var reference = await way.lib.parseConfigKey({
-                        key:`${reference}`,
-                        force: true
-                      });
-                      refaccess = `_args.gData${reference}`;
-                    } else {
-                      refaccess = `way.config.${refaccess_key}${refsetting}`;
-                    }
-                    //console.log(refaccess)
-                    matchtype = true;
-                  } catch (e) {
-                    way.lib.exit(e.stack)
-                  }
+              if (way.lib.check(refsetting)) {
+                refsetting = refsetting.replace(/\[/g,"[\"").replace(/\]/g,"\"]");
+                if (!/^\./.test(refsetting) && !/^\[/.test(refsetting)) {
+                  refsetting = `.${refsetting}`
                 }
-              // global
-                if (refkey == "{}" && refsetting != "" && refobj.length >= 2) {
-                  if (way.tmp.manageTask) {
-                    reftype = 'global';
-                    refobj.shift();
-                    if (/^[\w\.\-]*$/.test(refobj.join("."))) {
-                      refsetting = refsetting.substring(1);
-                      refsetting = await way.lib.parseConfigKey({
-                        key: refsetting,
-                        force: true
-                      });
-                      refaccess = `way${refsetting}`;
+              }
+              //console.log(reference, refobj, refkey, refsetting)
+              //console.log(datafromfile, refobj, refobj.length, `"${refkey}"`, `"${refsetting}"`, condicionalReference);
+
+              if (/^[0-9]*$/.test(reference) && /^[0-9]*$/.test(refkey)) {
+                way.lib.log({ message: `Salta referencia (${reference})` });
+              } else {
+                var refaccess = null;
+                var matchtype = false;
+
+                // simple
+                  if (refkey != "{}" && /^[a-zA-Z0-9_\-\.\[\]]*$/.test(reference)) {
+                    reftype = 'simple';
+                    refsetting = reference;
+                    if (!/^\./.test(refsetting) && !/^\[/.test(refsetting)) {
+                      refsetting = `.${refsetting}`
+                    }
+                    try {
+                      if (datafromfile) {
+                        refaccess_key = odata;
+                      } else {
+                        if (way.lib.check(_args.from)) {
+                          refaccess_key = _args.from;
+                        } else {
+                          refaccess_key = way.args[0];
+                        }
+                      }
+                      //console.log(eval(`way.config.${refaccess_key}`))
+                      if (way.lib.check(_args.gData)) {
+                        var reference = await way.lib.parseConfigKey({
+                          key:`${reference}`,
+                          force: true
+                        });
+                        refaccess = `_args.gData${reference}`;
+                      } else {
+                        refaccess = `way.config.${refaccess_key}${refsetting}`;
+                      }
+                      //console.log(refaccess)
+                      matchtype = true;
+                    } catch (e) {
+                      way.lib.exit(e.stack)
+                    }
+                  }
+                // global
+                  if (refkey == "{}" && refsetting != "" && refobj.length >= 2) {
+                    if (way.tmp.manageTask) {
+                      reftype = 'global';
+                      refobj.shift();
+                      if (/^[\w\.\-]*$/.test(refobj.join("."))) {
+                        refsetting = refsetting.substring(1);
+                        refsetting = await way.lib.parseConfigKey({
+                          key: refsetting,
+                          force: true
+                        });
+                        refaccess = `way${refsetting}`;
+                        try {
+                          way.lib.log({ message: `Check: ${refaccess}.constructor.name` });
+                          var refglobaltype = eval(`${refaccess}.constructor.name`);
+                          switch (refglobaltype) {
+                            case 'Function':
+                            case 'AsyncFunction':
+                              way.lib.exit(`Referencia "${reftype}:${refglobaltype}" a no soportada "${oReference}"`);
+                            break;
+                          }
+                        } catch (e) {
+                          if (!way.opt.d && !way.task.exclude) {
+                            if (_args.throwException.includes(reftype)/* && !condicionalReference*/) {
+                              if (/\{\}\.env\..*/.test(oReference)) {
+                                
+                              } else {
+                                if (way.proc.name != "core.get" && way.proc.name != "get") {
+                                  if (typeof odata == 'string') {
+                                    console.log('==========');
+                                    console.log(odata);
+                                    console.log('==========');
+                                    way.lib.exit(`Referencia "${reftype}" no implementada: "${oReference}"`);
+                                  } else {
+                                    if (refaccess != "way.out.buffer") {
+                                      if (!way.opt.d)
+                                        way.lib.exit(`Referencia "${reftype}" no implementada: "${oReference}"`);
+                                    }
+                                  }
+                                } else {
+                                  matchtype = true;
+                                }
+                              }
+                            }
+                          }
+                        }
+                        matchtype = true;
+                      }
+                    } else {
+                      matchtype = true;
+                    }
+                  }
+                // map
+                  if (refkey != "{}" && /^\{\w*\}$/.test(refkey) && refsetting != "") {
+                    reftype = 'map';
+                    refkey = refkey.replace(/^\{/,"").replace(/\}$/,"");
+                    if (way.envBatch.status) {
+                      var refSignature = way.reference.config[refkey][way.envBatch.num];
+                    } else {
+                      var refSignature = way.reference.config[refkey];
+                    }
+                    if (!way.lib.check(refsetting)) {
+                      if (way.lib.check(way.env[`${refkey}`])) {
+                        refaccess = `way.config.${refSignature}`;
+                      }
+                      matchtype = true;
+                    } else {
+                      if (way.lib.check(way.env[`${refkey}`])) {
+                        refaccess = `way.config.${refSignature}${refsetting}`;
+                      }
+                      matchtype = true;
+                    }
+                  }
+                
+                if (!matchtype) {
+                  way.lib.exit(`Referencia "${oReference}" no soportada. (Fallo en sintaxis)`);
+                }
+                
+                //console.log('*************',refaccess,'*************')
+                //console.log(eval(refaccess))
+
+                //way.lib.log({message:`(${reftype}): ${refaccess} --${refvalue}--`, type:"label"});
+                try {
+                  
+                  refaccess = await way.lib.parseConfigKey({
+                    key: refaccess
+                  });
+                  //console.log('refaccess',refaccess)
+
+                  var refvalue = eval(refaccess);
+
+                  /*
+                  if (condicionalReference && !way.lib.check(refvalue)) {
+                    throw 'condicionalReference undefined';
+                  }
+                  */
+                } catch(e) {
+                  /*
+                  if (condicionalReference) {
+                    if (`-${refconditionalvalue}-` == `--`) {
+                      var refobjjoin = refobj.join(".");
+                      var re = new RegExp(`${refobj[0]}\.${refobj[1]}`, "g");
+                      var toCheck = refobjjoin.replace(re,"");
                       try {
-                        way.lib.log({ message: `Check: ${refaccess}.constructor.name` });
-                        var refglobaltype = eval(`${refaccess}.constructor.name`);
-                        switch (refglobaltype) {
-                          case 'Function':
-                          case 'AsyncFunction':
-                            way.lib.exit(`Referencia "${reftype}:${refglobaltype}" a no soportada "${oReference}"`);
-                          break;
+                        var libsetting = eval(`way.config.lib.${refobj[0]}.config.lib.${refobj[0]}.${refobj[1]}.args`);
+                        for (k of way.lib.getTree(libsetting)) {
+                          if (k.replace(/^\.(opt|req)/,"") == toCheck) {
+                            var refvalue = eval(`libsetting${k}`)
+                          }
                         }
                       } catch (e) {
-                        if (!way.opt.d && !way.task.exclude) {
-                          if (_args.throwException.includes(reftype)/* && !condicionalReference*/) {
-                            if (/\{\}\.env\..*/.test(oReference)) {
-                              
-                            } else {
-                              if (way.proc.name != "core.get" && way.proc.name != "get") {
-                                if (typeof odata == 'string') {
-                                  console.log('==========');
-                                  console.log(odata);
-                                  console.log('==========');
-                                  way.lib.exit(`Referencia "${reftype}" no implementada: "${oReference}"`);
-                                } else {
-                                  if (refaccess != "way.out.buffer") {
-                                    if (!way.opt.d)
-                                      way.lib.exit(`Referencia "${reftype}" no implementada: "${oReference}"`);
-                                  }
-                                }
-                              } else {
-                                matchtype = true;
+                        //way.lib.exit(e)
+                      }
+                    } else {
+                      var refvalue = refconditionalvalue
+                    }
+                  } else {
+                  */
+                    if (!way.lib.check(refvalue) && !way.lib.isObjEmpty(opt) && way.lib.check(_args.throwException)) {
+                      if (_args.throwException.includes(reftype)) {
+                        //console.log(odata)
+                        if (/\{\}\.env\..*/.test(oReference)) {
+                          
+                        } else {
+                          if (!way.opt.d) {
+                            if (way.proc.name != "core.get" && way.proc.name != "get") {
+                              if (!/^\(\[.*\]\)$/.test(oReference)) {
+                                way.lib.exit(`Referencia "${oReference}" no definida.`);
                               }
                             }
                           }
                         }
                       }
-                      matchtype = true;
                     }
-                  } else {
-                    matchtype = true;
+                  /*
                   }
+                  */
                 }
-              // map
-                if (refkey != "{}" && /^\{\w*\}$/.test(refkey) && refsetting != "") {
-                  reftype = 'map';
-                  refkey = refkey.replace(/^\{/,"").replace(/\}$/,"");
-                  if (way.envBatch.status) {
-                    var refSignature = way.reference.config[refkey][way.envBatch.num];
-                  } else {
-                    var refSignature = way.reference.config[refkey];
-                  }
-                  if (!way.lib.check(refsetting)) {
-                    if (way.lib.check(way.env[`${refkey}`])) {
-                      refaccess = `way.config.${refSignature}`;
-                    }
-                    matchtype = true;
-                  } else {
-                    if (way.lib.check(way.env[`${refkey}`])) {
-                      refaccess = `way.config.${refSignature}${refsetting}`;
-                    }
-                    matchtype = true;
-                  }
-                }
-              
-              if (!matchtype) {
-                way.lib.exit(`Referencia "${oReference}" no soportada. (Fallo en sintaxis)`);
-              }
-              
-              //console.log('*************',refaccess,'*************')
-              //console.log(eval(refaccess))
-
-              //way.lib.log({message:`(${reftype}): ${refaccess} --${refvalue}--`, type:"label"});
-              try {
-                
-                refaccess = await way.lib.parseConfigKey({
-                  key: refaccess
-                });
-                //console.log('refaccess',refaccess)
-
-                var refvalue = eval(refaccess);
 
                 /*
-                if (condicionalReference && !way.lib.check(refvalue)) {
-                  throw 'condicionalReference undefined';
-                }
-                */
-              } catch(e) {
-                /*
-                if (condicionalReference) {
-                  if (`-${refconditionalvalue}-` == `--`) {
-                    var refobjjoin = refobj.join(".");
-                    var re = new RegExp(`${refobj[0]}\.${refobj[1]}`, "g");
-                    var toCheck = refobjjoin.replace(re,"");
-                    try {
-                      var libsetting = eval(`way.config.lib.${refobj[0]}.config.lib.${refobj[0]}.${refobj[1]}.args`);
-                      for (k of way.lib.getTree(libsetting)) {
-                        if (k.replace(/^\.(opt|req)/,"") == toCheck) {
-                          var refvalue = eval(`libsetting${k}`)
-                        }
-                      }
-                    } catch (e) {
-                      //way.lib.exit(e)
-                    }
-                  } else {
-                    var refvalue = refconditionalvalue
-                  }
-                } else {
-                */
-                  if (!way.lib.check(refvalue) && !way.lib.isObjEmpty(opt) && way.lib.check(_args.throwException)) {
-                    if (_args.throwException.includes(reftype)) {
-                      //console.log(odata)
-                      if (/\{\}\.env\..*/.test(oReference)) {
-                        
-                      } else {
-                        if (!way.opt.d) {
-                          if (way.proc.name != "core.get" && way.proc.name != "get") {
-                            if (!/^\(\[.*\]\)$/.test(oReference)) {
-                              way.lib.exit(`Referencia "${oReference}" no definida.`);
-                            }
-                          }
-                        }
-                      }
+                if (!way.lib.check(refvalue) && condicionalReference) {
+                  if (/^\\".*\\"$/.test(refconditionalvalue)) {
+                    if (refconditionalvalue == '\\"\\"') {
+                      refconditionalvalue = undefined
+                    } else {
+                      refconditionalvalue = refconditionalvalue.replace(/^\\"/,"").replace(/\\"$/,"")
                     }
                   }
-                /*
-                }
-                */
-              }
-
-              /*
-              if (!way.lib.check(refvalue) && condicionalReference) {
-                if (/^\\".*\\"$/.test(refconditionalvalue)) {
-                  if (refconditionalvalue == '\\"\\"') {
-                    refconditionalvalue = undefined
-                  } else {
-                    refconditionalvalue = refconditionalvalue.replace(/^\\"/,"").replace(/\\"$/,"")
-                  }
-                }
-                var refvalue = refconditionalvalue;
-                if (/\(\([\{\}\.a-zA-Z0-9_\?\s\\"\(\)]*\)\)/g.test(refvalue)) {
-                  if (_args.showWarn) {
-                    way.lib.log({
-                      message: `Recursivo: ${oReference}`,
-                      type: "log"
+                  var refvalue = refconditionalvalue;
+                  if (/\(\([\{\}\.a-zA-Z0-9_\?\s\\"\(\)]*\)\)/g.test(refvalue)) {
+                    if (_args.showWarn) {
+                      way.lib.log({
+                        message: `Recursivo: ${oReference}`,
+                        type: "log"
+                      });
+                    }
+                    refvalue = await way.lib.decode({
+                      data: refvalue
                     });
                   }
-                  refvalue = await way.lib.decode({
-                    data: refvalue
-                  });
                 }
-              }
-              */
+                */
 
-              if (!way.lib.check(refvalue) && !way.lib.isObjEmpty(opt) && way.lib.check(_args.throwException)) {
-                if (_args.throwException.includes(reftype)) {
-                  if (typeof refvalue == "undefined" && !way.opt.d && !way.task.exclude) { 
+                if (!way.lib.check(refvalue) && !way.lib.isObjEmpty(opt) && way.lib.check(_args.throwException)) {
+                  if (_args.throwException.includes(reftype)) {
+                    if (typeof refvalue == "undefined" && !way.opt.d && !way.task.exclude) { 
 
-                    if (!way.task.loop) {
-                      if (!/^\(\[.*\]\)$/.test(oReference)) {
-                        way.lib.exit(`Referencia "${reftype}" sin valor: "${oReference}"`);
+                      if (!way.task.loop) {
+                        if (!/^\(\[.*\]\)$/.test(oReference)) {
+                          way.lib.exit(`Referencia "${reftype}" sin valor: "${oReference}"`);
+                        }
+                      }
+                      
+                    }
+                    if (refvalue == null) {}
+                  }
+                }
+
+                if (typeof refvalue !== "undefined" && refvalue != null) {
+                  subreferences = refvalue.toString().match(refpattern);
+                  if (way.lib.check(subreferences)) {
+                    for (var sub = 0; sub < subreferences.length; sub++) {
+                      var subplaceholdervalue = way.reference.replace[subreferences[sub]];
+                      if (way.lib.check(subplaceholdervalue)) {
+                        refvalue = refvalue.replace(subreferences[sub], subplaceholdervalue)
                       }
                     }
-                    
                   }
-                  if (refvalue == null) {}
+                  way.reference.map[reference] = refvalue;
+                  way.reference.replace[oReference] = refvalue;
+                  try {
+                    //way.lib.log({ message: `Reference (${reftype}, ${typeof refvalue}):\n\t- ${reference} === ${refaccess}\n\t- ${JSON.stringify(refvalue)}` });
+                  } catch (e) {}
                 }
               }
 
-              if (typeof refvalue !== "undefined" && refvalue != null) {
-                subreferences = refvalue.toString().match(refpattern);
-                if (way.lib.check(subreferences)) {
-                  for (var sub = 0; sub < subreferences.length; sub++) {
-                    var subplaceholdervalue = way.reference.replace[subreferences[sub]];
-                    if (way.lib.check(subplaceholdervalue)) {
-                      refvalue = refvalue.replace(subreferences[sub], subplaceholdervalue)
-                    }
-                  }
-                }
-                way.reference.map[reference] = refvalue;
-                way.reference.replace[oReference] = refvalue;
-                try {
-                  //way.lib.log({ message: `Reference (${reftype}, ${typeof refvalue}):\n\t- ${reference} === ${refaccess}\n\t- ${JSON.stringify(refvalue)}` });
-                } catch (e) {}
-              }
             }
           }
           // Actualiza configuración
