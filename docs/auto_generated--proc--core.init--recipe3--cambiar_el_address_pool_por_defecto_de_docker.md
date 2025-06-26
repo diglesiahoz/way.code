@@ -15,7 +15,7 @@ echo '{
   ]
 }' | sudo tee /etc/docker/daemon.json > /dev/null
 ```
-2. Re-inicia servicio docker
+3. Re-inicia servicio docker
 ```
 sudo systemctl restart docker
 ```
