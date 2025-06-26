@@ -44,5 +44,6 @@ way
 ## Recetas
 
 * [Instalar aplicación desde repositorio](docs/auto_generated--proc--core.init--recipe1--instalar_aplicaci_n_desde_repositorio.md)
-* [Cambiar el address pool por defecto de Docker](docs/auto_generated--proc--core.init--recipe2--cambiar_el_address_pool_por_defecto_de_docker.md)
+* [Re-instalar Docker](docs/auto_generated--proc--core.init--recipe2--re_instalar_docker.md)
+* [Cambiar el address pool por defecto de Docker](docs/auto_generated--proc--core.init--recipe3--cambiar_el_address_pool_por_defecto_de_docker.md)
 * [Instalar nueva aplicación](docs/auto_generated--proc--core.make.app--recipe1--instalar_nueva_aplicaci_n.md)

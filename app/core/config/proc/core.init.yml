@@ -15,8 +15,42 @@
 # 4. Ejecuta ```way core.init -v```
 # :RECIPE
 
+# RECIPE:Re-instalar Docker:
+# 1. Si instalaste Docker con Snap...
+# ```
+# sudo snap disable docker && \
+# sudo snap remove --purge docker
+# ```
+# 2. Re-instalar Docker
+# ```
+# sudo systemctl stop docker && \
+# sudo systemctl disable docker && \
+# sudo systemctl disable docker.socket && \
+# sudo apt remove --purge docker-ce docker-ce-cli containerd.io docker-compose -y && \
+# sudo apt autoremove -y && \
+# sudo apt autoclean && \
+# sudo rm -rf /etc/docker && \
+# sudo rm -rf /usr/local/bin/docker
+# 
+# sudo apt remove docker-desktop 2>/dev/null && \
+# sudo rm -r $HOME/.docker/desktop && \
+# sudo rm /usr/local/bin/com.docker.cli && \
+# sudo apt purge docker-desktop && \
+# sudo rm $HOME/.docker/config.json
+# 
+# sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose -y && \
+# sudo systemctl start docker && \
+# sudo systemctl enable docker && \
+# sudo systemctl enable docker.socket
+# ```
+# :RECIPE
+
 # RECIPE:Cambiar el address pool por defecto de Docker:
-# 1. Establece fichero /etc/docker/daemon.json
+# 1. Crea backup de /etc/docker/daemon.json
+# ```
+# sudo cp /etc/docker/daemon.json /etc/docker/daemon.json.backup 2>/dev/null
+# ```
+# 2. Establece fichero /etc/docker/daemon.json
 # ```
 # echo '{
 #   "default-address-pools": [

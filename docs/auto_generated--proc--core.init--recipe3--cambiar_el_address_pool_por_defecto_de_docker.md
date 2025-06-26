@@ -1,6 +1,10 @@
 ### Cambiar el address pool por defecto de Docker
 
-1. Establece fichero /etc/docker/daemon.json
+1. Crea backup de /etc/docker/daemon.json
+```
+sudo cp /etc/docker/daemon.json /etc/docker/daemon.json.backup 2>/dev/null
+```
+2. Establece fichero /etc/docker/daemon.json
 ```
 echo '{
   "default-address-pools": [
