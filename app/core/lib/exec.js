@@ -105,9 +105,12 @@ way.lib.exec = async function (_args) {
         }
 
         if (_args.pipe != "") {
+          if (typeof data == 'string') {
+            data = data.trim();
+          }
           way.lib.var({
             key: _args.pipe,
-            value: data.trim()
+            value: data
           });
         }
         

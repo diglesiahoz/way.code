@@ -5,7 +5,7 @@ TAG = way_code
 DOCKER_GROUP_ID = $(shell getent group docker | cut -d: -f3)
 
 up:
-	cd ./env && export COMPOSE_PROJECT_NAME=$(TAG); export APPSETTING_UID=$(UID); export APPSETTING_GID=$(GID); export APPSETTING_USER=$(USERNAME); export APPSETTING_DOCKER_GROUP_ID=$(DOCKER_GROUP_ID); docker-compose up -d --build && echo && docker ps --filter name=^/$(TAG)-app
+	cd ./env && export COMPOSE_PROJECT_NAME=$(TAG); export APPSETTING_UID=$(UID); export APPSETTING_GID=$(GID); export APPSETTING_USER=$(USERNAME); export APPSETTING_DOCKER_GROUP_ID=$(DOCKER_GROUP_ID); docker compose up -d --build && echo && docker ps --filter name=^/$(TAG)-app
 down:
 	cd ./env && export COMPOSE_PROJECT_NAME=$(TAG); export APPSETTING_UID=$(UID); export APPSETTING_GID=$(GID); export APPSETTING_USER=$(USERNAME); export APPSETTING_DOCKER_GROUP_ID=$(DOCKER_GROUP_ID); docker compose down && docker ps --filter name=^/$(TAG)-app
 bash:
