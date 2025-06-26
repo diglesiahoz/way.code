@@ -1,4 +1,4 @@
-### Cambiar el address pool por defecto de Docker
+### Cambiar el grupo de direcciones predeterminado de Docker
 
 1. Crea backup de /etc/docker/daemon.json
 ```
