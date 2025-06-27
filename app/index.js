@@ -1508,7 +1508,6 @@ process.setMaxListeners(0);
 
     // Muestra tiempo de ejecución
     if (way.proc.name != "core.help" && way.proc.name != "core.get" && !way.opt.o) {
-      console.log(way.proc.name)
       var executionTime = way.lib.getPerformanceTask().toFixed(2);
       way.lib.log({ message:`${executionTime} sec. (${(executionTime / 60).toFixed(2)} min.)`, type: 'label'});
     }
