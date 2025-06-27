@@ -510,6 +510,17 @@ interface:
         required: false
         type: Boolean
         defaultValue: false
+  getFlatObject:
+    collection: false
+    args:
+      data:
+        required: false
+        type:
+        defaultValue: {}
+      prefix:
+        required: false
+        type: String
+        defaultValue: ''
   getRandomString:
     collection: false
     args:

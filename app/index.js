@@ -1398,6 +1398,31 @@ process.setMaxListeners(0);
     }
 
 
+  // Pinta salida de core.get
+    if (way.proc.name == "core.get") {
+      if (typeof way.tmp.out !== "undefined" && way.tmp.out.length > 0 && way.opt.o) {
+        process.stdout.write(JSON.stringify(way.tmp.out))
+      } else {
+        if (way.tmp.out.length > 0) {
+          //way.lib.log({ message: way.tmp.out, type: 'console' });
+          if (typeof way.tmp.out[0] !== 'undefined') {
+            if (typeof way.tmp.out[0] === 'string') {
+              var out = `\x1b[38;5;178m${way.tmp.out[0]}\x1b[0m`;
+            } else {
+              var out = await way.lib.getFlatObject({ data: way.tmp.out[0] }).join('\n');
+            }
+            console.log(out)
+          }
+          // // Pinta colores disponibles
+          // for (let i = 0; i <= 200; i++) {
+          //   console.log(`\x1b[38;5;${i}mColor ${i}\x1b[0m`);
+          // }
+        }
+      }
+    }
+
+
+  // INFO  
     if (!way.opt.d && way.opt.l) {
       const { networkInterfaces } = require('os');
       const nets = networkInterfaces();
@@ -1470,20 +1495,6 @@ process.setMaxListeners(0);
     }
 
 
-
-  // Pinta salida de core.get
-  if (way.proc.name == "core.get") {
-    if (typeof way.tmp.out !== "undefined" && way.tmp.out.length > 0 && way.opt.o) {
-      process.stdout.write(JSON.stringify(way.tmp.out))
-    } else {
-      if (way.tmp.out.length > 0) {
-        //console.log(way.tmp.out);
-        way.lib.log({ message: way.tmp.out, type: 'console' });
-      }
-    }
-  }
-
-
   // Elimina ficheros temporales creados en tiempo de ejecución
     await require("glob").sync(`/tmp/way-${way.pid}*`, {
       dot: false,
@@ -1496,7 +1507,8 @@ process.setMaxListeners(0);
     });
 
     // Muestra tiempo de ejecución
-    if (way.proc.name != "core.help" && !way.opt.o) {
+    if (way.proc.name != "core.help" && way.proc.name != "core.get" && !way.opt.o) {
+      console.log(way.proc.name)
       var executionTime = way.lib.getPerformanceTask().toFixed(2);
       way.lib.log({ message:`${executionTime} sec. (${(executionTime / 60).toFixed(2)} min.)`, type: 'label'});
     }
