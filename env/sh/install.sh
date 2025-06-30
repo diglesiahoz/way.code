@@ -26,7 +26,7 @@ alias \${WAY_CODE_APP_NAME}.dir="cd \${WAY_CODE_APP_ROOT}"
 alias \${WAY_CODE_APP_NAME}.code="cd $(dirname \${WAY_CODE_APP_ROOT})"
 alias \${WAY_CODE_APP_NAME}.poweroff="cd $(dirname \${WAY_CODE_APP_ROOT}) && make down && cd - > /dev/null"
 alias \${WAY_CODE_APP_NAME}.poweron="cd $(dirname \${WAY_CODE_APP_ROOT}) && make up && cd - > /dev/null"
-alias \${WAY_CODE_APP_NAME}.restart="cd $(dirname \${WAY_CODE_APP_ROOT}) && make down && make up && cd - > /dev/null"
+alias \${WAY_CODE_APP_NAME}.up="cd $(dirname \${WAY_CODE_APP_ROOT}) && make down && make up && cd - > /dev/null"
 # Manage end: way_code-app
 
 EOF
