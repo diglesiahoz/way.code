@@ -33,12 +33,12 @@ RUN apt install -y make
 
 # user:
 RUN deluser --remove-home ubuntu
-RUN addgroup $APPSETTING_USER
-RUN useradd -m -u $APPSETTING_UID -g $APPSETTING_GID -s /bin/bash -d /home/$APPSETTING_USER $APPSETTING_USER
-RUN usermod -aG www-data $APPSETTING_USER
-RUN usermod -aG sudo $APPSETTING_USER
-RUN echo "" >> /etc/sudoers
-RUN echo "${APPSETTING_USER} ALL=NOPASSWD: ALL" >> /etc/sudoers
+RUN addgroup --gid ${APPSETTING_GID} ${APPSETTING_USER} \
+ && useradd -m -u ${APPSETTING_UID} -g ${APPSETTING_GID} -s /bin/bash -d /home/${APPSETTING_USER} ${APPSETTING_USER} \
+ && usermod -aG www-data $APPSETTING_USER \
+ && usermod -aG sudo $APPSETTING_USER \
+ && echo "" >> /etc/sudoers \
+ && echo "${APPSETTING_USER} ALL=NOPASSWD: ALL" >> /etc/sudoers
 ADD ../templates/bashrc /home/$APPSETTING_USER/.bashrc
 
 # user root:
