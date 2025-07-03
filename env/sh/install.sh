@@ -1,8 +1,8 @@
 #!/bin/bash
 
-ROOT=$(cd "$(dirname -- "$1")" >/dev/null; pwd -P)/$(basename -- "$1")
+ROOT="$(dirname $(dirname $(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)))"
 
-cp $ROOT"env/example.env" $ROOT"env/.env"
+cp $ROOT/env/example.env $ROOT/env/.env
 
 OUT=$(cat ~/.bashrc | awk '/# Manage from: way_code-app/,/# Manage end: way_code-app/ { next } 1')
 echo "$OUT" > ~/.bashrc
@@ -11,7 +11,7 @@ cat >> ~/.bashrc<< EOF
 
 # Manage from: way_code-app
 export WAY_CODE_APP_NAME=way;
-export WAY_CODE_APP_ROOT=/home/\$USER/project/apps/way.code/app
+export WAY_CODE_APP_ROOT=$ROOT/app
 alias \${WAY_CODE_APP_NAME}='function '\$WAY_CODE_APP_NAME'(){ 
   CMD="docker exec -it -u \$USER way_code-app /bin/bash -c \"export PWD=\$(pwd) && /usr/bin/node \${WAY_CODE_APP_ROOT} \$(echo \$* | xargs)\""
   if [ "\$(echo \$* | xargs -n1 | grep -E "^-[a-z]*(v|r|s){1}")" != "" ] && [ "\$(echo \$* | xargs -n1 | grep -E "^-[a-z]*(o){1}")" = "" ]
