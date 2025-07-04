@@ -9,7 +9,7 @@
 
 ## Requisitos
 
-* Entorno Linux
+* Linux
 * Docker
 * Docker Compose
 
