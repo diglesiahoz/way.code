@@ -23,10 +23,10 @@ alias \${WAY_CODE_APP_NAME}='function '\$WAY_CODE_APP_NAME'(){
 }; \$WAY_CODE_APP_NAME';
 [ -f \${WAY_CODE_APP_ROOT}/complete.sh ] && source \${WAY_CODE_APP_ROOT}/complete.sh
 alias \${WAY_CODE_APP_NAME}.dir="cd \${WAY_CODE_APP_ROOT}"
-alias \${WAY_CODE_APP_NAME}.code="cd $(dirname \${WAY_CODE_APP_ROOT})"
-alias \${WAY_CODE_APP_NAME}.poweroff="cd $(dirname \${WAY_CODE_APP_ROOT}) && make down && cd - > /dev/null"
-alias \${WAY_CODE_APP_NAME}.poweron="cd $(dirname \${WAY_CODE_APP_ROOT}) && make up && cd - > /dev/null"
-alias \${WAY_CODE_APP_NAME}.up="cd $(dirname \${WAY_CODE_APP_ROOT}) && make down && make up && cd - > /dev/null"
+alias \${WAY_CODE_APP_NAME}.code="cd \$(dirname \${WAY_CODE_APP_ROOT})"
+alias \${WAY_CODE_APP_NAME}.poweroff="cd \$(dirname \${WAY_CODE_APP_ROOT}) && make down && cd - > /dev/null"
+alias \${WAY_CODE_APP_NAME}.poweron="cd \$(dirname \${WAY_CODE_APP_ROOT}) && make up && cd - > /dev/null"
+alias \${WAY_CODE_APP_NAME}.up="cd \$(dirname \$WAY_CODE_APP_ROOT) && make down && make up && cd - > /dev/null"
 # Manage end: way_code-app
 
 EOF
