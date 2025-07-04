@@ -20,7 +20,7 @@ git clone https://github.com/diglesiahoz/way.code.git && \
 cd way.code && \
 make install
 ```
-2. Modifica el valor de la variable ```APPSETTING_PROJECTS_PATH``` en ```./env/.env```
+2. Modifica el valor de la variable ```APPSETTING_PROJECTS_PATH``` en ```env/.env```
 3. Levanta entorno (ctrl + x cuando muestre mensaje "Keep alive")
 ```console
 source ~/.bashrc && \
