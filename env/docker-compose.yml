@@ -13,8 +13,8 @@ services:
       args:
         APPSETTING_UID: ${APPSETTING_UID}
         APPSETTING_GID: ${APPSETTING_GID}
-        APPSETTING_USER: ${APPSETTING_USER}
-        APPSETTING_DOCKER_GROUP_ID: ${APPSETTING_DOCKER_GROUP_ID}
+        APPSETTING_USERNAME: ${APPSETTING_USERNAME}
+        APPSETTING_DOCKER_GID: ${APPSETTING_DOCKER_GID}
         APPSETTING_SERVICE_IMAGE: ubuntu:24.04
     working_dir: ${WAY_CODE_APP_ROOT}
     volumes:
@@ -25,8 +25,8 @@ services:
         type: bind
       - 
         consistency: cached
-        source: /home/${APPSETTING_USER}/.ssh
-        target: /home/${APPSETTING_USER}/.ssh
+        source: /home/${APPSETTING_USERNAME}/.ssh
+        target: /home/${APPSETTING_USERNAME}/.ssh
         type: bind
       - 
         consistency: cached
