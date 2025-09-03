@@ -344,7 +344,15 @@ interface:
       default_options:
         required: false
         type: String
-        defaultValue: ""
+        defaultValue: "-tt"
+      rsync_origin_file:        
+        required: false
+        type: String
+        defaultValue: ''
+      rsync_target_file:        
+        required: false
+        type: String
+        defaultValue: ''
   fetch:
     collection: false
     args:
