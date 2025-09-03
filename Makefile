@@ -15,4 +15,4 @@ logs:
 ps:
 	cd ./env && docker ps --filter name=^/$(TAG)-app
 install:
-	$(shell ./env/sh/install.sh)
+	bash -c "./env/sh/install.sh && . ~/.bashrc"

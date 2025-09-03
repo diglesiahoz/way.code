@@ -52,7 +52,11 @@ way.lib.exec = async function (_args) {
 
   if (way.lib.check(_args.user) && way.lib.check(_args.host)) {
     if (way.lib.check(_args.pass)) {
-      _args.cmd = `sshpass -p '${_args.pass}' ssh ${_args.user}@${_args.host} ${_args.default_options} '${settings}${_args.cmd}'`;
+      if (_args.rsync_origin_file != '' && _args.rsync_target_file != '') {
+        _args.cmd = `sshpass -p '${_args.pass}' rsync -avz -e "ssh -o StrictHostKeyChecking=no" "${_args.user}@${_args.host}:${_args.rsync_origin_file}" "${_args.rsync_target_file}"`
+      } else {
+        _args.cmd = `sshpass -p '${_args.pass}' ssh ${_args.user}@${_args.host} ${_args.default_options} '${settings}${_args.cmd}'`;
+      }
     } else {
       _args.cmd = `ssh -o LogLevel=QUIET ${_args.default_options} ${_args.pem} ${_args.user}@${_args.host} '${settings}${_args.cmd}'`;
     }
