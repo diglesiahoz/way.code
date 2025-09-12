@@ -32,6 +32,9 @@ process.setMaxListeners(0);
 
   way = {
     pkg: {},
+    process: {
+      env: process.env
+    },
     //argv: {},
     envBatch: false,
     batch: {},
