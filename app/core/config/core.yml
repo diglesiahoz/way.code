@@ -60,12 +60,34 @@ opt:
     help: Muestra información
 
 envconfig:
-  \.local$: bgGreenBright.black.bold
-  \.ddev$: bgGreenBright.black.bold
-  \.dev$: bgCyanBright.black.bold
-  \.pre$: bgCyanBright.black.bold
-  \.stage$: bgCyanBright.black.bold
-  \.prod$: bgRedBright.black.bold
+  \.local$: 
+    bold: true
+    text_color: 0
+    bg_color: 82
+  \.ddev$:
+    bold: true
+    text_color: 0
+    bg_color: 82
+  \.test$:
+    bold: true
+    text_color: 0
+    bg_color: 82
+  \.dev$:
+    bold: true
+    text_color: 0
+    bg_color: 214
+  \.pre$:
+    bold: true
+    text_color: 0
+    bg_color: 208
+  \.stage$:
+    bold: true
+    text_color: 0
+    bg_color: 214
+  \.prod$:
+    bold: true
+    text_color: 0
+    bg_color: 9
 
 interface:
   makeApp:
@@ -848,6 +870,29 @@ interface:
         required: false
         type: Boolean
         defaultValue: false
+  trace:
+    collection: true
+    args:
+      data:
+        required: true
+        type: 
+        defaultValue: 
+      text_color:
+        required: false
+        type: Number
+        defaultValue:
+      bg_color:
+        required: false
+        type: Number
+        defaultValue:
+      bold:
+        required: false
+        type: Boolean
+        defaultValue: false
+      out:
+        required: false
+        type: Boolean
+        defaultValue: true
   unique:
     collection: false
     args:
