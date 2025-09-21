@@ -22,8 +22,8 @@ way.lib.exit = function (data) {
     if (typeof e === "undefined") {
       if (typeof way.opt !== "undefined") {
         if (way.log.level > 0) {
-          console.log(color.dim.white(figures.circleDouble + ' Trace:'))
-          for (t of way.lib.trace()) {
+          console.log(color.dim.white(figures.circleDouble + ' StackTrace:'))
+          for (t of way.lib.captureStackTrace()) {
             console.log(' ', color.dim.white(`- ${t}`))
           }
         }

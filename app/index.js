@@ -479,7 +479,6 @@ process.setMaxListeners(0);
 
       // PROFILE
       if (/^\@[a-z.]*/g.test(argv)) {
-        //console.log(`PROFILE!`)
         way.args['@'].push(argv.replace(/^\@/,""));
       }
       // COMPLEX OPTION
@@ -572,6 +571,7 @@ process.setMaxListeners(0);
     }
 
     //console.log(); console.log(`minimist_args`, minimist_args); console.log(`way.optSig`, way.optSig); console.log(`way.opt`, way.opt); console.log(`way.args`, way.args); console.log(); 
+    //console.log(`way args:`, way.args)
     //way.lib.exit()
 
 
@@ -607,7 +607,6 @@ process.setMaxListeners(0);
     //way.lib.exit()
 
     //console.log(); console.log(`minimist_args`, minimist_args); console.log(`way.optSig`, way.optSig); console.log(`way.optAll`, way.optAll); console.log(`way.opt`, way.opt); console.log(`way.args`, way.args); console.log(); 
-    //way.lib.exit()
 
 
 
@@ -718,7 +717,6 @@ process.setMaxListeners(0);
 
       var taskRequire = way.proc.code.task.require;
 
-
       // REQUIRE - CONFIG
       if (way.lib.check(taskRequire.config)) {
         noConfig = false;
@@ -728,6 +726,7 @@ process.setMaxListeners(0);
           way.batch = {};
           var filteredKeys = [];
           //console.log(taskRequire.config.length)
+          
           way.reference.scope = {}
           for (var i = nconf; i < taskRequire.config.length; i++) {
             var configSignature = taskRequire.config[nconf];
@@ -742,11 +741,20 @@ process.setMaxListeners(0);
               var configReference = rc[0];
             }
 
-            //console.log('--------------',configReference,'--------------')
-            //console.log(way.args['@'])
+            // console.log('--------------',configReference,'--------------')
+            // console.log(way.args['@'])
+            // console.log(nconf)
+            // console.log(way.args['@'].length)
+
+            if (way.proc.name == 'core.get' && way.args['@'].length == 1 && way.args['@'][0] == '') {
+              way.args['@'][0] = '\*'
+            }
+            
 
             var scope = "";
             if (way.lib.check(way.args['@'][nconf])) {
+
+              //way.lib.exit(1)
 
               var configKey = `@${way.args['@'][nconf]}`;
                 
@@ -806,6 +814,8 @@ process.setMaxListeners(0);
                 }
               }
             } else {
+
+              //way.lib.exit(2)
 
               if (way.lib.check(configPwd)) {
                 way.reference.config[configReference] = configPwd;
@@ -869,6 +879,9 @@ process.setMaxListeners(0);
                   if (!filteredKeys.length) {
                     way.lib.exit(`Configuración del tipo "${configType}" no disponible`)
                   }
+                  console.log(configReference);
+                  console.log(filteredKeys);
+                  way.lib.exit()
                   var choices = [];
                   var choice = await way.lib.complete({
                     choices: filteredKeys,
@@ -1083,7 +1096,7 @@ process.setMaxListeners(0);
       
       for (ref in way.reference.config) {
 
-        //console.log(ref)
+        //console.log(way.reference)
 
         if (way.reference.config[ref].constructor.name == "Array") { // AMBITO DE EJECUCIÓN POR LOTES
 
@@ -1115,6 +1128,7 @@ process.setMaxListeners(0);
 
             if (way.lib.checkCache(cache_name)) {
               // SI EN CACHÉ
+              //console.log(cache_name)
               Object.assign(way, way.lib.getCache(cache_name));
             } else {
 
@@ -1129,6 +1143,7 @@ process.setMaxListeners(0);
               }).catch((o) => {
                 return {};
               });
+              //console.log(configValue)
 
 
 
@@ -1234,23 +1249,14 @@ process.setMaxListeners(0);
               await way.lib.setArgsAndOpt({ argv: Object.assign({}, way.opt, way.args) });
               //console.log(way.args); console.log(way.opt);
               //way.lib.exit()
-              
+
+              //console.log(way.env)
+              //console.log('AQUI');way.lib.exit();
 
               for (var i = 0; i < doTask.length; i++) {
                 var manageTask = doTask[i];
                 //console.log('2 - MANAGE TASK', manageTask);
-                
-                if (way.proc.name == "get") {
-                  if (way.lib.check(way.config.core.envconfig)) {
-                    var envconfig = Object.keys(way.config.core.envconfig);
-                    for (ec of envconfig) {
-                      if (new RegExp(ec,"g").test(way.envBatch.now)) {
-                        eval(`console.log(color.${way.config.core.envconfig[ec]}(' ${way.envBatch.now} '))`)
-                        //way.lib.exit()
-                      }
-                    }
-                  }
-                }
+                //way.lib.exit()
 
                 await way.lib.manageTask(manageTask);
 
@@ -1365,17 +1371,6 @@ process.setMaxListeners(0);
 
           var manageTask = doTask[i];
 
-          if (way.proc.name == "get") {
-            if (way.lib.check(way.config.core.envconfig)) {
-              var envconfig = Object.keys(way.config.core.envconfig);
-              for (ec of envconfig) {
-                if (new RecgExp(ec,"g").test(way.env.conf._name)) {
-                  eval(`console.log(color.${way.config.core.envconfig[ec]}(' ${way.env.conf._name} '))`)
-                }
-              }
-            }
-          }
-
           way.task.exclude = false;
           var o = await way.lib.manageTask(manageTask);
           if (typeof o !== "undefined") {
@@ -1401,28 +1396,69 @@ process.setMaxListeners(0);
     }
 
 
+
+    
   // Pinta salida de core.get
     if (way.proc.name == "core.get") {
-      if (typeof way.tmp.out !== "undefined" && way.tmp.out.length > 0 && way.opt.o) {
-        process.stdout.write(JSON.stringify(way.tmp.out))
+
+      var hash_signature = `${way.lib.getHash(`${JSON.stringify(way.args)}${JSON.stringify(way.opt)}`)}`;
+      var cache_name = `${way.proc.name}.${hash_signature}--${way.lib.getHash(stat.mtime.toString())}`;
+
+      if (way.lib.checkCache(cache_name)) {
+        // SI EN CACHÉ
+        console.log(way.lib.getCache(cache_name));
       } else {
-        if (way.tmp.out.length > 0) {
-          //way.lib.log({ message: way.tmp.out, type: 'console' });
-          if (typeof way.tmp.out[0] !== 'undefined') {
-            if (typeof way.tmp.out[0] === 'string') {
-              var out = `\x1b[38;5;178m${way.tmp.out[0]}\x1b[0m`;
-            } else {
-              var out = await way.lib.getFlatObject({ data: way.tmp.out[0] }).join('\n');
+        // NO EN CACHÉ
+        var out = ""
+        if (typeof way.tmp.out !== "undefined" && way.tmp.out.length > 0 && way.opt.o) {
+          var out = JSON.stringify(way.tmp.out);
+          process.stdout.write(out);
+        } else {
+          if (way.tmp.out.length > 0) {
+            var out_key = ""
+            var out_data = ""
+            var counter = 1;
+            for (data of way.tmp.out) {
+              var config_name = Object.keys(data)[0];
+              if (counter == 1) {
+                out += "\n";
+              }
+              //if (way.tmp.out.length > 1) {
+                if (way.lib.check(way.config.core.envconfig)) {
+                  var envconfig = Object.keys(way.config.core.envconfig);
+                  for (ec of envconfig) {
+                    if (new RegExp(ec,"g").test(config_name)) {
+                      let env_config = way.config.core.envconfig[ec];
+                      out_key = way.lib.trace([
+                        { data: ` ${config_name} `, text_color: env_config.text_color, bg_color: env_config.bg_color, bold: env_config.bold, out: false },
+                      ]);
+                    }
+                  }
+                }
+                out_key += "\n";
+              //}
+              out_data = await way.lib.getFlatObject({ data: data[config_name] }).join('\n');
+              if (counter < way.tmp.out.length) {
+                out_data += "\n\n";
+              } else {
+                out_data += "\n";
+              }
+              if (!/^[\w\s.,;:¡!¿?()"'“”‘’\-–—\n\r]*$/u.test(out_data)) {
+                out += `${out_key}${out_data}`;
+              } else {
+                out += ""
+              }
+              counter++;
             }
             console.log(out)
           }
-          // // Pinta colores disponibles
-          // for (let i = 0; i <= 200; i++) {
-          //   console.log(`\x1b[38;5;${i}mColor ${i}\x1b[0m`);
-          // }
         }
+        // Establece caché
+        way.lib.setCache(cache_name, out);
       }
     }
+
+
 
 
   // INFO  
