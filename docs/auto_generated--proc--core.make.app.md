@@ -10,6 +10,7 @@ task:
   require:
     args:
       name:
+        required: true
         type: String
         default:
   do:

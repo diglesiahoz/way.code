@@ -24,7 +24,7 @@ way.lib.exit = function (data) {
         if (way.log.level > 0) {
           console.log(color.dim.white(figures.circleDouble + ' StackTrace:'))
           for (t of way.lib.captureStackTrace()) {
-            console.log(' ', color.dim.white(`- ${t}`))
+            console.log(color.dim.white(`  - ${t}`))
           }
         }
       }

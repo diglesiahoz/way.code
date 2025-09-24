@@ -19,11 +19,12 @@ way.lib.trace = function (_args) {
     }
 
     bold = (element.bold == true) ? `1;` : "" ;
+    dim = (element.dim == true) ? `2;` : "" ;
     text_color = (element.text_color != null) ? `38;5;${element.text_color}` : "" ;
     bg_color = (element.bg_color != null) ? `;48;5;${element.bg_color}` : "" ;
     
-    output += `\x1b[${bold}${text_color}${bg_color}m${element.data}\x1b[0m`;
-    
+    output += `\x1b[${bold}${dim}${text_color}${bg_color}m${element.data}\x1b[0m`;
+
     element_counter++;
   });
 

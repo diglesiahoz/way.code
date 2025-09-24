@@ -3,7 +3,6 @@ example:
 - (({}.tmp.proc.sig))
 - (({}.tmp.proc.sig)) @*.local
 
-
 # Propiedad que establece el uso del procedimiento de forma interna. No permitido uso mediante CLI.
 allowed: false
 
@@ -12,20 +11,8 @@ task:
     config: 
       - conf
   do:
-    - 
-      check:
-        data:
-          -
-            key: (({conf}._scope))
-            is: decoded
-        true:
-          -
-            call: getConfigFromCLI
-            args:
-              config: (({conf}._scope))
-        false:
-          -
-            call: getConfigFromCLI
-            args:
-              config: (({conf}))
+    -
+      call: getConfigFromCLI
+      args:
+        config: (({conf}))
 

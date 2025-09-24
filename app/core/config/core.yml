@@ -60,34 +60,52 @@ opt:
     help: Muestra información
 
 envconfig:
-  \.local$: 
-    bold: true
-    text_color: 0
-    bg_color: 82
-  \.ddev$:
-    bold: true
-    text_color: 0
-    bg_color: 82
-  \.test$:
-    bold: true
-    text_color: 0
-    bg_color: 82
-  \.dev$:
-    bold: true
-    text_color: 0
-    bg_color: 214
-  \.pre$:
-    bold: true
-    text_color: 0
-    bg_color: 208
-  \.stage$:
-    bold: true
-    text_color: 0
-    bg_color: 214
-  \.prod$:
-    bold: true
-    text_color: 0
-    bg_color: 9
+  keys:
+    \.local$: 
+      config_name_bold: true
+      config_name_color: 34
+      config_name_bg_color:
+      setting_key_color: 28
+      setting_value_color: 28
+    \.ddev$:
+      config_name_bold: true
+      config_name_color: 34
+      config_name_bg_color:
+      setting_key_color: 28
+      setting_value_color: 28
+    \.test$:
+      config_name_bold: true
+      config_name_color: 34
+      config_name_bg_color:
+      setting_key_color: 28
+      setting_value_color: 28
+    \.pre$:
+      config_name_bold: true
+      config_name_color: 172
+      config_name_bg_color:
+      setting_key_color: 130
+      setting_value_color: 130
+    \.dev$:
+      config_name_bold: true
+      config_name_color: 172
+      config_name_bg_color:
+      setting_key_color: 130
+      setting_value_color: 130
+    \.stage$:
+      config_name_bold: true
+      config_name_color: 172
+      config_name_bg_color:
+      setting_key_color: 130
+      setting_value_color: 130
+    \.prod$:
+      config_name_bold: true
+      config_name_color: 160
+      config_name_bg_color:
+      setting_key_color: 9
+      setting_value_color: 9
+  output:
+    key: 60
+    value: 61
 
 interface:
   makeApp:
@@ -473,6 +491,16 @@ interface:
         required: false
         type: Boolean
         defaultValue: true
+  getConfigAsTree:
+    args:
+      key:
+        required: true
+        type:
+        defaultValue:
+      filter_setting:
+        required: false
+        type: String
+        defaultValue: ""
   getConfigFromCLI:
     collection: false
     args:
@@ -480,10 +508,6 @@ interface:
         required: true
         type:
         defaultValue:
-      q:
-        required: false
-        type: String
-        defaultValue: ""
   getDate:
     collection: false
     args:
@@ -540,17 +564,6 @@ interface:
         required: false
         type: Boolean
         defaultValue: false
-  getFlatObject:
-    collection: false
-    args:
-      data:
-        required: false
-        type:
-        defaultValue: {}
-      prefix:
-        required: false
-        type: String
-        defaultValue: ''
   getRandomString:
     collection: false
     args:
@@ -886,6 +899,10 @@ interface:
         type: Number
         defaultValue:
       bold:
+        required: false
+        type: Boolean
+        defaultValue: false
+      dim:
         required: false
         type: Boolean
         defaultValue: false

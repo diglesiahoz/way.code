@@ -1,4 +1,5 @@
 const { resolve } = require('dns');
+const { config } = require('process');
 
 process.setMaxListeners(0);
 
@@ -610,12 +611,20 @@ process.setMaxListeners(0);
 
 
 
+    // Muy importante...
+    if (way.proc.name == 'core.get' && way.args['@'].length == 1 && way.args['@'][0] == '') {
+      way.args['@'][0] = '\*'
+    }
 
-
-
-  
-
-
+    // Obtiene resultados de core.get si está en caché
+    if (way.proc.name == "core.get") {
+      var hash_signature = `${way.lib.getHash(`${JSON.stringify(way.args)}${JSON.stringify(way.opt)}`)}`;
+      var cache_name = `${way.proc.name}.${hash_signature}`;
+      if (way.lib.checkCache(cache_name)) {
+        console.log(way.lib.getCache(cache_name));
+        process.exit()
+      }
+    }
 
 
 
@@ -725,7 +734,6 @@ process.setMaxListeners(0);
           choices = [];
           way.batch = {};
           var filteredKeys = [];
-          //console.log(taskRequire.config.length)
           
           way.reference.scope = {}
           for (var i = nconf; i < taskRequire.config.length; i++) {
@@ -741,20 +749,17 @@ process.setMaxListeners(0);
               var configReference = rc[0];
             }
 
-            // console.log('--------------',configReference,'--------------')
-            // console.log(way.args['@'])
-            // console.log(nconf)
-            // console.log(way.args['@'].length)
+            //console.log('--------------',configReference,'--------------')
+            //console.log(way.args['@'])
+            //console.log(nconf)
+            //console.log(way.args['@'].length)
 
             if (way.proc.name == 'core.get' && way.args['@'].length == 1 && way.args['@'][0] == '') {
               way.args['@'][0] = '\*'
             }
             
-
             var scope = "";
             if (way.lib.check(way.args['@'][nconf])) {
-
-              //way.lib.exit(1)
 
               var configKey = `@${way.args['@'][nconf]}`;
                 
@@ -767,6 +772,7 @@ process.setMaxListeners(0);
               }
 
               if (/\*/.test(configKey)) {
+
                 if (taskRequire.config.length != 1) {
                   way.lib.exit(`Procedimiento "${way.proc.name}" no soporta ambito de ejecución por lotes (Solo permitido si requiere una sola configuración)`);
                 }
@@ -785,6 +791,8 @@ process.setMaxListeners(0);
                   way.lib.exit(`No disponible configuración que cumpla patrón "${configKey.replace("*",".*")}"`)
                 }
               } else {
+
+                //way.lib.exit(4)
 
                 //console.log(way.map.configKey)
                 //console.log(configKey)
@@ -879,9 +887,6 @@ process.setMaxListeners(0);
                   if (!filteredKeys.length) {
                     way.lib.exit(`Configuración del tipo "${configType}" no disponible`)
                   }
-                  console.log(configReference);
-                  console.log(filteredKeys);
-                  way.lib.exit()
                   var choices = [];
                   var choice = await way.lib.complete({
                     choices: filteredKeys,
@@ -903,17 +908,14 @@ process.setMaxListeners(0);
               }
             }
 
-            //console.log(way.reference.config); console.log(configReference); way.lib.exit()
-
             if (way.lib.check(scope)) {
               way.reference.scope[configReference] = scope;
             }
 
+            //console.log(way.reference.config); console.log(way.reference.scope); console.log(configReference); console.log(scope); way.lib.exit()
+
             nconf++;
           }
-
-          //console.log(way.reference.config)
-          //way.lib.exit()
 
           if (choices.length > 0) {
             way.args['@'] = choices;
@@ -929,22 +931,11 @@ process.setMaxListeners(0);
         //}
       }      
 
-
     } catch (e) {}
 
     if (noConfig && way.args['@'].length > 0) {
       way.lib.exit(`Procedimiento "${way.proc.name}" no requiere configuración`);
     }
-
-    
-
-
-
-    
-    //way.lib.log({ message: argv, type: 'pretty' })
-    //way.lib.log({ message: way.args, type: 'pretty' })
-    //way.lib.log({ message: way.opt, type: 'pretty' })
-    //way.lib.exit()
 
 
 
@@ -997,20 +988,9 @@ process.setMaxListeners(0);
       way.lib.exit(`Procedimiento "${way.proc.name}" no implementa \"applyWith\" con valor "${noApplyFound}"`)
     }
 
-
     var doTask = [];
     var numTaskToExecute = 0;
     for (d of doTasks) {
-      /*
-      if (!way.lib.check(d.call)) {
-        way.lib.exit(`Procedimiento "${way.proc.name}" no implementa llamada (call) desde tarea "${numTaskToExecute}"`)
-      }
-      */
-      //console.log()
-      //console.log(doTask)
-      //console.log(way.lib.check(doTask.applyWith))
-      
-
       /*
         *****************
         IMPORTANTE: 
@@ -1027,9 +1007,7 @@ process.setMaxListeners(0);
         num++;
       }
       */
-
       doTask.push(d);
-
       numTaskToExecute++;
     }
     
@@ -1079,14 +1057,12 @@ process.setMaxListeners(0);
 
     if (JSON.stringify(way.reference.config) == "{}") {
 
-
       if (way.proc.name == 'core.make.app') {
         way.tmp.proc = {};
         way.tmp.proc.sig = `${way.app_name_root} ${way.args.arg1}.test`;
       }
 
       await way.lib.setArgsAndOpt({ argv: Object.assign({}, way.opt, way.args) });
-      //console.log(way.args); console.log(way.opt);
 
       for (var i = 0; i < doTask.length; i++) {
         var manageTask = doTask[i];
@@ -1096,30 +1072,13 @@ process.setMaxListeners(0);
       
       for (ref in way.reference.config) {
 
-        //console.log(way.reference)
-
-        if (way.reference.config[ref].constructor.name == "Array") { // AMBITO DE EJECUCIÓN POR LOTES
+        // AMBITO DE EJECUCIÓN POR LOTES
+        if (way.reference.config[ref].constructor.name == "Array") { 
 
           way.envBatch.num = 0;
 
           for (envBatch of way.reference.config[ref]) { 
             way.envBatch.now = envBatch;
-            
-            //if (way.proc.name != "core.get") {
-            //  console.log(`· ${color.bold(`${way.envBatch.now}`)}`);
-            //}
-            if (!way.opt.o) {
-              //console.log(`${color.bold(`${way.envBatch.now}`)}`);
-            }
-
-            
-            /*
-            way.lib.log({
-              message: `${color.red(way.envBatch.now)}`,
-              type: 'pretty'
-            })
-            */
-
 
             var stat = fs.statSync(`${way.map.config[ envBatch ]}`);
             var cache_name = `env.${way.proc.name}.${ref}.${envBatch}.${way.lib.getHash(`env.${JSON.stringify(way.args)}`)}--${way.lib.getHash(stat.mtime.toString())}`;
@@ -1135,17 +1094,12 @@ process.setMaxListeners(0);
               // Evita fallo en herencia
               way.env._this = {}
 
-              
-
               var configValue = await way.lib.loadConfig({
                 key: [envBatch],
                 force: true
               }).catch((o) => {
                 return {};
               });
-              //console.log(configValue)
-
-
 
               way.env[ref] = configValue;
               way.lib.log({
@@ -1154,82 +1108,21 @@ process.setMaxListeners(0);
                 type: "log"
               });
               // ESTABLECE VARIBLES DINÁMICAS (NAME,SCOPE)
-                if (way.env[ref] != null) {
-                  var configRefKey = await way.lib.parseConfigKey({
-                    key:`${way.envBatch.now}`,
-                    force: true
-                  });
-
-
-                  /*
-
-                  //
-                  // Implementado desde loadConfig
-                  //
-
-                  var map = way.envBatch.now.split("@");
-                  var map = map[1].split(".");
-                  // way.env[ref]._name = map[0];
-                  // eval(`${configRefKey}["_name"] = "${map[0]}"`);
-                  // way.env[ref]._env = map[1];
-                  // eval(`${configRefKey}["_env"] = "${map[1]}"`);
-                  way.env[ref]._env = map.slice(-1).toString();
-                  eval(`${configRefKey}["_env"] = "${map.slice(-1).toString()}"`);
-                  map.pop();
-                  way.env[ref]._key = map.join(".").replace(/\./g,"");
-                  eval(`${configRefKey}["_key"] = "${map.join(".").replace(/\./g,"")}"`);
-                  var s = [];
-                  for (var i = 0; i < map.length; i++) {
-                    s[i] = map[i].charAt(0).toUpperCase() + map[i].slice(1);
-                  }
-                  way.env[ref]._keyname = s.join("");
-                  eval(`${configRefKey}["_keyname"] = "${s.join("")}"`);
-                  way.env[ref]._name = map.join(".");
-                  eval(`${configRefKey}["_name"] = "${map.join(".")}"`);
-                  way.env[ref]._fullname = way.envBatch.now;
-                  eval(`${configRefKey}["_fullname"] = "${way.envBatch.now}"`);
-                  way.env[ref]._path = way.map.config[`${way.envBatch.now}`];
-                  eval(`${configRefKey}["_path"] = "${way.map.config[`${way.envBatch.now}`]}"`);
-                  // console.log(eval(`${configRefKey}`))
-                  // way.lib.exit()
-
-                  */
-
-                  if (JSON.stringify(way.reference.scope) != "{}") {
-                    try {
-                      if (way.lib.check(way.reference.scope[ref])) {
-                        way.reference.scope[ref] = way.reference.scope[ref].replace(/\[/g,"\[\"").replace(/\]/g,"\"\]");
-                        var parsedScope = await way.lib.parseConfigKey({
-                          key:`${way.reference.scope[ref]}`,
-                          force: true
-                        });
-                        //console.log(`way.env["${ref}"]${parsedScope}`)
-                        var scopeValue = eval(`way.env["${ref}"]${parsedScope}`);
-                        if (typeof scopeValue === "undefined") {
-                          throw "Valor no definido";
-                        }
-                        way.env[ref]._scope = scopeValue;
-                        if (scopeValue.constructor.name == "String") {
-                          eval(`${configRefKey}["_scope"] = "${scopeValue}"`);
-                        } else {
-                          if (scopeValue.constructor.name == "Array" || scopeValue.constructor.name == "Object") {
-                            eval(`${configRefKey}["_scope"] = ${JSON.stringify(scopeValue)}`);
-                          } else {
-                            eval(`${configRefKey}["_scope"] = ${scopeValue}`);
-                          }
-                        }
-                      }
-                    } catch (e) {
-                      //way.lib.exit(`Fallo al obtener la propiedad "${way.reference.scope[ref]}" (ámbito) desde "${ref}" [${e}]`)
-                      way.lib.log({
-                        message: `Fallo al obtener la propiedad "${way.reference.scope[ref]}" (ámbito) desde "${ref}" [${e}]`,
-                        type: `warn`
-                      });
-                      var has_error_flag = true;
+                if (way.env[ref] != null && JSON.stringify(way.reference.scope) != "{}") {
+                  try {
+                    if (way.lib.check(way.reference.scope[ref])) {
+                      way.reference.scope[ref] = way.reference.scope[ref].replace(/\[/g,"\[\"").replace(/\]/g,"\"\]");
                     }
+                  } catch (e) {
+                    way.lib.exit(`Fallo al obtener la propiedad "${way.reference.scope[ref]}" (ámbito) desde "${ref}" [${e}]`)
+                    way.lib.log({
+                      message: `Fallo al obtener la propiedad "${way.reference.scope[ref]}" (ámbito) desde "${ref}" [${e}]`,
+                      type: `warn`
+                    });
+                    var has_error_flag = true;
                   }
                 }
-              
+
                 way.env['_this'] = way.env[ref];
             
               // Establece cache
@@ -1247,41 +1140,26 @@ process.setMaxListeners(0);
               await way.lib.checkRequiredTaskSettings();
 
               await way.lib.setArgsAndOpt({ argv: Object.assign({}, way.opt, way.args) });
-              //console.log(way.args); console.log(way.opt);
-              //way.lib.exit()
-
-              //console.log(way.env)
-              //console.log('AQUI');way.lib.exit();
 
               for (var i = 0; i < doTask.length; i++) {
                 var manageTask = doTask[i];
-                //console.log('2 - MANAGE TASK', manageTask);
-                //way.lib.exit()
-
                 await way.lib.manageTask(manageTask);
-
               }
             }
 
             way.envBatch.num ++;
-            //console.log(way.envBatch.num)
-            
+
             /* Reinicia variables establecidas en entorno de ejecución */
             way.var = {}
 
-            
           }
 
-          
         
         } else { // AMBITO DE EJECUCIÓN EXPLICITO
 
           if (!way.reference.config[ref]) {
             way.lib.exit(`Required configuration profile to execute "${way.proc.name}" procedure`)
           }
-
-          //console.log(way.reference.config[ref], way.map.config[ way.reference.config[ref] ])
-          //way.lib.exit();
 
           var stat = fs.statSync(`${way.map.config[ way.reference.config[ref] ]}`);
           var cache_name = `env.${way.proc.name}.${ref}.${way.reference.config[ref]}.${way.lib.getHash(`env.${JSON.stringify(way.args)}`)}--${way.lib.getHash(stat.mtime.toString())}`;
@@ -1293,8 +1171,6 @@ process.setMaxListeners(0);
           } else {
             // NO EN CACHÉ
 
-            //console.log(1)
-
             // Carga config
               var configValue = await way.lib.loadConfig({
                 key: [way.reference.config[ref]],
@@ -1302,7 +1178,6 @@ process.setMaxListeners(0);
               }).catch((o) => {
                 return {};
               });
-
 
             // Establece entorno
               way.env[ref] = configValue;
@@ -1314,44 +1189,7 @@ process.setMaxListeners(0);
 
             // ESTABLECE VARIBLES DINÁMICAS (NAME,SCOPE)
               if (way.env[ref] != null) {
-                var configRefKey = await way.lib.parseConfigKey({
-                  key:`${way.reference.config[ref]}`,
-                  force: true
-                });
-
-
-                if (JSON.stringify(way.reference.scope) != "{}") {
-                  try {
-                    if (way.lib.check(way.reference.scope[ref])) {
-                      way.reference.scope[ref] = way.reference.scope[ref].replace(/\[/g,"\[\"").replace(/\]/g,"\"\]");
-                      var parsedScope = await way.lib.parseConfigKey({
-                        key:`${way.reference.scope[ref]}`,
-                        force: true
-                      });
-                      //console.log()
-                      //console.log(`way.env["${ref}"]${parsedScope}`)
-                      var scopeValue = eval(`way.env["${ref}"]${parsedScope}`);
-                      if (typeof scopeValue === "undefined") {
-                        throw "Valor no definido";
-                      }
-                      way.env[ref]._scope = scopeValue;
-                      if (scopeValue.constructor.name == "String") {
-                        eval(`${configRefKey}["_scope"] = "${scopeValue}"`);
-                      } else {
-                        if (scopeValue.constructor.name == "Array" || scopeValue.constructor.name == "Object") {
-                          eval(`${configRefKey}["_scope"] = ${JSON.stringify(scopeValue)}`);
-                        } else {
-                          eval(`${configRefKey}["_scope"] = ${scopeValue}`);
-                        }
-                      }
-                    }
-                  } catch (e) {
-                    way.lib.exit(`Fallo al obtener la propiedad "${way.reference.scope[ref]}" (ámbito) desde "${ref}" [${e}]`)
-                  }
-                }
-
                 way.env['_this'] = way.env[ref];
-
               }
             
           }
@@ -1359,7 +1197,6 @@ process.setMaxListeners(0);
         }
 
       }
-
 
       if (!way.envBatch.status) {
 
@@ -1391,71 +1228,79 @@ process.setMaxListeners(0);
           envCache.reference = way.reference;
           way.lib.setCache(cache_name, envCache);
       }
-
       
     }
 
-
-
     
-  // Pinta salida de core.get
+
+
+
+  // Pinta y establece en caché salida de core.get
     if (way.proc.name == "core.get") {
 
       var hash_signature = `${way.lib.getHash(`${JSON.stringify(way.args)}${JSON.stringify(way.opt)}`)}`;
-      var cache_name = `${way.proc.name}.${hash_signature}--${way.lib.getHash(stat.mtime.toString())}`;
+      var cache_name = `${way.proc.name}.${hash_signature}`;
 
-      if (way.lib.checkCache(cache_name)) {
-        // SI EN CACHÉ
-        console.log(way.lib.getCache(cache_name));
+      if (way.tmp.out.length == 0) {
+        way.lib.log({message: `No data found`, type: `warning`});
       } else {
-        // NO EN CACHÉ
-        var out = ""
+
         if (typeof way.tmp.out !== "undefined" && way.tmp.out.length > 0 && way.opt.o) {
-          var out = JSON.stringify(way.tmp.out);
-          process.stdout.write(out);
+          var out_data = JSON.stringify(way.tmp.out);
+          process.stdout.write(out_data);
         } else {
-          if (way.tmp.out.length > 0) {
-            var out_key = ""
-            var out_data = ""
-            var counter = 1;
-            for (data of way.tmp.out) {
-              var config_name = Object.keys(data)[0];
-              if (counter == 1) {
-                out += "\n";
+
+          var out_data = []
+
+          for (element of way.tmp.out) {
+
+            let config_name = Object.keys(element);
+            let config_data = element[config_name];
+
+            var envconfig = way.config.core.envconfig;
+            var envconfig_keys = envconfig['keys'];
+            var envconfig_output = envconfig['output'];
+
+            let setting_key_color = "";
+            let setting_value_color = "";
+            Object.entries(envconfig_keys).forEach(([pattern, env_config]) => {
+              if (new RegExp(pattern,"g").test(config_name)) {
+                out_data.push(way.lib.trace([
+                  { 
+                    data: `${config_name}`, 
+                    text_color: env_config.config_name_color, 
+                    bg_color: env_config.config_name_bg_color, 
+                    bold: env_config.config_name_bold, 
+                    out: false 
+                  },
+                ]));
+                setting_key_color = env_config.setting_key_color;
+                setting_value_color = env_config.setting_value_color;
               }
-              //if (way.tmp.out.length > 1) {
-                if (way.lib.check(way.config.core.envconfig)) {
-                  var envconfig = Object.keys(way.config.core.envconfig);
-                  for (ec of envconfig) {
-                    if (new RegExp(ec,"g").test(config_name)) {
-                      let env_config = way.config.core.envconfig[ec];
-                      out_key = way.lib.trace([
-                        { data: ` ${config_name} `, text_color: env_config.text_color, bg_color: env_config.bg_color, bold: env_config.bold, out: false },
-                      ]);
-                    }
-                  }
-                }
-                out_key += "\n";
-              //}
-              out_data = await way.lib.getFlatObject({ data: data[config_name] }).join('\n');
-              if (counter < way.tmp.out.length) {
-                out_data += "\n\n";
-              } else {
-                out_data += "\n";
-              }
-              if (!/^[\w\s.,;:¡!¿?()"'“”‘’\-–—\n\r]*$/u.test(out_data)) {
-                out += `${out_key}${out_data}`;
-              } else {
-                out += ""
-              }
-              counter++;
-            }
-            console.log(out)
+            });
+            
+            Object.entries(config_data).forEach(([key, value]) => {
+              value = (value === null || value === undefined) ? null : `"${value}"`;
+              out_data.push(way.lib.trace([
+                { data: `· `, text_color: 245, bg_color: null, bold: false, dim: false, out: false },
+                { data: `${key}`, text_color: setting_key_color, bg_color: null, bold: false, dim: true, out: false },
+                { data: ` = `, text_color: 238, bg_color: null, bold: false, dim: false, out: false },
+                { data: `${value}`, text_color: setting_value_color, bg_color: null, bold: false, dim: false, out: false },
+              ]));
+            });
+
           }
+
+          out_data = out_data.join('\n');
+          console.log(out_data);
+
         }
+
         // Establece caché
-        way.lib.setCache(cache_name, out);
+        way.lib.setCache(cache_name, out_data);
+
       }
+
     }
 
 
