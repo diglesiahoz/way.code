@@ -4,35 +4,35 @@ way.lib.getConfigFromCLI = async function (_args) {
     setTimeout(() => {
       (async function() {
 
-        //console.log(_args);
+        //console.log(_args)
 
-        if (way.lib.check(_args.q)) {
-          var output = await way.lib.query({
-            input: _args.config,
-            select: _args.q
-          }).then((o) => { return o.data; });
+        if (JSON.stringify(way.reference.scope) != "{}") {
+          // Filtra configuración por propiedad
+          var output = await way.lib.getConfigAsTree({
+            key: _args.config._config_name,
+            filter_setting: way.reference.scope.conf
+          });
         } else {
-          var output = _args.config;
+          // No filtra configuración por propiedad
+          var output = await way.lib.getConfigAsTree({
+            key: _args.config._config_name
+          });
         }
+        // console.log('output.data', output.data)
 
-        //console.log(way.env._this._config_name)
-        //console.log(output._config_name)
-        push = {}
-        if (way.opt.o) {
-          push = output;
-        } else {
-          if (typeof output._config_name !== 'undefined') {
-            push[output._config_name] = output;
+        if (JSON.stringify(output.data) != "{}") {
+          push = {}
+          if (way.opt.o) {
+            push = output.data;
           } else {
-            push[way.env._this._config_name] = output;
+            if (typeof output.data._config_name !== 'undefined') {
+              push[output.data._config_name] = output.data;
+            } else {
+              push[way.env._this._config_name] = output.data;
+            }
           }
+          way.tmp.out.push(push);
         }
-        way.tmp.out.push(push);
-
-        //way.lib.log({
-        //  message: output,
-        //  type: 'console'
-        //});
 
         resolve({
           args: Object.assign({}, _args),

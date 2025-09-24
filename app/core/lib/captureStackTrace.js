@@ -7,5 +7,6 @@ way.lib.captureStackTrace = function (){
   for (var i = 0; i < trace.length; i++) {
     trace[i] = trace[i].split(" ").pop().replace("(","").replace(")","");
   }
+  trace = trace.slice(1);
   return trace;
 }
