@@ -1238,6 +1238,9 @@ process.setMaxListeners(0);
   // Pinta y establece en caché salida de core.get
     if (way.proc.name == "core.get") {
 
+      // Modifico opción "rebuild" para que no sea necesario ejecutar dos veces el comando para obtener desde caché
+      way.opt.r = false;
+
       var hash_signature = `${way.lib.getHash(`${JSON.stringify(way.args)}${JSON.stringify(way.opt)}`)}`;
       var cache_name = `${way.proc.name}.${hash_signature}`;
 
