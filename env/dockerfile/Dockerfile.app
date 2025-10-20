@@ -32,6 +32,7 @@ RUN apt install -y perl
 RUN apt install -y sshpass
 RUN apt install -y rsync
 RUN apt install -y make
+RUN apt install -y iputils-ping
 RUN rm -rf /var/lib/apt/lists/*
 
 # node:
