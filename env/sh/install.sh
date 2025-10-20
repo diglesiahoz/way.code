@@ -28,6 +28,7 @@ alias \${WAY_CODE_APP_NAME}.env="docker exec -it -u \$USER way_code-app /bin/bas
 alias \${WAY_CODE_APP_NAME}.code="cd \$(dirname \${WAY_CODE_APP_ROOT})"
 alias \${WAY_CODE_APP_NAME}.up="cd \$(dirname \${WAY_CODE_APP_ROOT}) && make down && make up && cd - > /dev/null"
 alias \${WAY_CODE_APP_NAME}.down="cd \$(dirname \${WAY_CODE_APP_ROOT}) && make down && cd - > /dev/null"
+alias \${WAY_CODE_APP_NAME}.access="cd \$(dirname \${WAY_CODE_APP_ROOT}) && make access && cd - > /dev/null"
 # Manage end: way_code-app
 
 EOF
