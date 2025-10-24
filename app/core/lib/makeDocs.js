@@ -202,6 +202,10 @@ way.lib.makeDocs = async function (_args) {
                 var line_reg = new RegExp(`${recipe_end_mark}`);
                 if (line_reg.test(line)) {
                   is_recipe = false;
+                  if (!way.lib.check(recipekey)) {
+                    way.lib.log({message: `Check recipe sintax from "${filepath}"`, type: `warning`});
+                    return;
+                  }
                   data['recipes'][recipekey]['data'].push('');
                 }
 
