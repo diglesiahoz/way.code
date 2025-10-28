@@ -2,9 +2,7 @@
 
 ROOT="$(dirname $(dirname $(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)))"
 
-mkdir /home/$USER/project 2>/dev/null
-
-cp $ROOT/env/example.env $ROOT/env/.env
+[ ! -f $ROOT/env/.env ] && cp $ROOT/env/example.env $ROOT/env/.env
 
 OUT=$(cat ~/.bashrc | awk '/# Manage from: way_code-app/,/# Manage end: way_code-app/ { next } 1')
 echo "$OUT" > ~/.bashrc
