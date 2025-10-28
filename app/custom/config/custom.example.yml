@@ -1,4 +1,9 @@
 lib:
 
+# Permite instalar aplicaciones personalizadas desde repositorios GIT.
 apps:
   dm: https://github.com/diglesiahoz/way.code.app.dm.git
+
+# Permite instalar grupos de perfiles personalizadas desde repositorios GIT.
+# profile_groups:
+#   _memora: https://my-gitlab/my-group.git
