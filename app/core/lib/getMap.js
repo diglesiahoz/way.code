@@ -150,6 +150,14 @@ way.lib.getMap = function (dir, map) {
               key = key.replace(re, "@");
             }
 
+            // Elimina partes ocultas (ej: @_memora.memora.local ==> @memora.local) y necesario para agrupar configs
+            if (/^@_.*\./.test(key)) {
+              key = key.split('.').filter(p => !p.startsWith('_') && !p.startsWith('@_')).join('.');
+              if (!key.startsWith('@')) {
+                key = '@' + key;
+              }
+            }
+
             if (/proc\./.test(key)) {
               way.lib.log({ message:`Revisa clave de configuración (${key}) desde fichero ${rel}${file}`, type:"warning" });
             }

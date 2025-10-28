@@ -1044,7 +1044,8 @@ process.setMaxListeners(0);
   //console.log(way.opt)
   //console.log(way.proc)
   //console.log(way.args)
-  //console.log(way.map)
+  //console.log(way.map.config)
+  //console.log(way.map.profileKey)
   //way.lib.exit()
 
   
