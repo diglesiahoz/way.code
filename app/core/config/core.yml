@@ -166,11 +166,11 @@ interface:
       exitMessage: 
         required: false
         type: String
-        defaultValue: "Proceso abortado"
+        defaultValue: "Aborted"
       message:
         required: false
         type: String
-        defaultValue: "¿Deseas continuar?..."
+        defaultValue: "Do you wish to continue?..."
       messageProgress:
         required: false
         type: String
@@ -183,6 +183,10 @@ interface:
       var:  
         required: false
         type: Object
+        defaultValue: null
+      color:
+        required: false
+        type: String
         defaultValue: null
   apply:
     collection: false
