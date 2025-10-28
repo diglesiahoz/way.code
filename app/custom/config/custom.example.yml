@@ -6,4 +6,4 @@ apps:
 
 # Permite instalar grupos de perfiles personalizadas desde repositorios GIT.
 # profile_groups:
-#   _memora: https://my-gitlab/my-group.git
+#   _my_group: https://my-gitlab/my-group.git
