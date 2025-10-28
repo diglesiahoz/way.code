@@ -40,6 +40,28 @@ way.lib.init = async function (_args){
           }
         }
         
+        // ESTABLECE GRUPOS DE PERFILES PERSONALIZADOS
+        if (typeof way.config.custom !== 'undefined') {
+          if (typeof way.config.custom.profile_groups !== 'undefined') {
+            for (profile_group_name in way.config.custom.profile_groups) {
+              if (fs.existsSync(`${way.root}/custom/config/@/${profile_group_name}`)){
+                if (way.opt.f) {
+                  way.lib.log({ message: `Updating "${profile_group_name}" profile group`, type: "label" });
+                  await way.lib.exec({ cmd: `cd ${way.root}/custom/config/@/${profile_group_name} && git pull -q`, out: true }).catch((e) => {
+                    way.lib.exit(`Could not update "${profile_group_name}" profile group`);
+                  });
+                } else {
+                  way.lib.log({ message: `Skipping profile group "${profile_group_name}" as it already exists in "${way.root}/custom/config/@/${profile_group_name}"`, type: "label" });
+                }
+              } else {
+                way.lib.log({ message: `Clonning "${profile_group_name}" profile group`, type: "label" });
+                await way.lib.exec({ cmd: `git clone ${way.config.custom.profile_groups[profile_group_name]} ${way.root}/custom/config/@/${profile_group_name} 2>/dev/null`, out: false }).catch((e) => {
+                  way.lib.exit(`Could not clone app "${profile_group_name}"`);
+                });
+              }
+            }
+          }
+        }
 
         for (file of _args.file) {
           var cFile = await way.lib.getFile({ 
