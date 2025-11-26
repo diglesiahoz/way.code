@@ -597,6 +597,17 @@ interface:
         required: true
         type: 
         defaultValue: ""
+  hookEvent:
+    collection: false
+    args:
+      config_key:
+        required: true
+        type:
+        defaultValue: ""
+      event:
+        required: true
+        type:
+        defaultValue: ""
   init:
     collection: false
     args:

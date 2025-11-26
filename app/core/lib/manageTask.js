@@ -900,7 +900,10 @@ way.lib.manageTask = async function (argTask) {
                             way.lib.log({ message: `${task.callCmd}`, type: 'label' });
                           }
                           */
-                          way.lib.log({ message: `${task.call}`, type: 'label' });
+
+                          // Añade extra info...
+                          // way.lib.log({ message: `${task.call}`, type: 'label' });
+
                         }
 
                         // FUERZA EJECUTAR TAREA SI ANTERIOR A DADO ERROR
