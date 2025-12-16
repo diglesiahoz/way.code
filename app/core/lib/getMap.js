@@ -22,12 +22,6 @@ way.lib.getMap = function (dir, map) {
   way.map.fileKey = way.map.fileKey || []
   way.map.procKey = way.map.procKey || []
 
-  var apps = require('fs').readdirSync(`${way.root}/custom/app`);
-  apps.forEach(function(appname) {
-    if (require('fs').statSync(`${way.root}/custom/app/${appname}`).isDirectory() && !way.apps.includes(appname) ) {
-      way.apps.push(`${appname}`);
-    }
-  });
   var more_than_one_app = false;
   if (way.apps.length > 1) {
     more_than_one_app = true;

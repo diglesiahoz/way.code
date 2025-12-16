@@ -339,6 +339,15 @@ process.setMaxListeners(0);
     }
 
 
+  // Obtiene aplicaciones
+    var apps = require('fs').readdirSync(`${way.root}/custom/app`);
+    apps.forEach(function(appname) {
+      if (require('fs').statSync(`${way.root}/custom/app/${appname}`).isDirectory() && !way.apps.includes(appname) ) {
+        way.apps.push(`${appname}`);
+      }
+    });
+
+    
   // Establece mapa
     if (!way.cache) {
       way.lib.getMap()
@@ -443,6 +452,7 @@ process.setMaxListeners(0);
     // console.log(`way.proc.name: ${way.proc.name}`);
     // console.log(`way.proc.approot: ${way.proc.approot}`);
     // console.log(`way.root_app: ${way.root_app}`);
+    // console.log(way.apps)
     // way.lib.exit()
 
 
@@ -470,13 +480,13 @@ process.setMaxListeners(0);
     var minimist_args = require('minimist')(process.argv.slice(2), {});
     //console.log(minimist_args)
     //console.log(Object.keys(minimist_args))
-
+   
     var tmp_values = [];
     var app_args = [];
     var found_proc_name = false;
     process.argv.slice(2).forEach( argv => {
 
-      //console.log();console.log(`ARGV: ${argv}`)
+      // console.log();console.log(`ARGV: ${argv} ${argv.length}`)
 
       // PROFILE
       if (/^\@[a-z.]*/g.test(argv)) {
@@ -523,7 +533,8 @@ process.setMaxListeners(0);
         }
       }
       // SIMPLE OPTION
-      else if (/^-[a-z.]*/g.test(argv)) {
+      
+      else if (/^-[a-z.]*/g.test(argv) && argv.length < 5) {
         var opt_name = argv.replace(/^-/,"");
         //console.log(`SIMPLE OPTION! ${opt_name} ${app_args.length} ${found_proc_name}`)
         if (found_proc_name) {
@@ -605,6 +616,7 @@ process.setMaxListeners(0);
     }
     way.optAll = way.optAll.join(' ');
     //console.log(way.optAll)
+    //console.log(way.opt)
     //way.lib.exit()
 
     //console.log(); console.log(`minimist_args`, minimist_args); console.log(`way.optSig`, way.optSig); console.log(`way.optAll`, way.optAll); console.log(`way.opt`, way.opt); console.log(`way.args`, way.args); console.log(); 

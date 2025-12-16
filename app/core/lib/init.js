@@ -246,13 +246,13 @@ way.lib.init = async function (_args){
                             
                             
 
-                            if (way.lib.check(c._pwd)) {
-                              if (!configPwd.includes(`${c._pwd}:${profile}`)) {
-                                configPwd.push(`${c._pwd}:${profile}`)
+                            if (way.lib.check(c._root)) {
+                              if (!configPwd.includes(`${c._root}:${profile}`)) {
+                                configPwd.push(`${c._root}:${profile}`)
                                 //way.lib.exit()
                               }
                             } else {
-                              //way.lib.exit(`Cannot read property "_pwd" from ${profile}`)
+                              //way.lib.exit(`Cannot read property "_root" from ${profile}`)
                             }
                           } else {
                             //console.log('NO',re,configKey,profile)

@@ -21,7 +21,7 @@ way.lib.getLibConfig = function (callname) {
     }
     if (!way.lib.check(libConfig)) {
       if (way.lib.check(libArr[1])) {
-        if (!libConfigCallKeys.includes(libArr[1])) {
+        if (!libConfigCallKeys.includes(libArr[1]) && !/^hookLib/.test(libArr[1])) {
           way.lib.exit(`No definida interfaz "${libArr[0]}.${libArr[1]}" desde aplicación "${libArr[0]}"`);
         }
         libConfig = {}

@@ -3,7 +3,7 @@ way.lib.getTagFromString = async function (_args) {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       (async function() {
-        var data = _args.data.replace(/\s+/g, "_").replace(/[^a-zA-Z0-9]/g,'_').replace(/[\.]/g,'_').toLowerCase();
+        var data = _args.data.replace(/\s+/g, "").replace(/[^a-zA-Z0-9]/g,'').replace(/[\.]/g,'').toLowerCase();
         if (_args.pipe != "") {
           way.lib.var({
             key: _args.pipe,

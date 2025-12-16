@@ -236,47 +236,82 @@ way.lib.loadConfig = function (_args) {
               var map = c_key.replace(/^@/,"").split(".");
 
               way.env['_this'] = {};
-              way.env['_this'].key = "";
-              way.env['_this'].env = "";
 
-              way.env['_this']._env = map.slice(-1).toString();
-              eval(`${configRefKey}["_env"] = "${map.slice(-1).toString()}"`);
+              // Establece valor por defecto de "_env" (Puedes sobreescribirlo en perfil de configuración)
+              try {
+                if (!way.lib.check(eval(`${configRefKey}["_env"]`))) {
+                  way.env['_this']._env = map.slice(-1).toString();
+                  eval(`${configRefKey}["_env"] = "${map.slice(-1).toString()}"`);
+                }
+              } catch (e) { }
+
+              
               map.pop();
-
+              
+              
+              // Establece valor por defecto de "_key" (Puedes sobreescribirlo en perfil de configuración)
               //
               // NO ELIMINAR...
               //
               // way.env['_this']._key = map.join(".").replace(/\./g,"").replace(/^@/g,"");
               // eval(`${configRefKey}["_key"] = "${map.join(".").replace(/\./g,"").replace(/^@/g,"")}"`);
+              try {
+                if (!way.lib.check(eval(`${configRefKey}["_key"]`))) {
+                  way.env["_this"]["_key"] = map.join(".").replace(/^@/g,"");
+                  eval(`${configRefKey}["_key"] = "${map.join(".").replace(/^@/g,"")}"`);
+                }
+              } catch (e) { }
 
-              way.env['_this']._key = map.join(".").replace(/^@/g,"");
-              eval(`${configRefKey}["_key"] = "${map.join(".").replace(/^@/g,"")}"`);
+              // Establece valor por defecto de "_tag" (Puedes sobreescribirlo en perfil de configuración)
+              try {
+                if (!way.lib.check(eval(`${configRefKey}["_tag"]`))) {
+                  var tagFromString = await way.lib.getTagFromString({ data: way.env['_this']._key });
+                  way.env["_this"]["_tag"] = tagFromString.data;
+                  eval(`${configRefKey}["_tag"] = "${way.env['_this']._tag}"`);
+                }
+              } catch (e) { }
+              
+              // Establece valor por defecto de "_name" (Puedes sobreescribirlo en perfil de configuración)
+              try {
+                if (!way.lib.check(eval(`${configRefKey}["_name"]`))) {
+                  var s = [];
+                  for (var i = 0; i < map.length; i++) {
+                    s[i] = map[i].charAt(0).toUpperCase() + map[i].slice(1);
+                  }
+                  way.env["_this"]["_name"] = `${ s.join("") }`;
+                  eval(`${configRefKey}["_name"] = "${ s.join("") }"`);
+                }
+              } catch (e) { }
+              
 
-              way.env['_this']._parent_key = way.env['_this']._key.split('.')[0];
-              eval(`${configRefKey}["_parent_key"] = "${way.env['_this']._key.split('.')[0]}"`);
+              // Establece valor por defecto de "_config_name" (Puedes sobreescribirlo en perfil de configuración)
+              try {
+                if (!way.lib.check(eval(`${configRefKey}["_config_name"]`))) {
+                  way.env["_this"]["_config_name"] = c_key;
+                  eval(`${configRefKey}["_config_name"] = "${c_key}"`);
+                }
+              } catch (e) { }
+              
+              // Establece valor por defecto de "_path" (Puedes sobreescribirlo en perfil de configuración)
+              try {
+                if (!way.lib.check(eval(`${configRefKey}["_path"]`))) {
+                  way.env["_this"]["_path"] = way.map.config[c_key];
+                  eval(`${configRefKey}["_path"] = "${way.map.config[`${c_key}`]}"`);
+                }
+              } catch (e) { }
 
-              var tagFromString = await way.lib.getTagFromString({ data: way.env['_this']._key });
-              way.env['_this']._tag = tagFromString.data;
-              eval(`${configRefKey}["_tag"] = "${way.env['_this']._tag}"`);
-
-              //console.log(way.env)
+              // Establece valor por defecto de "_root" (Puedes sobreescribirlo en perfil de configuración)
+              try {
+                if (!way.lib.check(eval(`${configRefKey}["_root"]`))) {
+                  way.env["_this"]["_root"] = `${way.process.env.APPSETTING_PROJECTS_PATH}/${way.env['_this']._key}`;
+                  eval(`${configRefKey}["_root"] = "${way.process.env.APPSETTING_PROJECTS_PATH}/${way.env['_this']._key}"`);
+                }
+              } catch (e) { }
+              
+              //console.log(way.env);
+              //console.log(eval(`${configRefKey}`));
+              //console.log(way)
               //way.lib.exit()
-              //console.log(configRefKey)
-
-              var s = [];
-              for (var i = 0; i < map.length; i++) {
-                s[i] = map[i].charAt(0).toUpperCase() + map[i].slice(1);
-              }
-              way.env['_this']._name = `${ s.join("") }`;
-              eval(`${configRefKey}["_name"] = "${ s.join("") }"`);
-              
-              way.env['_this']._name = c_key;
-              eval(`${configRefKey}["_config_name"] = "${c_key}"`);
-              
-              way.env['_this']._path = way.map.config[c_key];
-              eval(`${configRefKey}["_path"] = "${way.map.config[`${c_key}`]}"`);
-              
-              //console.log(way.env);way.lib.exit()
 
             } else {
               if (/^@/.test(c_key)) {
@@ -287,27 +322,34 @@ way.lib.loadConfig = function (_args) {
             }
             
 
-            
+            // CALL CUSTOM HOOK LIB
+            try {
+              if (way.lib.check(configRefKey)) {
+                var alter_config = await way.lib.hookLib({ name: `loadConfig`, config: loaded[c_key] });
+                for (const app_name of way.apps) {
+                  // TODO: CHECK IF HAS MORE THAN ONE APP
+                  loaded[c_key] = alter_config.data[app_name];
+                }
+              }
+            } catch (e) { 
+              way.lib.log({message:e, type: 'warning'})
+            }
 
+
+            // SET CONFIG
             loaded[c_key] = await way.lib.decode({
               data: loaded[c_key],
               throwException: [ "simple" ],
               from: from
             });
-            // Remplaza HOME
-            // var loaded_stringify = JSON.stringify(loaded[c_key]).replaceAll(/_pwd":"~\//gi, `_pwd":"${process.env.HOME}/`);
-            var loaded_stringify = JSON.stringify(loaded[c_key]).replaceAll(/:"~\//gi, `:"${process.env.HOME}/`);
-            // console.log(c_key, loaded[c_key], loaded_stringify)
-            // Establece configuración
+            var loaded_stringify = JSON.stringify(loaded[c_key]).replaceAll(/:"~\//gi, `:"${process.env.HOME}/`); // Remplaza HOME
             loaded[c_key] = JSON.parse(loaded_stringify);
             eval(`way.config${treeSignature} = ${loaded_stringify}`);
 
-
-
             
 
-            
             if (!fs.existsSync(`${way.root}/.cache/${cache_name}`)) {
+              //console.log('ESTABLECE EN CACHE...')
               //var stat = fs.statSync(`${way.map.config[configname]}`);
               //console.log(way.map.config[configname], stat, `${way.lib.getHash(`${stat.mtime}`)}`)
               if (way.proc.name != "core.init") {
