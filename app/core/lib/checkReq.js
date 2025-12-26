@@ -92,14 +92,23 @@ way.lib.checkReq = function (_args) {
                   type: "warning"
                 });
               } 
-              var k = eval(JSON.stringify(`${await way.lib.decode({ data: key })}`))
-              if (k == "") {
-                check = `("") ? false: true;`;
+              var value = await way.lib.decode({ data: key })
+              if (typeof value == 'object') {
+                if (Object.keys(value).length === 0) {
+                  check = `true`;
+                } else {
+                  check = `false`;
+                }
               } else {
-                if (k == "false") {
+                var k = eval(JSON.stringify(`${value}`))
+                if (k == "") {
                   check = `("") ? false: true;`;
                 } else {
-                  check = `(!"") ? false: true;`;
+                  if (k == "false") {
+                    check = `("") ? false: true;`;
+                  } else {
+                    check = `(!"") ? false: true;`;
+                  }
                 }
               }
               break;
@@ -110,14 +119,23 @@ way.lib.checkReq = function (_args) {
                   type: "warning"
                 });
               } 
-              var k = eval(JSON.stringify(`${await way.lib.decode({ data: key })}`))
-              if (k == "") {
-                check = `("") ? true: false;`;
+              var value = await way.lib.decode({ data: key })
+              if (typeof value == 'object') {
+                if (Object.keys(value).length === 0) {
+                  check = `false`;
+                } else {
+                  check = `true`;
+                }
               } else {
-                if (k == "false") {
+                var k = eval(JSON.stringify(`${value}`))
+                if (k == "") {
                   check = `("") ? true: false;`;
                 } else {
-                  check = `(!"") ? true: false;`;
+                  if (k == "false") {
+                    check = `("") ? true: false;`;
+                  } else {
+                    check = `(!"") ? true: false;`;
+                  }
                 }
               }
               break;
