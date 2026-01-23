@@ -20,4 +20,4 @@ node_modules/
 .npm/
 
 # Ignora (MUY IMPORTANTE)
-md/**/*__custom__*.json
+md/**/*__custom__*.md
