@@ -38,3 +38,16 @@ services:
         source: ${APPSETTING_PROJECTS_PATH}
         target: ${APPSETTING_PROJECTS_PATH}
         type: bind
+  docs:
+    container_name: ${COMPOSE_PROJECT_NAME}-docs
+    hostname: ${COMPOSE_PROJECT_NAME}-docs
+    env_file:
+      - ./.env 
+    build:
+      context: .
+      dockerfile: ./dockerfile/Dockerfile.docs
+    volumes:
+      - ../docs:/docs
+    ports:
+      - "3000:3000"
+    tty: true

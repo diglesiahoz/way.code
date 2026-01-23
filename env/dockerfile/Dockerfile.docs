@@ -1,0 +1,16 @@
+FROM node:20-alpine
+
+# Crear directorio de trabajo
+WORKDIR /docs
+
+# Copiar entrypoint (usa ruta dentro del contexto)
+COPY entrypoint/docker-entrypoint.docs.sh /docker-entrypoint.docs.sh
+
+# Cambiar permisos como root
+RUN chmod +x /docker-entrypoint.docs.sh
+
+# Cambiar a usuario no root
+USER node
+
+# Usar entrypoint
+ENTRYPOINT ["/docker-entrypoint.docs.sh"]

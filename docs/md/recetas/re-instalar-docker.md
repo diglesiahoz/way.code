@@ -1,4 +1,12 @@
-### Re-instalar Docker
+---
+title: Re-instalar Docker
+sidebar_label: Re-instalar Docker
+sidebar_position: 1.0
+slug: /recetas/re-instalar-docker
+tags: [core, instalación]
+---
+
+# Re-instalar Docker
 
 1. Si instalaste Docker con Snap...
 ```

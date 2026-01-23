@@ -1,4 +1,12 @@
-### Cambiar el grupo de direcciones predeterminado de Docker
+---
+title: Modificar el grupo de direcciones predeterminado de Docker
+sidebar_label: Modificar el grupo de direcciones predeterminado de Docker
+sidebar_position: 1.0
+slug: /recetas/modificar-grupo-de-direcciones-predeterminado-de-docker
+tags: [core, configuración]
+---
+
+# Modificar el grupo de direcciones predeterminado de Docker
 
 1. Crea backup de /etc/docker/daemon.json
 ```

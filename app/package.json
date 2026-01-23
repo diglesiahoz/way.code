@@ -32,6 +32,7 @@
     "figures": "^3.2.0",
     "fs": "0.0.1-security",
     "glob": "^10.3.12",
+    "gray-matter": "^4.0.3",
     "html-minifier": "^4.0.0",
     "js-yaml": "^3.13.1",
     "json-colorz": "^0.2.7",

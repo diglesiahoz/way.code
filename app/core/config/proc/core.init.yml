@@ -1,78 +1,14 @@
-# DOCS:
-# > Realiza acciones administrativas del entorno de la aplicación.
-# >
-# > Cabe destacar que se encarga de generar la documentación y el autocompletado
+# DOCS:description:
+# Realiza acciones administrativas del entorno de la aplicación.
 # :DOCS
 
-# RECIPE:Instalar aplicación desde repositorio:
-# 1. Modifica el fichero ```app/custom/config/custom.yml``` (Si no existe copia desde custom.example.yml)
-# 2. Establece la configuración de la aplicación en la propiedad *apps*. Estableciendo el nombre de la aplicación y la url del repositorio.
-#    ```yml
-#    apps:
-#      dm: https://github.com/diglesiahoz/way.code.app.dm.git
-#    ```
-# 3. Guarda el fichero ```app/custom/config/custom.yml```
-# 4. Ejecuta ```way core.init -v```
-# :RECIPE
+# DOCS:tip::
+# Se encarga de generar la documentación y el autocompletado
+# :DOCS
 
-# RECIPE:Re-instalar Docker:
-# 1. Si instalaste Docker con Snap...
-# ```
-# sudo snap disable docker && \
-# sudo snap remove --purge docker
-# ```
-# 2. Re-instalar Docker
-# ```
-# sudo systemctl stop docker && \
-# sudo systemctl disable docker && \
-# sudo systemctl disable docker.socket && \
-# sudo apt remove --purge docker-ce docker-ce-cli containerd.io docker-compose -y && \
-# sudo apt autoremove -y && \
-# sudo apt autoclean && \
-# sudo rm -rf /etc/docker && \
-# sudo rm -rf /usr/local/bin/docker
-# 
-# sudo apt remove docker-desktop 2>/dev/null && \
-# sudo rm -r $HOME/.docker/desktop && \
-# sudo rm /usr/local/bin/com.docker.cli && \
-# sudo apt purge docker-desktop && \
-# sudo rm $HOME/.docker/config.json
-# 
-# sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose -y && \
-# sudo systemctl start docker && \
-# sudo systemctl enable docker && \
-# sudo systemctl enable docker.socket
-# ```
-# :RECIPE
-
-# RECIPE:Cambiar el grupo de direcciones predeterminado de Docker:
-# 1. Crea backup de /etc/docker/daemon.json
-# ```
-# sudo cp /etc/docker/daemon.json /etc/docker/daemon.json.backup 2>/dev/null
-# ```
-# 2. Establece fichero /etc/docker/daemon.json
-# ```
-# echo '{
-#   "default-address-pools": [
-#     {
-#       "base": "172.200.0.0/16",
-#       "size": 24
-#     }
-#   ],
-#   "dns": [
-#     "8.8.8.8",
-#     "8.8.4.4"
-#   ],
-#   "registry-mirrors": [
-#     "https://mirror.gcr.io"
-#   ]
-# }' | sudo tee /etc/docker/daemon.json > /dev/null
-# ```
-# 3. Re-inicia servicio docker
-# ```
-# sudo systemctl restart docker
-# ```
-# :RECIPE
+# DOCS:example:
+# way core.init -v
+# :DOCS
 
 help: "Ejecuta tareas administrativas"
 example:

@@ -1,0 +1,23 @@
+build/
+node_modules/
+.docusaurus/
+
+.DS_Store
+
+# Archivos JSON generados automáticamente
+# md/**/*.json
+# Si solo quieres ignorar ciertos JSON generados (p. ej. sidebars)
+# docs/_category_.json
+# docs/sidebars.json
+
+# Archivos temporales de sistema
+*.log
+*.tmp
+*.swp
+
+# Caché de yarn o npm (opcional)
+.yarn/
+.npm/
+
+# Ignora (MUY IMPORTANTE)
+md/**/*__custom__*.json
