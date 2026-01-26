@@ -20,7 +20,7 @@ way.lib.makeDocs = async function (_args) {
         // const apiDir = `${docsRoot}/api`;
         // fs.rmSync(`${apiDir}`, { recursive: true, force: true });
 
-        let autoGenTypes = [ "perfiles", "procedimientos" ];
+        let autoGenTypes = [ "profiles", "procedures" ];
 
         // -- Elimina ficheros para generarlos de nuevo -- //
         for (const type of autoGenTypes) {
@@ -147,10 +147,10 @@ way.lib.makeDocs = async function (_args) {
               // console.log(path.dirname(fileRelPath).replace(/\//g, '.'))
 
               if (/.*\/config\/proc\/.*/.test(fileRelPath)) {
-                var sourceDirKey = `procedimientos`;
+                var sourceDirKey = `procedures`;
               }
               if (/.*\/config\/@\/.*/.test(fileRelPath)) {
-                var sourceDirKey = `perfiles`;
+                var sourceDirKey = `profiles`;
               }
               if (!way.lib.check(docsLinks[sourceDirKey])) {
                 docsLinks[sourceDirKey] = [];
@@ -161,7 +161,7 @@ way.lib.makeDocs = async function (_args) {
               fs.mkdirSync(`${dirPath}`, { recursive: true });
 
 
-              // Añade prefijo para perfiles "custom" que deben de ser ignorados en repositorio
+              // Añade prefijo para profiles "custom" que deben de ser ignorados en repositorio
 
               if (/.*\/@\//.test(fileRelPath)) {
                 if (/^custom\/config\/@/.test(fileRelPath)) {
@@ -180,8 +180,11 @@ way.lib.makeDocs = async function (_args) {
               fs.writeFileSync(targetFilePath, `# ${fileKey}\n${infoSource}\n${docsText}\n### Código\n\`\`\`yml\n${cleanYamlText.trim()}\n\`\`\``);
               way.lib.log({ message: `Created doc file: ${targetFilePath} (from: ${fileKey} ==> ${fileRelPath})`, type: `label`});
 
-              let link = `- [${fileKey}](${targetFilePath.replace(docsRoot, "")})`;
-              docsLinks[sourceDirKey].push(link);
+              // -- Excluye enlaces a perfiles personalizados --//
+              if (!/^custom\/config\/@/.test(fileRelPath)) {
+                let link = `- [${fileKey}](${targetFilePath.replace(docsRoot, "")})`;
+                docsLinks[sourceDirKey].push(link);
+              }
 
               prefix = autoGenString;
 
@@ -205,9 +208,9 @@ way.lib.makeDocs = async function (_args) {
           fs.writeFileSync(targetFilePath, indexContent);
         }
 
-        // -- Establece menú en index.md de recetas -- //
-        docsLinks['recetas'] = [];
-        let dirToGetFiles = `${docsRoot}/recetas`;
+        // -- Establece menú en index.md de recipes -- //
+        docsLinks['recipes'] = [];
+        let dirToGetFiles = `${docsRoot}/recipes`;
         const files = fs.readdirSync(dirToGetFiles, { withFileTypes: true });
         for (const file of files) {
           const fullFilePath = path.join(dirToGetFiles, file.name);
@@ -228,7 +231,7 @@ way.lib.makeDocs = async function (_args) {
               .replace(/\.md$/, '');       // quitar extensión .md
 
             const link = `- [${docTitle}](${relativePath})`;
-            docsLinks['recetas'].push(link);
+            docsLinks['recipes'].push(link);
           }
         }
         let targetFilePath = `${dirToGetFiles}/index.md`;
@@ -240,7 +243,7 @@ way.lib.makeDocs = async function (_args) {
         );
         indexContent = indexContent.replace(
           regex,
-          `${startMarker}\n\n${docsLinks['recetas'].join('\n')}\n\n${endMarker}`
+          `${startMarker}\n\n${docsLinks['recipes'].join('\n')}\n\n${endMarker}`
         );
         fs.writeFileSync(targetFilePath, indexContent);
 

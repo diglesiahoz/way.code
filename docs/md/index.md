@@ -1,6 +1,6 @@
 ---
-title: Introducción
-sidebar_label: 🚀 Introducción
+title: Intro
+sidebar_label: 🚀 Intro
 sidebar_position: 1.0
 slug: /
 tags: []
@@ -20,3 +20,10 @@ tags: []
 * Linux
 * Docker
 * Docker Compose
+
+## Siguientes pasos
+
+- [Instalación](/getting-started)
+- [Perfiles](/profiles)
+- [Procedimientos](/procedures)
+- [Recetas](/recipes)

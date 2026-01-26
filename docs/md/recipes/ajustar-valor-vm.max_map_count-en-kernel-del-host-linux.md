@@ -2,7 +2,7 @@
 title: Ajustar valor "vm.max_map_count" en kernel del host (linux)
 sidebar_label: Ajustar valor "vm.max_map_count" en kernel del host (linux)
 sidebar_position: 1.0
-slug: /recetas/ajustar-valor-vm.max_map_count-en-kernel-del-host-linux
+slug: /recipes/ajustar-valor-vm.max_map_count-en-kernel-del-host-linux
 tags: [core, configuración]
 ---
 

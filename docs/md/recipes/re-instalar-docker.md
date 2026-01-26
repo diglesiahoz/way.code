@@ -2,7 +2,7 @@
 title: Re-instalar Docker
 sidebar_label: Re-instalar Docker
 sidebar_position: 1.0
-slug: /recetas/re-instalar-docker
+slug: /recipes/re-instalar-docker
 tags: [core, instalación]
 ---
 

@@ -2,7 +2,7 @@
 title: Instalar aplicación desde repositorio
 sidebar_label: Instalar aplicación desde repositorio
 sidebar_position: 1.0
-slug: /recetas/instalar-aplicacion-desde-repositorio
+slug: /recipes/instalar-aplicacion-desde-repositorio
 tags: [core, instalación]
 ---
 

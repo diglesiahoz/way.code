@@ -2,7 +2,7 @@
 title: Modificar y/o crear certificados
 sidebar_label: Modificar y/o crear certificados
 sidebar_position: 1.0
-slug: /recetas/modificar-y-o-crear-certificados
+slug: /recipes/modificar-y-o-crear-certificados
 tags: [core, configuración]
 ---
 

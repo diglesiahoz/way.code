@@ -2,7 +2,7 @@
 title: Instalar nueva app
 sidebar_label: Instalar nueva app
 sidebar_position: 1.0
-slug: /recetas/instalar-nueva-app
+slug: /recipes/instalar-nueva-app
 tags: [core, configuración]
 ---
 

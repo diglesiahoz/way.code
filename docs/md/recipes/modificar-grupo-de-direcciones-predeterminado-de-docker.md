@@ -2,7 +2,7 @@
 title: Modificar el grupo de direcciones predeterminado de Docker
 sidebar_label: Modificar el grupo de direcciones predeterminado de Docker
 sidebar_position: 1.0
-slug: /recetas/modificar-grupo-de-direcciones-predeterminado-de-docker
+slug: /recipes/modificar-grupo-de-direcciones-predeterminado-de-docker
 tags: [core, configuración]
 ---
 

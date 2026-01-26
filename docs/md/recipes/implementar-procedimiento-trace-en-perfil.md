@@ -2,7 +2,7 @@
 title: Implementar procedimiento "trace" en perfil
 sidebar_label: Implementar procedimiento "trace" en perfil
 sidebar_position: 1.0
-slug: /recetas/implementar-procedimiento-trace-en-perfil
+slug: /recipes/implementar-procedimiento-trace-en-perfil
 tags: [custom, configuración]
 ---
 

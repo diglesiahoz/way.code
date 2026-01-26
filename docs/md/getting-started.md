@@ -2,7 +2,7 @@
 title: Instalación
 sidebar_label: 🛠️ Instalación
 sidebar_position: 2.0
-slug: /instalacion
+slug: /getting-started
 tags: []
 ---
 
