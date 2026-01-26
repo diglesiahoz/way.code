@@ -24,6 +24,6 @@ tags: []
 ## Siguientes pasos
 
 - [Instalación](./getting-started.md)
-- [Perfiles](./profiles.md)
-- [Procedimientos](./procedures.md)
-- [Recetas](./recipes.md)
+- [Perfiles](./profiles/index.md)
+- [Procedimientos](./procedures/index.md)
+- [Recetas](./recipes/index.md)

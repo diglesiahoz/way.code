@@ -182,7 +182,8 @@ way.lib.makeDocs = async function (_args) {
 
               // -- Excluye enlaces a perfiles personalizados --//
               if (!/^custom\/config\/@/.test(fileRelPath)) {
-                let link = `- [${fileKey}](${targetFilePath.replace(docsRoot, "")})`;
+                // let link = `- [${fileKey}](${targetFilePath.replace(docsRoot, "")})`;
+                let link = `- [${fileKey}](./${fileName})`;
                 docsLinks[sourceDirKey].push(link);
               }
 
@@ -229,7 +230,8 @@ way.lib.makeDocs = async function (_args) {
               .replace(docsRoot, '')       // ruta relativa
               .replace(/\\/g, '/');
 
-            const link = `- [${docTitle}](${relativePath})`;
+            //const link = `- [${docTitle}](${relativePath})`;
+            const link = `- [${docTitle}](./${file.name})`;
             docsLinks['recipes'].push(link);
           }
         }
