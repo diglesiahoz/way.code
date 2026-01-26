@@ -23,7 +23,7 @@ tags: []
 
 ## Siguientes pasos
 
-- [Instalación](/getting-started)
-- [Perfiles](/profiles)
-- [Procedimientos](/procedures)
-- [Recetas](/recipes)
+- [Instalación](./getting-started)
+- [Perfiles](./profiles)
+- [Procedimientos](./procedures)
+- [Recetas](./recipes)
