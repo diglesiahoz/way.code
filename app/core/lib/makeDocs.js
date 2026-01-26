@@ -227,8 +227,7 @@ way.lib.makeDocs = async function (_args) {
 
             const relativePath = fullFilePath
               .replace(docsRoot, '')       // ruta relativa
-              .replace(/\\/g, '/')         // Windows -> /
-              .replace(/\.md$/, '');       // quitar extensión .md
+              .replace(/\\/g, '/');
 
             const link = `- [${docTitle}](${relativePath})`;
             docsLinks['recipes'].push(link);
