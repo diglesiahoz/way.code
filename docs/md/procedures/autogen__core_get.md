@@ -1,6 +1,6 @@
 # core.get
 
-📂 `core/config/proc/core.get.yml`
+📂 `app/core/config/proc/core.get.yml`
 
 
 ### Código

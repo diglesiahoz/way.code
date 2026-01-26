@@ -1,6 +1,6 @@
 # core.help
 
-📂 `core/config/proc/core.help.yml`
+📂 `app/core/config/proc/core.help.yml`
 
 
 ### Código

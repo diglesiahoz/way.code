@@ -1,6 +1,6 @@
 # core.init
 
-📂 `core/config/proc/core.init.yml`
+📂 `app/core/config/proc/core.init.yml`
 
 ### Descripción
 

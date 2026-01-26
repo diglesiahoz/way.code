@@ -2,7 +2,7 @@
 
 > Marco para crear aplicaciones que te permitan automatizar tareas y procesos.
 
-## Documentación completa
+## Docs
 
 - [Ver documentación completa](docs/md/index.md)
 

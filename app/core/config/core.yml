@@ -124,7 +124,9 @@ interface:
           - config/proc
           - file
           - lib
-          - docs
+          - docs/procedures
+          - docs/profiles
+          - docs/recipes
       file:
         required: false
         type: Array
@@ -156,6 +158,33 @@ interface:
           -
             origin: make.app.gitkeep
             target: docs/.gitkeep
+          -
+            origin: make.app.docs_index_md
+            target: docs/index.md
+          -
+            origin: make.app.docs_category_json
+            target: docs/_category_.json
+          -
+            origin: make.app.docs_gitignore
+            target: docs/.gitignore
+          -
+            origin: make.app.docs_procedures_index_md
+            target: docs/procedures/index.md
+          -
+            origin: make.app.docs_elem_category_json
+            target: docs/procedures/_category_.json
+          -
+            origin: make.app.docs_profiles_index_md
+            target: docs/profiles/index.md
+          -
+            origin: make.app.docs_elem_category_json
+            target: docs/profiles/_category_.json
+          -
+            origin: make.app.docs_recipes_index_md
+            target: docs/recipes/index.md
+          -
+            origin: make.app.docs_elem_category_json
+            target: docs/recipes/_category_.json
   ask:
     collection: false
     args:

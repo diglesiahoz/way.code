@@ -1,11 +1,7 @@
 # ((name))
 
-> Contenido por defecto de README.md
+> Aplicación personalizada.
 
-### Recetas
-```sh
-way ((name)).test
-```
+## Docs
 
-### Referencias
-  - https://dillinger.io/
+- [Ver documentación completa](docs/index.md)

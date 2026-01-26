@@ -1,6 +1,6 @@
 # core.make.app
 
-📂 `core/config/proc/core.make.app.yml`
+📂 `app/core/config/proc/core.make.app.yml`
 
 
 ### Código

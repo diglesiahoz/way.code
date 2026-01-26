@@ -1,6 +1,6 @@
 # core.ssh
 
-📂 `core/config/proc/core.ssh.yml`
+📂 `app/core/config/proc/core.ssh.yml`
 
 
 ### Código

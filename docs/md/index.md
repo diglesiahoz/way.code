@@ -21,7 +21,7 @@ tags: []
 * Docker
 * Docker Compose
 
-## Siguientes pasos
+## Docs
 
 - [Instalación](./getting-started.md)
 - [Perfiles](./profiles/index.md)
