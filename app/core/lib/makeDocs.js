@@ -264,12 +264,13 @@ way.lib.makeDocs = async function (_args) {
 
               // -- Excluye enlaces a perfiles personalizados --//
               //if (!/.*\/@\//.test(fileRelPath)) {
+              if (!/^custom\/config\/@/.test(fileRelPath)) {
                 // let link = `- [${fileKey}](${targetFilePath.replace(docsRoot, "")})`;
                 let link = `- [${fileKey}](./${fileName})`;
                 //console.log(link)
                 //console.log(filePathSource)
                 sourcesConfig[filePathSource]['links'][sourceDirKey].push(link)
-              //}
+              }
 
               prefix = autoGenString;
 
