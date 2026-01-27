@@ -8,6 +8,8 @@
 !/custom/config/proc/.gitkeep  
 /custom/config/custom.yml
 /custom/config/env.yml
+/custom/docs/*
+!/custom/docs/.gitkeep
 /.complete
 /.cache
 /complete.sh
