@@ -15,15 +15,9 @@ way.lib.makeDocs = async function (_args) {
         var sources  = ['core'].concat(way.apps);
         var sourcesConfig  = {};
         
-
         let autoGenTypes = [ "profiles", "procedures" ];
-        
-        //let docsLinks = {};
-
 
         for (const source of sources) {
-
-          //docsLinks[source] = {};
 
           if (source == 'core') {
             docsOriginRelPath = `${path.dirname(way.root)}/docs/md`;
@@ -40,6 +34,7 @@ way.lib.makeDocs = async function (_args) {
           sourcesConfig[source]['links']['recipes'] = [];
 
           fs.mkdirSync(`${docsOriginRelPath}`, { recursive: true });
+
           // -- Elimina ficheros para generarlos de nuevo -- //
           for (const type of autoGenTypes) {
 
@@ -52,64 +47,27 @@ way.lib.makeDocs = async function (_args) {
                 const fullFilePath = path.join(dirToRemoveFiles, file.name);
                 if (file.isFile() && file.name.startsWith('autogen__')) {
                   fs.unlinkSync(fullFilePath);
-                  // console.log('🗑️  Deleted:', fullFilePath);
                 }
               }
               way.lib.log({ message: `Auto-gen docs cleanup finished from: ${dirToRemoveFiles}`, type: `label`});
             } catch (e) { }
           }
-        }
 
+        }
         //console.log(sourcesConfig)
-        //console.log(docsLinks)
-        //way.lib.exit();
-       
-
-
-
-        // -- Elimina ficheros para generarlos de nuevo -- //
-        /*
-        for (const type of autoGenTypes) {
-          let dirToRemoveFiles = `${docsRoot}/${type}`;
-          console.log(dirToRemoveFiles)
-
-          way.lib.exit();
-
-          const files = fs.readdirSync(dirToRemoveFiles, { withFileTypes: true });
-          for (const file of files) {
-            const fullFilePath = path.join(dirToRemoveFiles, file.name);
-            if (file.isFile() && file.name.startsWith('autogen__')) {
-              fs.unlinkSync(fullFilePath);
-              // console.log('🗑️  Deleted:', fullFilePath);
-            }
-          }
-        }
-        way.lib.log({ message: `✅ Auto-gen docs cleanup finished`, type: `label`});
-        */
-
-        //way.lib.exit()
 
         let autoGenString = `autogen__`;
         let prefix = autoGenString;
 
-        
-
-        // console.log(way.map.config)
         var file_tree = way.map.config;
-        // console.log(file_tree)
 
-        //way.lib.exit()
-        
         for (const fileKey in file_tree) {
           if (file_tree.hasOwnProperty(fileKey)) { // buena práctica
 
             var fileRelPath = file_tree[fileKey]; 
-            //console.log(fileRelPath)
 
             if (fileRelPath.startsWith('custom/app/')) {
               var filePathSource = fileRelPath.replace(/^custom\/app\//,'').split('/')[0];
-              // console.log(fileRelPath, filePathSource)
-              // way.lib.exit()
               if (!way.lib.check(sourcesConfig[filePathSource])) {
                 way.lib.exit(`Not found doc source`);
               }
@@ -117,24 +75,10 @@ way.lib.makeDocs = async function (_args) {
               var filePathSource = 'core';
             }
             var docsRoot = sourcesConfig[filePathSource]['path'];
-            //console.log(`docsRoot: ${docsRoot}`)
-
-            //var fileSource = fileRelPath.split('/')[0];
-            //console.log(fileSource, sourcesConfig[fileSource]);
-            //console.log()
-
-            
-
-            //var docsRoot = `${path.dirname(way.root)}/docs/md`;
-            //console.log(`Docs root: ${docsRoot}`);
-            //way.lib.exit()
-            
-            
 
             var filePath = `${path.dirname(way.root)}/app/${fileRelPath}`;
 
             if (
-              // /^core.init/.test(fileKey) && 
               /.*\/config\/proc\/.*/.test(fileRelPath) || 
               /.*\/config\/@\/.*/.test(fileRelPath)
               ) {
@@ -169,61 +113,43 @@ way.lib.makeDocs = async function (_args) {
 
               let docsText = '';
 
-              // Agrupamos los bloques por título, soportando subtítulo opcional (tipo:Subtitulo)
               const groupedBlocks = {};
               
               for (const block of docsBlocks) {
-                // Dividimos título en tipo y subtítulo opcional
                 const parts = block.sectionTitle.split(':');
-                const type = parts[0].toLowerCase().trim();           // e.g., "danger"
-                const subtitle = parts.slice(1).join(':').trim();     // e.g., "Muy importante"
-              
+                const type = parts[0].toLowerCase().trim();
+                const subtitle = parts.slice(1).join(':').trim();
                 if (!groupedBlocks[type]) groupedBlocks[type] = [];
-              
-                // Guardamos tanto el body como el subtítulo
                 groupedBlocks[type].push({ body: block.sectionBody, subtitle });
               }
               
-              // ---------- Primero procesamos "description" ----------
               if (groupedBlocks['description']) {
                 const bodies = groupedBlocks['description'];
-                // Un solo blockquote con todos los cuerpos concatenados
                 const combined = bodies.map(b => b.body.replace(/\n/g, '\n> ')).join('\n>\n> ');
                 docsText += `### Descripción\n\n> ${combined}\n\n`;
-              
                 delete groupedBlocks['description'];
               }
               
-              // ---------- Luego procesamos el resto de títulos ----------
               for (const [type, blocks] of Object.entries(groupedBlocks)) {
                 if (type === 'example') {
-                  // Code block para cada ejemplo
                   docsText += `### Ejemplos\n\n`;
                   for (const b of blocks) {
                     docsText += '```\n' + b.body + '\n```\n\n';
                   }
                 } 
                 else if (['tip','note','warning','danger'].includes(type)) {
-                  // Admonition con subtítulo opcional
                   for (const b of blocks) {
                     const sub = b.subtitle ? b.subtitle : type.charAt(0).toUpperCase() + type.slice(1);
                     docsText += `:::${type} ${sub}\n${b.body}\n:::\n\n`;
                   }
                 } 
                 else {
-                  // Normal para otros títulos
                   for (const b of blocks) {
                     const title = b.subtitle ? b.subtitle : type;
                     docsText += `### ${title}\n\n${b.body}\n\n`;
                   }
                 }
               }
-              
-              // console.log(docsText);
-              
-              // console.log(fileRelPath)
-
-              // console.log(path.dirname(fileRelPath).replace(/\//g, '.'))
 
               if (/.*\/config\/proc\/.*/.test(fileRelPath)) {
                 var sourceDirKey = `procedures`;
@@ -231,15 +157,11 @@ way.lib.makeDocs = async function (_args) {
               if (/.*\/config\/@\/.*/.test(fileRelPath)) {
                 var sourceDirKey = `profiles`;
               }
-              //console.log(sourceDirKey)
-              
+
               const dirPath = `${docsRoot}/${sourceDirKey}`;
-              //console.log(dirPath)
               fs.mkdirSync(`${dirPath}`, { recursive: true });
 
-
               // Añade prefijo para profiles "custom" que deben de ser ignorados en repositorio
-
               if (/.*\/@\//.test(fileRelPath)) {
                 if (/^custom\/config\/@/.test(fileRelPath)) {
                   prefix = `${prefix}custom__@`;
@@ -253,29 +175,17 @@ way.lib.makeDocs = async function (_args) {
                   .replace(/[^a-z0-9]+/g, '_')
                   .replace(/^_+|_+$/g, '') + '.md';
               const targetFilePath = `${dirPath}/${fileName}`;
-              //console.log(targetFilePath)
-
-              //console.log(`${fileRelPath} ==> ${targetFilePath}`);
-
 
               fs.writeFileSync(targetFilePath, `# ${fileKey}\n${infoSource}\n${docsText}\n### Código\n\`\`\`yml\n${cleanYamlText.trim()}\n\`\`\``);
               way.lib.log({ message: `Created doc file: ${targetFilePath} (from: ${fileKey} ==> ${fileRelPath})`, type: `label`});
               
-
               // -- Excluye enlaces a perfiles personalizados --//
-              //if (!/.*\/@\//.test(fileRelPath)) {
               if (!/^custom\/config\/@/.test(fileRelPath)) {
-                // let link = `- [${fileKey}](${targetFilePath.replace(docsRoot, "")})`;
                 let link = `- [${fileKey}](./${fileName})`;
-                //console.log(link)
-                //console.log(filePathSource)
                 sourcesConfig[filePathSource]['links'][sourceDirKey].push(link)
               }
 
               prefix = autoGenString;
-
-              //console.log()
-
             }
           }
         }
@@ -297,17 +207,11 @@ way.lib.makeDocs = async function (_args) {
         }
 
 
-
-        //console.log(sourcesConfig)
-        //console.log(sourcesConfig['dm']['links'])
-
         Object.keys(sourcesConfig).forEach(source => {
           // -- Enlaces a procedimientos y perfiles -- //
           Object.keys(sourcesConfig[source]['links']).forEach(type => {
             let targetFilePath = `${sourcesConfig[source]['path']}/${type}/index.md`;
             if (sourcesConfig[source]['links'][type].length > 0) {
-              // console.log(source, type, sourcesConfig[source]['links'][type]);
-              // console.log(targetFilePath)
               let indexContent = fs.readFileSync(targetFilePath, 'utf8');
               const startMarker = '<!-- AUTOGEN:START -->';
               const endMarker = '<!-- AUTOGEN:END -->';
@@ -355,7 +259,6 @@ way.lib.makeDocs = async function (_args) {
           );
           fs.writeFileSync(targetFilePath, indexContent);
         });
-
 
 
         // -- Resuelve -- //
