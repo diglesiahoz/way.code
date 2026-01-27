@@ -326,10 +326,7 @@ way.lib.loadConfig = function (_args) {
             try {
               if (way.lib.check(configRefKey)) {
                 var alter_config = await way.lib.hookLib({ name: `loadConfig`, config: loaded[c_key] });
-                for (const app_name of way.apps) {
-                  // TODO: CHECK IF HAS MORE THAN ONE APP
-                  loaded[c_key] = alter_config.data[app_name];
-                }
+                loaded[c_key] = alter_config.data;
               }
             } catch (e) { 
               way.lib.log({message:e, type: 'warning'})

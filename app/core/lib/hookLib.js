@@ -5,15 +5,24 @@ way.lib.hookLib = function (_args) {
       (async function() {
 
         let output = {};
-        for (const app_name of way.apps) {
-          output[app_name] = _args.config
-        }
 
         try {
           let hook_signature = `hookLib${_args.name[0].toUpperCase() + _args.name.substring(1)}`;
-          for (const app_name of way.apps) {
-            let tmp_output = await way.lib[app_name][hook_signature]({ config: _args.config });
-            output[app_name] = tmp_output.data
+          if (way.proc.appname == 'core') {
+            var regex = new RegExp(hook_signature, "i");
+          } else {
+            var regex = new RegExp(`${way.proc.appname}.${hook_signature}`, "i");
+          }
+          const libsToCall = way.map.libKey.filter(p => regex.test(p));
+          if (libsToCall.length > 0) {
+            for (const libName of libsToCall) {
+              var libNameSplited = libName.split('.');
+              if (libNameSplited.length > 1) {
+                var app_name = libNameSplited[0];
+              }
+              let tmp_output = await way.lib[app_name][hook_signature]({ config: _args.config });
+              output = tmp_output.data
+            }
           }
         } catch (e) { 
           // way.lib.exit(e) 
