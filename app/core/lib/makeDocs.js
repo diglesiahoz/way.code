@@ -402,7 +402,13 @@ way.lib.makeDocs = async function (_args) {
               fs.copySync(
                 originPath,
                 targetPath,
-                { overwrite: true }
+                {
+                  overwrite: true,
+                  filter: (src) => {
+                    const name = path.basename(src);
+                    return !name.startsWith('.');
+                  }
+                }
               );
               way.lib.log({ message: `Sync "${app_name}" app docs from "${originPath}" to "${targetPath}"`, type: `label`});
               // -- Elimina secciones sin docs en aplicaciones custom --//
@@ -464,7 +470,13 @@ way.lib.makeDocs = async function (_args) {
               fs.copySync(
                 `${originPath}/index.md`,
                 `${targetPath}/index.md`,
-                { overwrite: true }
+                {
+                  overwrite: true,
+                  filter: (src) => {
+                    const name = path.basename(src);
+                    return !name.startsWith('.');
+                  }
+                }
               );
               way.lib.log({ message: `Sync "${app_name}" app docs from "${originPath}/index.md" to "${targetPath}/index.md"`, type: `label`});
             }
@@ -481,7 +493,13 @@ way.lib.makeDocs = async function (_args) {
           fs.copySync(
             originPath,
             targetPath,
-            { overwrite: true }
+            {
+              overwrite: true,
+              filter: (src) => {
+                const name = path.basename(src);
+                return !name.startsWith('.');
+              }
+            }
           );
           way.lib.log({ message: `Sync custom recipes from "${originPath}" to "${targetPath}"`, type: `label`});
         }
