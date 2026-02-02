@@ -2,8 +2,8 @@
 title: Instalar nueva app
 sidebar_label: Instalar nueva app
 sidebar_position: 1.0
-slug: /recipes/instalar-nueva-app
-tags: [core, configuración]
+slug: /core/recipes/instalar-nueva-app
+tags: [core, recetas]
 ---
 
 # Instalar nueva app

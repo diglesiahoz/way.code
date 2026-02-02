@@ -24,6 +24,5 @@ tags: []
 ## Docs
 
 - [Instalación](./getting-started.md)
-- [Perfiles](./profiles/index.md)
-- [Procedimientos](./procedures/index.md)
-- [Recetas](./recipes/index.md)
+- [Core](./core)
+- [Custom](./custom)

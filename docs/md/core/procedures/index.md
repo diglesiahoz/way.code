@@ -2,7 +2,7 @@
 title: Procedimientos
 sidebar_label: 📦 Procedimientos
 sidebar_position: 4.0
-slug: /procedures
+slug: /core/procedures
 tags: []
 ---
 

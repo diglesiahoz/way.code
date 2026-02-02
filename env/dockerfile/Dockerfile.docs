@@ -9,8 +9,5 @@ COPY entrypoint/docker-entrypoint.docs.sh /docker-entrypoint.docs.sh
 # Cambiar permisos como root
 RUN chmod +x /docker-entrypoint.docs.sh
 
-# Cambiar a usuario no root
-USER node
-
 # Usar entrypoint
 ENTRYPOINT ["/docker-entrypoint.docs.sh"]

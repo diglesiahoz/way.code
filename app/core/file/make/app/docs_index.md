@@ -2,7 +2,7 @@
 title: ((name))
 sidebar_label: 🧩 ((name))
 sidebar_position: 1.0
-slug: /apps/((name))
+slug: /custom/apps/((name))
 tags: []
 ---
 

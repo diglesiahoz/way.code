@@ -56,7 +56,30 @@ way.lib.init = async function (_args){
               } else {
                 way.lib.log({ message: `Clonning "${profile_group_name}" profile group`, type: "label" });
                 await way.lib.exec({ cmd: `git clone ${way.config.custom.profile_groups[profile_group_name]} ${way.root}/custom/config/@/${profile_group_name} 2>/dev/null`, out: false }).catch((e) => {
-                  way.lib.exit(`Could not clone app "${profile_group_name}"`);
+                  way.lib.exit(`Could not clone "${profile_group_name}" profile group`);
+                });
+              }
+            }
+          }
+        }
+
+        // ESTABLECE DOCUMENTACIÓN PERSONALIZADA
+        if (typeof way.config.custom !== 'undefined') {
+          if (typeof way.config.custom.docs !== 'undefined') {
+            for (dir_name in way.config.custom.docs) {
+              if (fs.existsSync(`${way.root}/custom/docs/${dir_name}`)){
+                if (way.opt.f) {
+                  way.lib.log({ message: `Updating "${dir_name}" docs`, type: "label" });
+                  await way.lib.exec({ cmd: `cd ${way.root}/custom/docs/${dir_name} && git pull -q`, out: true }).catch((e) => {
+                    way.lib.exit(`Could not update "${dir_name}" docs`);
+                  });
+                } else {
+                  way.lib.log({ message: `Skipping docs "${dir_name}" as it already exists in "${way.root}/custom/docs/${dir_name}"`, type: "label" });
+                }
+              } else {
+                way.lib.log({ message: `Clonning "${dir_name}" docs`, type: "label" });
+                await way.lib.exec({ cmd: `git clone ${way.config.custom.docs[dir_name]} ${way.root}/custom/docs/${dir_name} 2>/dev/null`, out: false }).catch((e) => {
+                  way.lib.exit(`Could not clone "${dir_name}" docs`);
                 });
               }
             }

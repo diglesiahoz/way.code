@@ -41,6 +41,7 @@ services:
   docs:
     container_name: ${COMPOSE_PROJECT_NAME}-docs
     hostname: ${COMPOSE_PROJECT_NAME}-docs
+    user: "${APPSETTING_UID}:${APPSETTING_GID}"
     env_file:
       - ./.env 
     build:

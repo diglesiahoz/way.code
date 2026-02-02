@@ -2,7 +2,7 @@
 title: Perfiles
 sidebar_label: 🏷️ Perfiles
 sidebar_position: 3.0
-slug: /profiles
+slug: /custom/profiles
 tags: []
 ---
 

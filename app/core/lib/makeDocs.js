@@ -12,76 +12,247 @@ way.lib.makeDocs = async function (_args) {
         const yaml = require('js-yaml');
         const matter = require('gray-matter');
 
-        var sources  = ['core'].concat(way.apps);
+
+        way.lib.log({ message: `MAKE DOCS...`, type: `label`});
+
+        //var sources  = ['core','custom'].concat(way.apps);
+        var sources  = ['core','custom'];
         var sourcesConfig  = {};
         
         let autoGenTypes = [ "profiles", "procedures" ];
+        let autoGenPaths = [];
+
 
         for (const source of sources) {
 
-          if (source == 'core') {
-            docsOriginRelPath = `${path.dirname(way.root)}/docs/md`;
-          } else {
-            docsOriginRelPath = `${path.dirname(way.root)}/app/custom/app/${source}/docs`;
-            docsTargetRelPath = `${path.dirname(way.root)}/docs/md/apps/${source}`;
-            fs.removeSync(`${path.dirname(way.root)}/docs/md/apps/${source}`);
-            way.lib.log({ message: `Removed: ${docsTargetRelPath}`, type: `label`});
-          }
-
           sourcesConfig[source] = {};
-          sourcesConfig[source]['path'] = docsOriginRelPath;
+
+          docsOriginRelPath = `${path.dirname(way.root)}/docs/md/${source}`;
+          if (source == 'core') {
+            sourcesConfig[source]['scanPaths'] = [docsOriginRelPath];
+          } else {
+            sourcesConfig[source]['scanPaths'] = [];
+          }
+          sourcesConfig[source]['targetPath'] = docsOriginRelPath;
           sourcesConfig[source]['links'] = {};
+          sourcesConfig[source]['recipes'] = [];
           sourcesConfig[source]['links']['recipes'] = [];
 
-          fs.mkdirSync(`${docsOriginRelPath}`, { recursive: true });
-
-          // -- Elimina ficheros para generarlos de nuevo -- //
+          autoGenPaths.push(sourcesConfig[source]['targetPath']);
+          
+          
           for (const type of autoGenTypes) {
-
             sourcesConfig[source]['links'][type] = [];
+          }
 
-            let dirToRemoveFiles = `${sourcesConfig[source]['path']}/${type}`;
+          if (source == 'custom') {
+            sourcesConfig[source]['apps'] = {};
+            if (way.apps.length > 0) {
+              for (const app of way.apps) {
+                const originPath = `${path.dirname(way.root)}/app/custom/app/${app}/docs`;
+                sourcesConfig[source]['apps'][app] = {};
+                sourcesConfig[source]['apps'][app]['scanPaths'] = [originPath];
+                sourcesConfig[source]['apps'][app]['targetPath'] = originPath;
+                sourcesConfig[source]['apps'][app]['links'] = {};
+                sourcesConfig[source]['apps'][app]['recipes'] = [];
+
+                autoGenPaths.push(sourcesConfig[source]['apps'][app]['targetPath']);
+                
+                for (const type of autoGenTypes) {
+                  sourcesConfig[source]['apps'][app]['links'][type] = [];
+                }
+                sourcesConfig[source]['apps'][app]['links']['recipes'] = [];
+              }
+            }
+          } 
+
+        }
+
+
+        // -- Limpia docs auto-generados -- //
+        for (const autoGenPath of autoGenPaths) {
+          for (const autoGenType of autoGenTypes) {
+            let p = `${autoGenPath}/${autoGenType}`;
             try {
-              const files = fs.readdirSync(dirToRemoveFiles, { withFileTypes: true });
+              const files = fs.readdirSync(p, { withFileTypes: true });
               for (const file of files) {
-                const fullFilePath = path.join(dirToRemoveFiles, file.name);
+                const fullFilePath = path.join(p, file.name);
                 if (file.isFile() && file.name.startsWith('autogen__')) {
                   fs.unlinkSync(fullFilePath);
                 }
               }
-              way.lib.log({ message: `Auto-gen docs cleanup finished from: ${dirToRemoveFiles}`, type: `label`});
-            } catch (e) { }
+              way.lib.log({ message: `Cleanup auto-gen docs from: ${p}`, type: `label`});
+            } catch (e) { 
+              // way.lib.log({ message: `Skip cleanup auto-gen docs from: ${p}`, type: `label`});
+            }
           }
-
         }
-        //console.log(sourcesConfig)
+        for (const app_name of way.apps) {
+          try {
+            const files = fs.readdirSync(`${sourcesConfig['custom']['targetPath']}/apps`, { withFileTypes: true });
+            for (const file of files) {
+              if (file.isDirectory()) {
+                const fullFilePath = path.join(file.parentPath, file.name);
+                fs.removeSync(`${fullFilePath}`);
+                way.lib.log({ message: `Cleanup app docs from: ${fullFilePath}`, type: `label`});
+              }
+            }
+          } catch (e) {}
+        }
+        try {
+          fs.removeSync(`${sourcesConfig['custom']['targetPath']}/recipes`);
+          way.lib.log({ message: `Cleanup custom recipes: ${sourcesConfig['custom']['targetPath']}/recipes`, type: `label`});
+        } catch (e) {}
+        /* -- Fin limpieza -- */
 
+
+
+        // -- Añade ruta de recetas custom --//
+        sourcesConfig['custom']['scanPaths'].push(`${way.root}/custom/docs`);
+
+
+
+
+        //way.lib.exit()
+        //console.log(JSON.stringify(sourcesConfig, null, 2));
+        //way.lib.exit()
+
+
+
+        // -- Obtiene recetas y establece links de recetas -- //
+        function normalizePaths(pathValue) {
+          if (Array.isArray(pathValue)) return pathValue;
+          if (typeof pathValue === 'string') return [pathValue];
+          return [];
+        }        
+        function getLink(recipesPath, fileName) {
+          const fullFilePath = path.join(recipesPath, fileName);
+          const fileContent = fs.readFileSync(fullFilePath, 'utf8');
+        
+          const { data } = matter(fileContent);
+        
+          const title =
+            way.lib.check(data?.title)
+              ? data.title
+              : path.basename(fileName, path.extname(fileName));
+        
+          return `- [${title}](./${fileName})`;
+        }
+        function getRecipeFiles(recipesPath) {
+          if (!fs.existsSync(recipesPath)) return [];
+        
+          return fs
+            .readdirSync(recipesPath, { withFileTypes: true })
+            .filter(
+              d =>
+                d.isFile() &&
+                d.name.endsWith('.md') &&
+                d.name !== 'index.md'
+            )
+            .map(d => d.name);
+        }
+        function processRecipes(node) {
+          if (!node.scanPaths || !node.recipes || !node.links?.recipes) return;
+        
+          const paths = normalizePaths(node.scanPaths);
+        
+          if (!paths.length) return;
+        
+          for (const basePath of paths) {
+            const recipesPath = `${basePath}/recipes`;
+            const files = getRecipeFiles(recipesPath);
+        
+            if (!files.length) {
+              way.lib.log({
+                message: `Not found recipes from: ${recipesPath}`,
+                type: 'label'
+              });
+              continue;
+            }
+        
+            for (const fileName of files) {
+              node.recipes.push(fileName);
+              node.links.recipes.push(
+                getLink(recipesPath, fileName)
+              );
+            }
+          }
+        }        
+        function walkSources(node) {
+          if (typeof node !== 'object' || node === null) return;
+        
+          processRecipes(node);
+        
+          Object.values(node).forEach(child => {
+            if (typeof child === 'object') {
+              walkSources(child);
+            }
+          });
+        }
+        walkSources(sourcesConfig);
+
+        
+
+
+        //console.log(JSON.stringify(sourcesConfig, null, 2));
+        //way.lib.exit()
+
+
+
+
+        // -- Auto-gen -- //
+        way.lib.log({ message: `Auto-gen docs...`, type: `label`});
         let autoGenString = `autogen__`;
         let prefix = autoGenString;
-
         var file_tree = way.map.config;
-
         for (const fileKey in file_tree) {
-          if (file_tree.hasOwnProperty(fileKey)) { // buena práctica
+          if (file_tree.hasOwnProperty(fileKey)) {
 
             var fileRelPath = file_tree[fileKey]; 
-
-            if (fileRelPath.startsWith('custom/app/')) {
-              var filePathSource = fileRelPath.replace(/^custom\/app\//,'').split('/')[0];
-              if (!way.lib.check(sourcesConfig[filePathSource])) {
-                way.lib.exit(`Not found doc source`);
-              }
-            } else {
-              var filePathSource = 'core';
+            
+            var filePathSource = fileRelPath.split('/')[0];
+            
+            var docsRoot = sourcesConfig[filePathSource]['targetPath'];
+            if (fileRelPath.startsWith('custom/app')) {
+              var app_name = fileRelPath.replace(/^custom\/app\//,'').split('/')[0];
+              docsRoot = sourcesConfig[filePathSource]['apps'][app_name]['targetPath'];
             }
-            var docsRoot = sourcesConfig[filePathSource]['path'];
 
             var filePath = `${path.dirname(way.root)}/app/${fileRelPath}`;
 
-            if (
-              /.*\/config\/proc\/.*/.test(fileRelPath) || 
-              /.*\/config\/@\/.*/.test(fileRelPath)
-              ) {
+            if ((/.*\/config\/proc\/.*/.test(fileRelPath) || /.*\/config\/@\/.*/.test(fileRelPath))) {
+
+              if (/.*\/config\/proc\/.*/.test(fileRelPath)) {
+                var sourceDirKey = `procedures`;
+              }
+              if (/.*\/config\/@\/.*/.test(fileRelPath)) {
+                var sourceDirKey = `profiles`;
+              }
+              const targetDirPath = `${docsRoot}/${sourceDirKey}`;
+
+              // Añade prefijo para profiles "custom" que deben de ser ignorados en repositorio
+              if (/.*\/@\//.test(fileRelPath)) {
+                if (/^custom\/config\/@/.test(fileRelPath)) {
+                  prefix = `${prefix}custom__@`;
+                } else {
+                  prefix = `${prefix}@`;
+                }
+              }
+
+              const fileName = prefix + fileKey
+                  .toLowerCase()
+                  .replace(/[^a-z0-9]+/g, '_')
+                  .replace(/^_+|_+$/g, '') + '.md';
+              const targetFilePath = `${targetDirPath}/${fileName}`;
+
+
+              // way.lib.log({ message: `fileKey        ===> |${fileKey}|`, type: `label`});
+              // way.lib.log({ message: `filePathSource ===> |${filePathSource}|`, type: `label`});
+              // way.lib.log({ message: `fileRelPath    ===> |${fileRelPath}|`, type: `label`});
+              // way.lib.log({ message: `docsRoot       ===> |${docsRoot}|`, type: `label`});
+              // way.lib.log({ message: `targetDirPath  ===> |${targetDirPath}|`, type: `label`});
+              // way.lib.log({ message: `targetFilePath ===> |${targetFilePath}|`, type: `label`});
+              
 
               // Leemos el YAML como texto para capturar los comentarios
               const yamlContent = fs.readFileSync(filePath, 'utf8');
@@ -151,67 +322,129 @@ way.lib.makeDocs = async function (_args) {
                 }
               }
 
-              if (/.*\/config\/proc\/.*/.test(fileRelPath)) {
-                var sourceDirKey = `procedures`;
-              }
-              if (/.*\/config\/@\/.*/.test(fileRelPath)) {
-                var sourceDirKey = `profiles`;
-              }
-
-              const dirPath = `${docsRoot}/${sourceDirKey}`;
-              fs.mkdirSync(`${dirPath}`, { recursive: true });
-
-              // Añade prefijo para profiles "custom" que deben de ser ignorados en repositorio
-              if (/.*\/@\//.test(fileRelPath)) {
-                if (/^custom\/config\/@/.test(fileRelPath)) {
-                  prefix = `${prefix}custom__@`;
-                } else {
-                  prefix = `${prefix}@`;
-                }
-              }
-
-              const fileName = prefix + fileKey
-                  .toLowerCase()
-                  .replace(/[^a-z0-9]+/g, '_')
-                  .replace(/^_+|_+$/g, '') + '.md';
-              const targetFilePath = `${dirPath}/${fileName}`;
 
               fs.writeFileSync(targetFilePath, `# ${fileKey}\n${infoSource}\n${docsText}\n### Código\n\`\`\`yml\n${cleanYamlText.trim()}\n\`\`\``);
-              way.lib.log({ message: `Created doc file: ${targetFilePath} (from: ${fileKey} ==> ${fileRelPath})`, type: `label`});
+              way.lib.log({ message: `Created doc: ${targetFilePath}`, type: `label`});
               
               // -- Excluye enlaces a perfiles personalizados --//
               if (!/^custom\/config\/@/.test(fileRelPath)) {
                 let link = `- [${fileKey}](./${fileName})`;
-                sourcesConfig[filePathSource]['links'][sourceDirKey].push(link)
+
+                if (/^custom\/app/.test(fileRelPath)) {
+                  var app_name = fileKey.split(".")[0].replace(/^@/, '');
+                  sourcesConfig[filePathSource]['apps'][app_name]['links'][sourceDirKey].push(link);
+                } else {
+                  sourcesConfig[filePathSource]['links'][sourceDirKey].push(link);
+                }
+                
               }
 
               prefix = autoGenString;
+
+              // way.lib.log({ message: `============`, type: `label`});
+
             }
           }
         }
 
 
+        //console.log(JSON.stringify(sourcesConfig, null, 2));
 
-        for (const source of sources) {
-          if (source != 'core') {
-            docsOriginRelPath = `${path.dirname(way.root)}/app/custom/app/${source}/docs`;
-            docsTargetRelPath = `${path.dirname(way.root)}/docs/md/apps/${source}`;
-            // Copia documentación de aplicación custom
-            fs.copySync(
-              docsOriginRelPath,
-              docsTargetRelPath,
-              { overwrite: true }
-            );
-            way.lib.log({ message: `Sync "${source}" app docs from "${docsOriginRelPath}" to "${docsTargetRelPath}"`, type: `label`});
+
+        // -- Establece enlaces -- //
+        function processLinks(node) {
+          // 1. Si tiene links, los procesamos
+          if (node.links && node.scanPaths) {
+            Object.keys(node.links).forEach(type => {
+              const links = node.links[type];
+              if (!Array.isArray(links) || links.length === 0) return;
+        
+              const targetFilePath = `${node.scanPaths}/${type}/index.md`;
+        
+              let indexContent = fs.readFileSync(targetFilePath, 'utf8');
+        
+              const startMarker = '<!-- AUTOGEN:START -->';
+              const endMarker = '<!-- AUTOGEN:END -->';
+              const regex = new RegExp(
+                `${startMarker}[\\s\\S]*?${endMarker}`
+              );
+        
+              indexContent = indexContent.replace(
+                regex,
+                `${startMarker}\n\n${links.join('\n')}\n\n${endMarker}`
+              );
+        
+              fs.writeFileSync(targetFilePath, indexContent);
+        
+              way.lib.log({
+                message: `Links setted into "${targetFilePath}"`,
+                type: 'label'
+              });
+            });
           }
+          // 2. Recorremos hijos (recursivo)
+          Object.values(node).forEach(value => {
+            if (typeof value === 'object' && value !== null) {
+              processLinks(value);
+            }
+          });
         }
+        processLinks(sourcesConfig);
 
 
-        Object.keys(sourcesConfig).forEach(source => {
-          // -- Enlaces a procedimientos y perfiles -- //
-          Object.keys(sourcesConfig[source]['links']).forEach(type => {
-            let targetFilePath = `${sourcesConfig[source]['path']}/${type}/index.md`;
-            if (sourcesConfig[source]['links'][type].length > 0) {
+        // -- Sincroniza apps --//
+        for (const source of sources) {
+          if (way.lib.check(sourcesConfig[source]['apps'])) {
+            for (const app_name in sourcesConfig[source]['apps']) {
+              const originPath = sourcesConfig[source]['apps'][app_name]['targetPath'];
+              const targetPath = `${sourcesConfig[source]['targetPath']}/apps/${app_name}`;
+              // -- Sincroniza docs de aplicaciones personalizadas -- //
+              fs.copySync(
+                originPath,
+                targetPath,
+                { overwrite: true }
+              );
+              way.lib.log({ message: `Sync "${app_name}" app docs from "${originPath}" to "${targetPath}"`, type: `label`});
+              // -- Elimina secciones sin docs en aplicaciones custom --//
+              var toCheck = autoGenTypes;
+              toCheck.push('recipes');
+              var checked = [];
+              var sectionsWithDocs = [];
+              for (const type of toCheck) {
+                let p = `${targetPath}/${type}`;
+                if (!checked.includes(p)) {
+                  const mdFiles = fs
+                                  .readdirSync(p, { withFileTypes: true })
+                                  .filter(f => f.isFile() && f.name.toLowerCase().endsWith('.md') && f.name.toLowerCase() !== 'index.md')
+                                  .map(f => f.name);
+                  if (mdFiles && !mdFiles.length) {
+                    fs.removeSync(`${p}`);
+                    way.lib.log({ message: `Removed empty directory from: ${p}`, type: `label`});
+                  } else {
+                    sectionsWithDocs.push(type)
+                  }
+                  checked.push(p);
+                }
+              }
+              // -- Establece enlaces en landing app --//
+              var appLinks = [];
+              for (section of sectionsWithDocs) {
+                switch (section) {
+                  case 'procedures':
+                    link = `- [Procedimientos](./${section})`;
+                    break;
+                  case 'profiles':
+                    link = `- [Perfiles](./${section})`;
+                    break;
+                  case 'recipes':
+                    link = `- [Recetas](./${section})`;
+                    break;
+                  default:
+                    way.lib.exit(`Not found`);
+                }
+                appLinks.push(link);
+              }
+              const targetFilePath = `${originPath}/index.md`;
               let indexContent = fs.readFileSync(targetFilePath, 'utf8');
               const startMarker = '<!-- AUTOGEN:START -->';
               const endMarker = '<!-- AUTOGEN:END -->';
@@ -220,45 +453,39 @@ way.lib.makeDocs = async function (_args) {
               );
               indexContent = indexContent.replace(
                 regex,
-                `${startMarker}\n\n${sourcesConfig[source]['links'][type].join('\n')}\n\n${endMarker}`
+                `${startMarker}\n\n${appLinks.join('\n')}\n\n${endMarker}`
               );
               fs.writeFileSync(targetFilePath, indexContent);
-              way.lib.log({ message: `Links setted into "${targetFilePath}"`, type: `label`});
-            }
-          });
-          // -- Enlaces a recetas -- //
-          let dirToGetFiles = `${sourcesConfig[source]['path']}/recipes/`;
-          const files = fs.readdirSync(dirToGetFiles, { withFileTypes: true });
-          for (const file of files) {
-            const fullFilePath = path.join(dirToGetFiles, file.name);
-            if (file.isFile() && !file.name.startsWith('index') && !file.name.startsWith('_')) {
-              const baseName = path.basename(file.name, path.extname(file.name));
-              const fileContent = fs.readFileSync(fullFilePath, 'utf8');
-              const { data } = matter(fileContent);
-              let docTitle = data.title;
-              if (!way.lib.check(docTitle)) {
-                docTitle = baseName
-              }
-              const relativePath = fullFilePath
-                .replace(docsRoot, '')
-                .replace(/\\/g, '/');
-              const link = `- [${docTitle}](./${file.name})`;
-              sourcesConfig[source]['links']['recipes'].push(link);
+              way.lib.log({
+                message: `Links setted into "${targetFilePath}"`,
+                type: 'label'
+              });
+              // -- Sincroniza docs de aplicaciones personalizadas -- //
+              fs.copySync(
+                `${originPath}/index.md`,
+                `${targetPath}/index.md`,
+                { overwrite: true }
+              );
+              way.lib.log({ message: `Sync "${app_name}" app docs from "${originPath}/index.md" to "${targetPath}/index.md"`, type: `label`});
             }
           }
-          let targetFilePath = `${dirToGetFiles}/index.md`;
-          let indexContent = fs.readFileSync(targetFilePath, 'utf8');
-          const startMarker = '<!-- AUTOGEN:START -->';
-          const endMarker = '<!-- AUTOGEN:END -->';
-          const regex = new RegExp(
-            `${startMarker}[\\s\\S]*?${endMarker}`
+        }
+
+        // -- Sincroniza recetas custom --//
+        for (scanPath of sourcesConfig['custom']['scanPaths']) {
+          const originPath = `${scanPath}/recipes`;
+          const targetPath = `${sourcesConfig['custom']['targetPath']}/recipes`;
+          if (!fs.existsSync(targetPath)) {
+            fs.mkdirSync(targetPath);
+          }
+          fs.copySync(
+            originPath,
+            targetPath,
+            { overwrite: true }
           );
-          indexContent = indexContent.replace(
-            regex,
-            `${startMarker}\n\n${sourcesConfig[source]['links']['recipes'].join('\n')}\n\n${endMarker}`
-          );
-          fs.writeFileSync(targetFilePath, indexContent);
-        });
+          way.lib.log({ message: `Sync custom recipes from "${originPath}" to "${targetPath}"`, type: `label`});
+        }
+        //console.log(sourcesConfig['custom']['targetPath'])
 
 
         // -- Resuelve -- //

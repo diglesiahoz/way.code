@@ -7,3 +7,7 @@ apps:
 # Permite instalar grupos de perfiles personalizadas desde repositorios GIT.
 # profile_groups:
 #   _my_group: https://my-gitlab/my-group.git
+
+# Permite instalar documentación personalizada desde repositorios GIT.
+# docs:
+#   recipes: https://my-gitlab/my-docs.git

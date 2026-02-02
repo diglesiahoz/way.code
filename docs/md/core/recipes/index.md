@@ -1,8 +1,8 @@
 ---
 title: Recetas
-sidebar_label: ✴️ Recetas
+sidebar_label: 🛠️ Recetas
 sidebar_position: 4.0
-slug: /recipes
+slug: /core/recipes
 tags: []
 ---
 

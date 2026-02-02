@@ -3,6 +3,21 @@ module.exports = {
   url: 'http://localhost',
   baseUrl: '/',
   favicon: 'img/favicon.ico',
+  themeConfig: {
+    navbar: {
+      title: 'way.code',
+      logo: {
+        alt: 'Logo Docs',
+        src: 'img/way.png',
+      },
+      items: [],
+    },
+    colorMode: {
+      defaultMode: 'dark',
+      disableSwitch: true,
+      respectPrefersColorScheme: false,
+    },
+  },  
   presets: [
     [
       'classic',
@@ -13,6 +28,9 @@ module.exports = {
           routeBasePath: '/',
         },
         blog: false,
+        theme: {
+          customCss: require.resolve('./src/css/custom.css'),
+        },
       },
     ],
   ],
