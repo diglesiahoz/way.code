@@ -19,9 +19,6 @@ way core.init -v
 
 ### Código
 ```yml
-help: Ejecuta tareas administrativas
-example:
-  - '(({}.tmp.proc.sig))'
 task:
   do:
     - call: init

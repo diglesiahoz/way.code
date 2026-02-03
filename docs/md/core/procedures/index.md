@@ -19,6 +19,6 @@ tags: []
 - [core.help](./autogen__core_help.md)
 - [core.init](./autogen__core_init.md)
 - [core.make.app](./autogen__core_make_app.md)
-- [core.ssh](./autogen__core_ssh.md)
+- [core.watch](./autogen__core_watch.md)
 
 <!-- AUTOGEN:END -->

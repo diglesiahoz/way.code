@@ -173,16 +173,7 @@ way.lib.init = async function (_args){
 
               singleHelp['proc'] = `${color.green(configKey)}`;
 
-
-              if (way.lib.check(procConfig.help)) {
-                singleHelp['description'] = `\n${color.dim.white(procConfig.help)}`;
-              }
-
-              //singleHelp['example'] = `\n\n${color.dim.white(procConfig.example.join(", "))}`;
-              singleHelp['example'] = `\n${color.dim.white(procConfig.example[0])}`;
-
-
-              //way.lib.exit()
+              // Descripción y ejemplos se gestionan con comentarios DOCS en el YAML (makeDocs).
 
               try {
                 if (!way.lib.check(procConfig.task.do)) {
@@ -280,14 +271,6 @@ way.lib.init = async function (_args){
                           } else {
                             //console.log('NO',re,configKey,profile)
                           }
-
-
-
-                          if (configKey == "ssh") {
-                            //way.lib.exit()
-                          }
-
-                          
 
                         }
                       }
@@ -487,7 +470,7 @@ way.lib.init = async function (_args){
           //help_out += `${color.dim.bold.white(`\n`)}`;
           //help_out += `${color.dim.bold.white(`\n`)}`;
           help_out += columnify(help['proc'], {
-            columns: ['proc', 'description', 'example'],
+            columns: ['proc'],
             showHeaders: false,
             preserveNewLines: true,
             paddingChr: '',

@@ -10,10 +10,6 @@
 # way core.init -v
 # :DOCS
 
-help: "Ejecuta tareas administrativas"
-example:
-- (({}.tmp.proc.sig))
-
 task:
   do:
     -

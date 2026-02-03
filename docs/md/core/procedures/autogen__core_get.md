@@ -5,10 +5,6 @@
 
 ### Código
 ```yml
-help: Obtiene información de ficheros de configuración
-example:
-  - '(({}.tmp.proc.sig))'
-  - '(({}.tmp.proc.sig)) @*.local'
 allowed: false
 task:
   require:

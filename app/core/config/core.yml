@@ -659,6 +659,9 @@ interface:
             origin: init.complete_sh
             target: complete.sh
             ignoreIfExist: false
+  watch:
+    collection: false
+    args: {}
   input:
     collection: false
     args:

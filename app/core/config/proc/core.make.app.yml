@@ -1,6 +1,15 @@
-help: "Establece libreria personalizada"
-example:
- - (({}.tmp.proc.sig)) --name myapp
+# DOCS:description:
+# Crea una nueva aplicación (biblioteca) personalizada en custom/app con la estructura
+# estándar: config, config/@, config/proc, file, lib, docs (procedimientos, perfiles, recetas).
+# :DOCS
+
+# DOCS:tip::
+# Muy útil para crear aplicaciones personalizadas.
+# :DOCS
+
+# DOCS:example:
+# way core.make.app myapp -v
+# :DOCS
 
 task:
   require:

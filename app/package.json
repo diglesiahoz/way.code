@@ -17,6 +17,7 @@
     "nodemon": "^2.0.3"
   },
   "dependencies": {
+    "chokidar": "^4.0.1",
     "@chilkat/ck-node12-linux64": "^9.50.84",
     "@rauschma/stringio": "^1.4.0",
     "abort-controller": "^3.0.0",
