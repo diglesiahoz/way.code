@@ -861,12 +861,30 @@ process.setMaxListeners(0);
                 paths.reverse();
                 var approot = "";
                 for (property in paths) {
-                  //console.log(`${paths[property]}/.${way.proc.appname}`)
+                  // Comprueba si existe el directorio oculto con el nombre de la app (ej: .dm)
                   if (fs.existsSync(`${paths[property]}/.${way.proc.appname}`)) 
                   {
-                    approot = `${paths[property]}`
-                    break;
+                    const stats = fs.statSync(`${paths[property]}/.${way.proc.appname}`);
+                    try {
+                      if (stats.isDirectory()) {
+                        approot = `${paths[property]}`;
+                        break;
+                      }
+                    } catch (e) {}
                   } 
+                  else {
+                    // Comprueba si existe el fichero oculto ".way"
+                    if (fs.existsSync(`${paths[property]}/.way`))
+                    {
+                      const stats = fs.statSync(`${paths[property]}/.way`);
+                      try {
+                        if (stats.isFile()) {
+                          approot = `${paths[property]}`;
+                          break;
+                        }
+                      } catch (e) {}
+                    }
+                  }
                 }
 
                 if (approot == os.homedir()) {
@@ -906,6 +924,7 @@ process.setMaxListeners(0);
                   });
                   choices.push(choice);
                   way.reference.config[configReference] = choice;
+                  configKey = choice;
                   filteredKeys = []
                 }
 

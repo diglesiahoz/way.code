@@ -1,7 +1,3 @@
-help: Ejecuta test
-example:
-- (({}.tmp.proc.sig))
-
 # Propiedad que establece el uso del procedimiento de forma interna. No permitido uso mediante CLI.
 # allowed: false
 

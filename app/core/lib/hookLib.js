@@ -23,6 +23,8 @@ way.lib.hookLib = function (_args) {
               let tmp_output = await way.lib[app_name][hook_signature]({ config: _args.config });
               output = tmp_output.data
             }
+          } else {
+            output = _args.config
           }
         } catch (e) { 
           // way.lib.exit(e) 
