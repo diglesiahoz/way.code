@@ -44,6 +44,7 @@ way.lib.watch = async function (_args) {
     path.join(way.root, 'core', 'config', '@'),
     path.join(way.root, 'custom', 'config', 'proc'),
     path.join(way.root, 'custom', 'config', '@'),
+    path.join(way.root, 'custom', 'docs'),
   ];
   // Añadir custom/app/*/config/proc y config/@ si existen
   try {
@@ -121,7 +122,13 @@ way.lib.watch = async function (_args) {
   }
 
   const onChange = (event, eventPath) => {
-    if (!eventPath || !/\.(yml|yaml)$/i.test(eventPath)) return;
+
+    if (
+      !eventPath ||
+      !/\.(yml|yaml|md)$/i.test(eventPath) ||
+      /index\.md$/i.test(eventPath)
+    ) return;
+
     way.lib.log({
       message: `watch: evento "${event}" → ${eventPath}`,
       type: 'label',
