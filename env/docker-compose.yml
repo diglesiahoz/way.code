@@ -10,6 +10,7 @@ services:
     build:
       context: .
       dockerfile: ./dockerfile/Dockerfile.app
+      network: host
       args:
         APPSETTING_UID: ${APPSETTING_UID}
         APPSETTING_GID: ${APPSETTING_GID}
